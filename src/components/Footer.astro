@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../utils/paths";
+
 /**
  * Footer.astro
  * Minimal responsive footer with logo and contact info.
@@ -8,8 +10,8 @@
 <footer class="mt-20 bg-[#00747b] text-white">
   <div class="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 md:flex-row md:items-start md:gap-14">
     <div class="flex w-full max-w-sm flex-col gap-4">
-      <a href="/" class="inline-flex items-center gap-3 text-white">
-        <img src="/images/logo-light.png" alt="ILM-SA" class="h-12 w-auto" />
+      <a href={withBase("/")} class="inline-flex items-center gap-3 text-white">
+        <img src={withBase("/images/logo-light.png")} alt="ILM-SA" class="h-12 w-auto" />
         <div class="hidden text-left md:block">
           <p class="text-sm font-semibold uppercase tracking-[0.4em] text-white/70">
             ILM-SA Trust
@@ -67,17 +69,17 @@
         </p>
         <ul class="space-y-2">
           <li>
-            <a href="/#who-can-apply" class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+            <a href={withBase("/#who-can-apply")} class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
               <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> What you need to know
             </a>
           </li>
           <li>
-            <a href="/#how-to-apply" class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+            <a href={withBase("/#how-to-apply")} class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
               <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> Application steps
             </a>
           </li>
           <li>
-            <a href="/apply" class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+            <a href={withBase("/apply")} class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
               <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> Submit your application
             </a>
           </li>

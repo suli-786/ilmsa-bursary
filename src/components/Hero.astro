@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../utils/paths";
+
 const {
   slides: customSlides,
   sub: customSub,
@@ -6,12 +8,9 @@ const {
   body: customBody,
   highlightWord: customHighlight,
   showButtons = true,
-  ctas = [
-    { href: "/apply", label: "Apply", variant: "primary" },
-    { href: "#how-to-apply", label: "How to apply", variant: "outline" },
-  ],
+  ctas: providedCtas,
   scrollCue,
-  scrollTarget = "#how-to-apply",
+  scrollTarget: rawScrollTarget = "#how-to-apply",
 } = Astro.props;
 
 const defaultSlides = [
@@ -29,12 +28,25 @@ const defaultSlides = [
   },
 ];
 
-const slides = customSlides ?? defaultSlides;
-const firstSlide = slides[0] ?? defaultSlides[0];
+const slidesSource = customSlides?.length ? customSlides : defaultSlides;
+const slides = slidesSource.map((slide) => ({
+  ...slide,
+  image: slide?.image ? withBase(slide.image) : slide.image,
+}));
+const firstSlide = slidesSource[0] ?? defaultSlides[0];
 const sub = customSub ?? firstSlide.sub ?? "Bursary Application Form 2026";
 const headlineText = customHeadline ?? firstSlide.title ?? "ILM-SA Bursary";
 const bodyText = customBody ?? firstSlide.body ?? "Financial assistance, mentorship, and a supportive community to help you thrive in 2026 and beyond.";
 const highlightWord = customHighlight ?? "ILM-SA";
+const defaultCtas = [
+  { href: "/apply", label: "Apply", variant: "primary" },
+  { href: "#how-to-apply", label: "How to apply", variant: "outline" },
+];
+const ctas = (providedCtas ?? defaultCtas).map((cta) => ({
+  ...cta,
+  href: withBase(cta.href ?? "#"),
+}));
+const resolvedScrollTarget = withBase(rawScrollTarget);
 ---
 <section
   class="relative isolate min-h-screen overflow-hidden text-white"
@@ -127,7 +139,7 @@ const highlightWord = customHighlight ?? "ILM-SA";
         <div class="flex items-center gap-3 text-white/90">
           <span class="text-sm font-semibold uppercase tracking-[0.4em] text-[color-mix(in_lch,var(--brand-secondary)_88%,white)]">{scrollCue}</span>
           <a
-            href={scrollTarget}
+            href={resolvedScrollTarget}
             aria-label={scrollCue}
             title={scrollCue}
             class="flex h-12 w-12 items-center justify-center rounded-full border border-white/70 text-white shadow-[0_8px_24px_rgba(0,145,147,0.35)] transition hover:-translate-y-1 hover:border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(0,145,147,0.65)]"
