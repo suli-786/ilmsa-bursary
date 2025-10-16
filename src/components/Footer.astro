@@ -1,0 +1,92 @@
+---
+/**
+ * Footer.astro
+ * Minimal responsive footer with logo and contact info.
+ * Uses Tailwind + brand CSS variables defined in global.css
+ */
+---
+<footer class="mt-20 bg-[#00747b] text-white">
+  <div class="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 md:flex-row md:items-start md:gap-14">
+    <div class="flex w-full max-w-sm flex-col gap-4">
+      <a href="/" class="inline-flex items-center gap-3 text-white">
+        <img src="/images/logo-light.png" alt="ILM-SA" class="h-12 w-auto" />
+        <div class="hidden text-left md:block">
+          <p class="text-sm font-semibold uppercase tracking-[0.4em] text-white/70">
+            ILM-SA Trust
+          </p>
+          <p class="text-base font-semibold text-white">
+            Bursary Programme
+          </p>
+        </div>
+      </a>
+      <p class="text-sm text-white/80 md:text-base">
+        Empowering KwaZulu Natal students with financial support, mentorship, and opportunities to give back.
+      </p>
+    </div>
+
+    <div class="flex w-full flex-col gap-8 text-sm md:flex-row md:text-base">
+      <div class="flex flex-1 flex-col gap-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[--brand-secondary]">
+          Contact
+        </p>
+        <ul class="space-y-2 text-white/90">
+          <li>
+            <span class="font-medium text-white">Email:</span>
+            <a href="mailto:info@ilmsa.co.za" class="ml-2 border-b border-transparent text-[--brand-secondary] transition hover:border-[--brand-secondary]">
+              info@ilmsa.co.za
+            </a>
+          </li>
+          <li class="flex flex-wrap items-center gap-2">
+            <span class="font-medium text-white">WhatsApp:</span>
+            <a
+              href="https://wa.me/27670568975"
+              target="_blank"
+              rel="noopener"
+              class="border-b border-transparent text-[--brand-secondary] transition hover:border-[--brand-secondary]"
+            >
+              067 056 8975
+            </a>
+            <span class="text-white/40">|</span>
+            <a
+              href="https://wa.me/27832714500"
+              target="_blank"
+              rel="noopener"
+              class="border-b border-transparent text-[--brand-secondary] transition hover:border-[--brand-secondary]"
+            >
+              083 271 4500
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="hidden h-full w-px bg-gradient-to-b from-transparent via-[--brand-secondary] to-transparent md:block"></div>
+
+      <div class="flex flex-1 flex-col gap-4">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[--brand-secondary]">
+          Quick links
+        </p>
+        <ul class="space-y-2">
+          <li>
+            <a href="/#who-can-apply" class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+              <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> What you need to know
+            </a>
+          </li>
+          <li>
+            <a href="/#how-to-apply" class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+              <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> Application steps
+            </a>
+          </li>
+          <li>
+            <a href="/apply" class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+              <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> Submit your application
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-t border-white/15 bg-[#00636a] py-4 text-center text-xs text-white/80">
+    © {new Date().getFullYear()} ILM-SA Trust. All rights reserved.
+  </div>
+</footer>

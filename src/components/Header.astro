@@ -1,0 +1,243 @@
+---
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/#who-can-apply", label: "Who can apply" },
+  { href: "/#how-to-apply", label: "How to apply" },
+];
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary]";
+const desktopLinkClasses = `nav-link relative text-sm font-medium text-white/90 transition-colors duration-200 hover:text-white ${focusRing}`;
+const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text-gray-800 transition hover:bg-gray-100 ${focusRing}`;
+---
+<header
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-colors duration-300"
+  data-header
+>
+  <a
+    href="#main"
+    class="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus-visible:ring-2 focus-visible:ring-[--brand-primary] focus:ring-0"
+  >
+    Skip to content
+  </a>
+  <nav
+    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-white md:gap-6"
+    aria-label="Primary navigation"
+  >
+    <div class="flex items-center md:flex-1">
+      <a href="/" class="inline-flex items-center">
+        <img src="/images/logo-light.png" alt="ILM-SA" class="h-9 w-auto" />
+      </a>
+    </div>
+
+    <ul class="nav-list hidden items-center gap-6 md:flex">
+      {links.map((l) => {
+        const isPageLink = !l.href.startsWith('#');
+        const hrefPath = isPageLink
+          ? (new URL(l.href, Astro.url).pathname.replace(/\/$/, '') || '/')
+          : '';
+        const isActive = isPageLink && hrefPath === currentPath;
+        return (
+          <li>
+            <a
+              href={l.href}
+              aria-current={isActive ? "page" : undefined}
+              class={`${desktopLinkClasses}${isActive ? ' nav-link--active' : ''}`}
+            >
+              {l.label}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+
+    <div class="flex items-center gap-3">
+      <a
+        href="/apply"
+        class="hidden rounded-md bg-brand-secondary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-secondary] md:inline-flex"
+      >
+        Apply
+      </a>
+      <button
+        class="inline-flex items-center justify-center rounded-md p-2 text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary] md:hidden"
+        type="button"
+        aria-label="Open menu"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        aria-haspopup="true"
+        data-menu-button
+      >
+        <span class="sr-only" data-menu-label>Open menu</span>
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div
+    id="mobile-menu"
+    class="hidden border-t border-black/5 bg-white md:hidden"
+    data-menu-panel
+    aria-hidden="true"
+    hidden
+  >
+    <ul class="mx-auto max-w-6xl space-y-2 px-4 py-3">
+      {links.map((l) => {
+        const isPageLink = !l.href.startsWith('#');
+        const hrefPath = isPageLink
+          ? (new URL(l.href, Astro.url).pathname.replace(/\/$/, '') || '/')
+          : '';
+        const isActive = isPageLink && hrefPath === currentPath;
+        return (
+          <li>
+            <a
+              href={l.href}
+              aria-current={isActive ? "page" : undefined}
+              class={`${mobileLinkClasses}${isActive ? ' text-[--brand-secondary]' : ''}`}
+            >
+              {l.label}
+            </a>
+          </li>
+        );
+      })}
+      <li>
+        <a
+          href="/apply"
+          class="block rounded-md bg-brand-secondary px-3 py-2 text-base font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-secondary]"
+        >
+          Apply
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<script is:inline>
+  const btn = document.querySelector('[data-menu-button]');
+  const panel = document.querySelector('[data-menu-panel]');
+  const menuLabel = btn?.querySelector('[data-menu-label]');
+  const header = document.querySelector('[data-header]');
+
+  if (btn && panel) {
+    const setMenuState = (open) => {
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if (menuLabel) {
+        menuLabel.textContent = open ? 'Close menu' : 'Open menu';
+      }
+
+      if (open) {
+        panel.classList.remove('hidden');
+        panel.removeAttribute('hidden');
+        panel.setAttribute('aria-hidden', 'false');
+        const firstLink = panel.querySelector('a');
+        if (firstLink instanceof HTMLElement) {
+          firstLink.focus();
+        }
+      } else {
+        panel.classList.add('hidden');
+        panel.setAttribute('hidden', '');
+        panel.setAttribute('aria-hidden', 'true');
+      }
+    };
+
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      setMenuState(!open);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') {
+        setMenuState(false);
+        btn.focus();
+      }
+    });
+
+    panel.addEventListener('click', (event) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest('a')) {
+        setMenuState(false);
+      }
+    });
+  }
+
+  if (header) {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+    let hideTimeout;
+    let showTimeout;
+    const SCROLL_OFFSET = 80;
+    const DIRECTION_THRESHOLD = 4;
+    const HIDE_DELAY = 220;
+    const SHOW_DELAY = 90;
+
+    const showHeader = (immediate = false) => {
+      if (hideTimeout) {
+        window.clearTimeout(hideTimeout);
+        hideTimeout = undefined;
+      }
+      if (showTimeout) {
+        window.clearTimeout(showTimeout);
+        showTimeout = undefined;
+      }
+      if (immediate) {
+        header.classList.remove('is-hidden');
+        return;
+      }
+      if (!header.classList.contains('is-hidden')) {
+        return;
+      }
+      showTimeout = window.setTimeout(() => {
+        header.classList.remove('is-hidden');
+        showTimeout = undefined;
+      }, SHOW_DELAY);
+    };
+
+    const hideHeader = () => {
+      if (showTimeout) {
+        window.clearTimeout(showTimeout);
+        showTimeout = undefined;
+      }
+      if (header.classList.contains('is-hidden') || hideTimeout) {
+        return;
+      }
+      hideTimeout = window.setTimeout(() => {
+        header.classList.add('is-hidden');
+        hideTimeout = undefined;
+      }, HIDE_DELAY);
+    };
+
+    const updateHeader = () => {
+      const current = window.scrollY;
+      const scrolled = current > 8;
+      header.classList.toggle('is-scrolled', scrolled);
+      header.classList.toggle('bg-transparent', !scrolled);
+      header.classList.toggle('border-transparent', !scrolled);
+
+      const scrollingDown = current > lastScrollY + DIRECTION_THRESHOLD;
+      const scrollingUp = current < lastScrollY - DIRECTION_THRESHOLD;
+
+      if (current <= SCROLL_OFFSET || scrollingUp) {
+        showHeader(current <= SCROLL_OFFSET / 2);
+      } else if (scrollingDown) {
+        hideHeader();
+      }
+
+      lastScrollY = current;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateHeader);
+      }
+    };
+
+    updateHeader();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>

@@ -1,0 +1,248 @@
+---
+const {
+  slides: customSlides,
+  sub: customSub,
+  headline: customHeadline,
+  body: customBody,
+  highlightWord: customHighlight,
+  showButtons = true,
+  ctas = [
+    { href: "/apply", label: "Apply", variant: "primary" },
+    { href: "#how-to-apply", label: "How to apply", variant: "outline" },
+  ],
+  scrollCue,
+  scrollTarget = "#how-to-apply",
+} = Astro.props;
+
+const defaultSlides = [
+  {
+    image: "/images/bg1.jpg",
+    title: "ILM-SA Bursary Applications",
+    sub: "Bursary Application Form 2026",
+    body: "Financial assistance, mentorship, and a supportive community to help you thrive in 2026 and beyond.",
+  },
+  {
+    image: "/images/bg2.jpg",
+    title: "Closing Date: 18th January 2026",
+    sub: "Applications close once we receive 100 complete submissions",
+    body: "Submit before 18 January 2026 or sooner if the 100-application cap is reached.",
+  },
+];
+
+const slides = customSlides ?? defaultSlides;
+const firstSlide = slides[0] ?? defaultSlides[0];
+const sub = customSub ?? firstSlide.sub ?? "Bursary Application Form 2026";
+const headlineText = customHeadline ?? firstSlide.title ?? "ILM-SA Bursary";
+const bodyText = customBody ?? firstSlide.body ?? "Financial assistance, mentorship, and a supportive community to help you thrive in 2026 and beyond.";
+const highlightWord = customHighlight ?? "ILM-SA";
+---
+<section
+  class="relative isolate min-h-screen overflow-hidden text-white"
+  data-hero
+>
+  {slides.map((slide, index) => (
+    <img
+      src={slide.image}
+      alt={slide.title}
+      loading={index === 0 ? "eager" : "lazy"}
+      data-hero-slide
+      data-title={slide.title}
+      data-sub={slide.sub ?? ""}
+      data-body={slide.body ?? ""}
+      class={`hero-slide absolute inset-0 h-full w-full transform-gpu object-cover ${
+        index === 0 ? "is-active" : "is-inactive"
+      }`}
+    />
+  ))}
+  <div class="absolute inset-0 bg-black/50"></div>
+  <div
+    class="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_lch,var(--brand-primary)_22%,transparent) 0%,color-mix(in_lch,var(--brand-primary)_12%,transparent) 100%)]"
+    data-animated-gradient
+  ></div>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_60%)]"></div>
+
+  {slides.length > 1 && (
+    <div class="hero-nav-wrapper">
+      <div class="flex flex-1"></div>
+      <button
+        type="button"
+        class="hero-nav hero-nav-next"
+        data-hero-next
+        aria-label="Next slide"
+      >
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  )}
+
+  <div class="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 pt-32 pb-16">
+    <div class="flex flex-col gap-6">
+      <p
+        class="text-sm font-semibold uppercase tracking-[0.3em] text-white/70"
+        data-hero-sub
+        data-sub-default={sub}
+      >
+        {sub}
+      </p>
+      <h1
+        class="hero-heading hero-heading-change max-w-2xl text-4xl font-bold tracking-tight md:text-6xl"
+        data-hero-heading
+        data-title={slides[0]?.title ?? headlineText}
+        data-highlight={highlightWord}
+      >
+        {headlineText.split(/(\s+)/).map((segment) =>
+          segment.trim() === highlightWord ? (
+            <span class="hero-word hero-word--highlight">{segment}</span>
+          ) : (
+            segment
+          )
+        )}
+      </h1>
+      <p
+        class="max-w-lg text-base text-white/85 md:text-lg"
+        data-hero-body
+        data-body-default={bodyText}
+      >
+        {bodyText}
+      </p>
+
+      {showButtons && (
+        <div class="flex flex-wrap items-center gap-3">
+          {ctas.map((cta) => (
+            <a
+              href={cta.href}
+              class={cta.variant === "primary"
+                ? "inline-flex items-center rounded-md bg-brand-secondary px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[--brand-secondary]"
+                : "inline-flex items-center rounded-md border border-white/60 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-white/70"}
+            >
+              {cta.label}
+            </a>
+          ))}
+        </div>
+      )}
+
+      {scrollCue && (
+        <div class="flex items-center gap-3 text-white/90">
+          <span class="text-sm font-semibold uppercase tracking-[0.4em] text-[color-mix(in_lch,var(--brand-secondary)_88%,white)]">{scrollCue}</span>
+          <a
+            href={scrollTarget}
+            aria-label={scrollCue}
+            title={scrollCue}
+            class="flex h-12 w-12 items-center justify-center rounded-full border border-white/70 text-white shadow-[0_8px_24px_rgba(0,145,147,0.35)] transition hover:-translate-y-1 hover:border-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[rgba(0,145,147,0.65)]"
+          >
+            <svg class="h-5 w-5 animate-[bounce_2s_infinite]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 5v14m0 0-5-5m5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </div>
+      )}
+    </div>
+
+    <div class="h-6" aria-hidden="true"></div>
+  </div>
+</section>
+
+<script is:inline>
+  const hero = document.querySelector('[data-hero]');
+  if (!hero) {
+    throw new Error('Hero element not found');
+  }
+
+  const heroSlides = Array.from(hero.querySelectorAll('[data-hero-slide]'));
+  if (!heroSlides.length) {
+    throw new Error('No hero slides available. Ensure slides are provided.');
+  }
+
+  const heading = hero.querySelector('[data-hero-heading]');
+  const subElement = hero.querySelector('[data-hero-sub]');
+  const bodyElement = hero.querySelector('[data-hero-body]');
+  const nextBtn = hero.querySelector('[data-hero-next]');
+
+  if (!heading || !subElement || !bodyElement) {
+    throw new Error('Hero content elements missing (heading/sub/body).');
+  }
+
+  const highlightWord = heading.dataset.highlight ?? '';
+  const defaultSub = subElement.dataset.subDefault ?? '';
+  const defaultBody = bodyElement.dataset.bodyDefault ?? '';
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  let currentIndex = heroSlides.findIndex((slide) => slide.classList.contains('is-active'));
+  if (currentIndex < 0) currentIndex = 0;
+  let rotationTimer;
+
+  const renderHeadline = (value) => {
+    if (!highlightWord) {
+      heading.textContent = value;
+      return;
+    }
+    const fragments = value.split(/(\s+)/);
+    heading.innerHTML = fragments
+      .map((fragment) =>
+        fragment.trim() === highlightWord
+          ? `<span class="hero-word hero-word--highlight">${fragment}</span>`
+          : fragment
+      )
+      .join('');
+    heading.dataset.title = value;
+  };
+
+  const showSlide = (index) => {
+    heroSlides.forEach((slide, i) => {
+      slide.classList.toggle('is-active', i === index);
+      slide.classList.toggle('is-inactive', i !== index);
+    });
+
+    const activeSlide = heroSlides[index];
+    renderHeadline(activeSlide.dataset.title ?? heading.dataset.title ?? '');
+    subElement.textContent = activeSlide.dataset.sub || defaultSub;
+    bodyElement.textContent = activeSlide.dataset.body || defaultBody;
+
+    currentIndex = index;
+  };
+
+  const goToNextSlide = () => {
+    const nextIndex = (currentIndex + 1) % heroSlides.length;
+    showSlide(nextIndex);
+  };
+
+  const startRotation = () => {
+    stopRotation();
+    if (prefersReducedMotion.matches || heroSlides.length < 2) {
+      return;
+    }
+    rotationTimer = window.setInterval(goToNextSlide, 4500);
+  };
+
+  const stopRotation = () => {
+    if (rotationTimer) {
+      window.clearInterval(rotationTimer);
+      rotationTimer = undefined;
+    }
+  };
+
+  showSlide(currentIndex);
+  startRotation();
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      goToNextSlide();
+      startRotation();
+    });
+  }
+
+  hero.addEventListener('mouseenter', stopRotation, { passive: true });
+  hero.addEventListener('mouseleave', startRotation, { passive: true });
+  hero.addEventListener('touchstart', stopRotation, { passive: true });
+  hero.addEventListener('touchend', startRotation, { passive: true });
+
+  prefersReducedMotion.addEventListener?.('change', (event) => {
+    if (event.matches) {
+      stopRotation();
+    } else {
+      startRotation();
+    }
+  });
+</script>

@@ -1,0 +1,245 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap");
+@import "tailwindcss";
+
+/* Your brand tokens (we’ll use via CSS variables and Tailwind classes) */
+:root {
+  --brand-primary: #009193;
+  --brand-secondary: #f6931c;
+  --brand-bg: #97c9c3;
+  --font-heading: "Poppins", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@layer utilities {
+  .bg-brand-secondary {
+    background-color: var(--brand-secondary);
+  }
+}
+
+@layer components {
+  @keyframes preloaderPulse {
+    0%, 100% {
+      transform: translateY(0);
+      opacity: 0.35;
+    }
+    50% {
+      transform: translateY(-6px);
+      opacity: 1;
+    }
+  }
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  [data-header] {
+    will-change: transform, opacity, background-color;
+    transition:
+      transform 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.08s,
+      opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s,
+      background-color 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.45s ease;
+  }
+
+  [data-header].is-scrolled {
+    background-image: linear-gradient(
+      110deg,
+      color-mix(in lch, var(--brand-secondary) 20%, white) 0%,
+      color-mix(in lch, var(--brand-primary) 92%, black) 18%,
+      color-mix(in lch, var(--brand-primary) 88%, black) 100%
+    );
+    border-color: color-mix(in srgb, var(--brand-primary) 60%, transparent);
+    box-shadow:
+      inset 0 -2px 0 color-mix(in srgb, var(--brand-secondary) 75%, transparent),
+      0 18px 42px color-mix(in srgb, var(--brand-primary) 32%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  [data-header].is-hidden {
+    transform: translateY(-140%);
+    opacity: 0;
+    pointer-events: none;
+    transition-delay: 0s;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.4rem;
+    height: 2px;
+    width: 0;
+    background: var(--brand-secondary);
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    width: 100%;
+  }
+
+  .nav-link--active,
+  .nav-link[aria-current="page"] {
+    color: #ffffff;
+  }
+
+  .nav-list > li {
+    position: relative;
+    padding-left: 0.75rem;
+  }
+
+  .nav-list > li:first-child {
+    padding-left: 0;
+  }
+
+  .nav-list > li + li::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 1.5rem;
+    width: 1px;
+    transform: translate(-0.5rem, -50%);
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .hero-slide {
+    opacity: 0;
+    transform: scale(1.06);
+    transition:
+      opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  .hero-slide.is-active {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  .hero-slide.is-inactive {
+    pointer-events: none;
+  }
+
+  .hero-heading {
+    position: relative;
+    display: inline;
+    will-change: transform, opacity;
+  }
+
+  .hero-heading-change {
+    animation: hero-heading-in 0.55s ease forwards;
+  }
+
+  .hero-word {
+    display: inline;
+  }
+
+  .hero-word--highlight {
+    font-weight: 700;
+    color: color-mix(in srgb, var(--brand-secondary) 96%, white);
+  }
+
+  .hero-nav-wrapper {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+  }
+
+  .hero-nav {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    transition: background-color 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  }
+
+  .hero-nav:hover {
+    background: rgba(255, 255, 255, 0.24);
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+
+  .hero-nav:active {
+    transform: translateY(0);
+  }
+
+  .hero-nav:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(5, 165, 156, 0.45);
+  }
+
+  .hero-nav svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .hero-nav-prev svg {
+    transform: scaleX(-1);
+  }
+
+  @keyframes hero-heading-in {
+    0% {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-4px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-header] {
+      transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.3s ease;
+    }
+
+    .hero-slide {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .hero-nav {
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+  }
+
+  [data-animated-gradient] {
+    background-size: 400% 400%;
+    animation: gradientShift 30s ease infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-animated-gradient] {
+      animation: none;
+      background-position: 0 0;
+    }
+  }
+}

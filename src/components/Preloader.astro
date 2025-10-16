@@ -1,0 +1,59 @@
+---
+const message = "Loading ILM-SA…";
+const pulseDots = [0, 1, 2];
+---
+<div
+  id="preloader"
+  class="fixed inset-0 z-[9999] flex items-center justify-center bg-white/95 backdrop-blur-md transition-opacity duration-500"
+  role="status"
+  aria-live="polite"
+  aria-label={message}
+>
+  <div class="relative flex flex-col items-center gap-8">
+    <div class="relative flex h-20 w-20 items-center justify-center">
+      <div class="absolute inset-0 rounded-full border-2 border-[color-mix(in_lch,var(--brand-primary)_45%,white)]" aria-hidden="true"></div>
+      <div class="absolute inset-2 rounded-full border-2 border-[color-mix(in_lch,var(--brand-secondary)_55%,white)] opacity-80" aria-hidden="true"></div>
+      <div class="absolute h-[110%] w-[110%] rounded-full border-4 border-transparent border-t-[--brand-primary] border-b-[--brand-secondary] animate-[spin_1.8s_linear_infinite]" aria-hidden="true"></div>
+
+      <div class="relative flex items-center gap-2">
+        {pulseDots.map((d) => (
+          <span
+            class="inline-flex h-3 w-3 animate-[preloaderPulse_1.4s_ease-in-out_infinite] rounded-full bg-[--brand-primary]"
+            style={`animation-delay: ${d * 0.18}s`}
+          />
+        ))}
+      </div>
+    </div>
+
+    <div class="flex flex-col items-center text-center">
+      <p class="text-sm font-semibold tracking-[0.3em] uppercase text-[color-mix(in_lch,var(--brand-secondary)_65%,black)]">
+        {message}
+      </p>
+      <p class="mt-1 text-xs text-[color-mix(in_lch,var(--brand-primary)_55%,black)]">
+        Preparing bursary experience…
+      </p>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const el = document.getElementById('preloader');
+    if (!el) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fadeMs = prefersReduced ? 0 : 500;
+    const remove = () => {
+      el.style.transition = `opacity ${fadeMs}ms ease`;
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+      setTimeout(() => el.remove(), fadeMs + 50);
+    };
+
+    window.addEventListener('load', remove, { once: true });
+
+    setTimeout(() => {
+      if (document.body.contains(el)) remove();
+    }, 4000);
+  })();
+</script>

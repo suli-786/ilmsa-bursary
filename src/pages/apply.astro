@@ -1,0 +1,51 @@
+---
+import "../styles/global.css";
+import Preloader from "../components/Preloader.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Hero from "../components/Hero.astro";
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Apply — ILM-SA Bursary</title>
+  </head>
+  <body class="antialiased">
+    <Preloader />   <!-- <-- here -->
+    <Header />
+
+    <main id="main" class="scroll-mt-28">
+      <Hero
+        slides={[{
+          image: "/images/bg2.jpg",
+          title: "Complete Your ILM-SA Application",
+          sub: "Bursary Application Form 2026",
+          body: "Use the secure form below to submit your personal details, academic records, and supporting documents.",
+        }]}
+        highlightWord="ILM-SA"
+        showButtons={false}
+        scrollCue="Scroll to application form"
+        scrollTarget="#apply-form"
+      />
+
+      <section id="apply-form" class="w-full">
+        <iframe
+          title="ILM-SA Bursary Application Form"
+          class="h-[100vh] w-full border-0"
+          src="https://forms.office.com/Pages/ResponsePage.aspx?id=fjfIu6g9CECua3WudPoYgVoAia5hMclKu_KP9FXeetdUM1JLS0laOEc2WFpYTUZLTUpIQjBFSjVCOCQlQCN0PWcu&embed=true"
+          frameborder="0"
+          marginwidth="0"
+          marginheight="0"
+          style="border: none;"
+          allowfullscreen
+          webkitallowfullscreen
+          mozallowfullscreen
+          msallowfullscreen
+        ></iframe>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
+</html>
