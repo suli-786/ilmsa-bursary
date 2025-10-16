@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../utils/paths";
+
 const contextIntro =
   "Most of the funding we receive for this bursary comes in the form of zakaah. Zakaah funds must be allocated to specific categories of Muslims. We therefore prioritise Muslim students who qualify for zakaah support; however, all eligible students—Muslim and non-Muslim—are welcome to apply.";
 
@@ -195,7 +197,7 @@ const expectationCards = [
           </p>
         </div>
         <a
-          href="/apply"
+          href={withBase("/apply")}
           class="inline-flex items-center justify-center rounded-full border border-[--brand-secondary] px-5 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(246,147,28,0.45)] transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-secondary]/80"
           style="background-color: var(--brand-secondary);"
         >
@@ -207,37 +209,40 @@ const expectationCards = [
 </section>
 
 <script is:inline>
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const animatedBlocks = document.querySelectorAll('#who-can-apply [data-animate]');
+  const initWhoCanApplyAnimations = () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const animatedBlocks = document.querySelectorAll('#who-can-apply [data-animate]');
 
-  if (!animatedBlocks.length) {
-    return;
-  }
+    if (!animatedBlocks.length) {
+      return;
+    }
 
-  const prepareAnimations = () => {
-    animatedBlocks.forEach((el, index) => {
-      el.classList.add('is-preparing');
-      el.style.transitionDelay = `${index * 60}ms`;
-    });
-  };
+    const prepareAnimations = () => {
+      animatedBlocks.forEach((el, index) => {
+        el.classList.add('is-preparing');
+        el.style.transitionDelay = `${index * 60}ms`;
+      });
+    };
 
-  const revealImmediately = () => {
-    animatedBlocks.forEach((el) => {
-      el.classList.remove('is-preparing');
-      el.classList.add('is-visible');
-    });
-  };
+    const revealImmediately = () => {
+      animatedBlocks.forEach((el) => {
+        el.classList.remove('is-preparing');
+        el.classList.add('is-visible');
+      });
+    };
 
-  prepareAnimations();
+    prepareAnimations();
 
-  if (!('IntersectionObserver' in window)) {
-    revealImmediately();
-    return;
-  }
+    if (!('IntersectionObserver' in window)) {
+      revealImmediately();
+      return;
+    }
 
-  if (prefersReducedMotion.matches) {
-    revealImmediately();
-  } else {
+    if (prefersReducedMotion.matches) {
+      revealImmediately();
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries, obs) => {
         entries.forEach((entry) => {
@@ -253,7 +258,14 @@ const expectationCards = [
         threshold: 0.25,
       },
     );
+
     animatedBlocks.forEach((el) => observer.observe(el));
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWhoCanApplyAnimations, { once: true });
+  } else {
+    initWhoCanApplyAnimations();
   }
 </script>
 
