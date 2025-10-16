@@ -1,43 +1,44 @@
-# Astro Starter Kit: Minimal
+# ILM-SA Bursary site
 
-```sh
-npm create astro@latest -- --template minimal
+This repository contains the marketing site for the ILM-SA bursary programme, built with [Astro](https://astro.build/) and Tailwind CSS.
+
+## 🚀 Getting started
+
+Install dependencies and start the local dev server:
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The site will be available at [http://localhost:4321](http://localhost:4321).
 
-## 🚀 Project Structure
+## 🧞 Useful commands
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command | Action |
+| --- | --- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start the development server |
+| `npm run build` | Build the production site to `./dist/` |
+| `npm run preview` | Preview the built site locally |
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## 🌐 Deployment
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+This project ships with an automated GitHub Actions workflow that builds the site from the `main` branch and publishes the output to the `gh-pages` branch. Make sure the repository's **Pages** settings are configured to serve from the `gh-pages` branch ("Deploy from a branch" → `gh-pages` / `/ (root)`), then once changes are merged into `main`, the deployment workflow will:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+1. Install dependencies.
+2. Build the site with the correct GitHub Pages base URL.
+3. Upload the build output and publish it via GitHub Pages.
 
-Any static assets, like images, can be placed in the `public/` directory.
+You can also trigger a deployment manually from the **Actions** tab by running the "Deploy site to GitHub Pages" workflow.
 
-## 🧞 Commands
+If you need to customise the deployment domain or base path, override the following environment variables in the workflow or in a local `.env` file before running `npm run build`:
 
-All commands are run from the root of the project, from a terminal:
+- `PUBLIC_SITE` – the fully-qualified site origin (e.g. `https://example.com`).
+- `PUBLIC_BASE_PATH` – the path segment where the site is hosted (default: `/`).
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## 🛠️ Tech stack
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [Astro 5](https://docs.astro.build/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [AOS](https://michalsnik.github.io/aos/) for scroll animations

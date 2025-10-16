@@ -1,11 +1,14 @@
 ---
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/#who-can-apply", label: "Who can apply" },
-  { href: "/#how-to-apply", label: "How to apply" },
+import { withBase } from "../utils/paths";
+
+const navItems = [
+  { path: "/", label: "Home" },
+  { path: "/#who-can-apply", label: "Who can apply" },
+  { path: "/#how-to-apply", label: "How to apply" },
 ];
 
-const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const normalizePathname = (value) => (value.replace(/\/$/, "") || "/");
+const currentPath = normalizePathname(Astro.url.pathname);
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary]";
@@ -17,7 +20,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
   data-header
 >
   <a
-    href="#main"
+    href={withBase("#main")}
     class="sr-only focus:not-sr-only focus:absolute focus:m-2 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus-visible:ring-2 focus-visible:ring-[--brand-primary] focus:ring-0"
   >
     Skip to content
@@ -27,26 +30,26 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
     aria-label="Primary navigation"
   >
     <div class="flex items-center md:flex-1">
-      <a href="/" class="inline-flex items-center">
-        <img src="/images/logo-light.png" alt="ILM-SA" class="h-9 w-auto" />
+      <a href={withBase("/")} class="inline-flex items-center">
+        <img src={withBase("/images/logo-light.png")} alt="ILM-SA" class="h-9 w-auto" />
       </a>
     </div>
 
     <ul class="nav-list hidden items-center gap-6 md:flex">
-      {links.map((l) => {
-        const isPageLink = !l.href.startsWith('#');
-        const hrefPath = isPageLink
-          ? (new URL(l.href, Astro.url).pathname.replace(/\/$/, '') || '/')
-          : '';
-        const isActive = isPageLink && hrefPath === currentPath;
+      {navItems.map((item) => {
+        const href = withBase(item.path);
+        const pathPart = item.path.split('#')[0] ?? '';
+        const targetPath = pathPart === '' ? '/' : pathPart;
+        const isPageLink = targetPath !== '';
+        const isActive = isPageLink && normalizePathname(targetPath) === currentPath;
         return (
           <li>
             <a
-              href={l.href}
+              href={href}
               aria-current={isActive ? "page" : undefined}
               class={`${desktopLinkClasses}${isActive ? ' nav-link--active' : ''}`}
             >
-              {l.label}
+              {item.label}
             </a>
           </li>
         );
@@ -55,7 +58,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
 
     <div class="flex items-center gap-3">
       <a
-        href="/apply"
+        href={withBase("/apply")}
         class="hidden rounded-md bg-brand-secondary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-secondary] md:inline-flex"
       >
         Apply
@@ -85,27 +88,27 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
     hidden
   >
     <ul class="mx-auto max-w-6xl space-y-2 px-4 py-3">
-      {links.map((l) => {
-        const isPageLink = !l.href.startsWith('#');
-        const hrefPath = isPageLink
-          ? (new URL(l.href, Astro.url).pathname.replace(/\/$/, '') || '/')
-          : '';
-        const isActive = isPageLink && hrefPath === currentPath;
+      {navItems.map((item) => {
+        const href = withBase(item.path);
+        const pathPart = item.path.split('#')[0] ?? '';
+        const targetPath = pathPart === '' ? '/' : pathPart;
+        const isPageLink = targetPath !== '';
+        const isActive = isPageLink && normalizePathname(targetPath) === currentPath;
         return (
           <li>
             <a
-              href={l.href}
+              href={href}
               aria-current={isActive ? "page" : undefined}
               class={`${mobileLinkClasses}${isActive ? ' text-[--brand-secondary]' : ''}`}
             >
-              {l.label}
+              {item.label}
             </a>
           </li>
         );
       })}
       <li>
         <a
-          href="/apply"
+          href={withBase("/apply")}
           class="block rounded-md bg-brand-secondary px-3 py-2 text-base font-semibold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-secondary]"
         >
           Apply
