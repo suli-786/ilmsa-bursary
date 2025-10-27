@@ -4,15 +4,50 @@ import Preloader from "../components/Preloader.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Hero from "../components/Hero.astro";
+
+const FORM_URL =
+  "https://forms.office.com/Pages/ResponsePage.aspx?id=fjfIu6g9CECua3WudPoYgVoAia5hMclKu_KP9FXeetdUM1JLS0laOEc2WFpYTUZLTUpIQjBFSjVCOCQlQCN0PWcu&embed=true";
 ---
+
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Apply — ILM-SA Bursary</title>
+
+    <style is:global>
+      /* Top scroll progress bar */
+      #scroll-progress {
+        position: fixed;
+        inset: 0 auto auto 0;
+        height: 4px;
+        width: 0%;
+        background: linear-gradient(90deg, #05a59c, #f6931c);
+        z-index: 60;
+        transition: width 0.15s ease;
+      }
+
+      /* Loading skeleton for iframe */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          rgba(0,0,0,0.06) 25%,
+          rgba(0,0,0,0.12) 37%,
+          rgba(0,0,0,0.06) 63%
+        );
+        background-size: 400% 100%;
+        animation: shimmer 1.2s infinite;
+      }
+      @keyframes shimmer {
+        0% { background-position: 100% 0; }
+        100% { background-position: -100% 0; }
+      }
+    </style>
   </head>
-  <body class="antialiased">
-    <Preloader />   <!-- <-- here -->
+
+  <body class="antialiased bg-white text-slate-800">
+    <div id="scroll-progress"></div>
+    <Preloader />
     <Header />
 
     <main id="main" class="scroll-mt-28">
@@ -29,23 +64,88 @@ import Hero from "../components/Hero.astro";
         scrollTarget="#apply-form"
       />
 
-      <section id="apply-form" class="w-full">
-        <iframe
-          title="ILM-SA Bursary Application Form"
-          class="h-[100vh] w-full border-0"
-          src="https://forms.office.com/Pages/ResponsePage.aspx?id=fjfIu6g9CECua3WudPoYgVoAia5hMclKu_KP9FXeetdUM1JLS0laOEc2WFpYTUZLTUpIQjBFSjVCOCQlQCN0PWcu&embed=true"
-          frameborder="0"
-          marginwidth="0"
-          marginheight="0"
-          style="border: none;"
-          allowfullscreen
-          webkitallowfullscreen
-          mozallowfullscreen
-          msallowfullscreen
-        ></iframe>
+      <section id="apply-form" class="relative w-full">
+        <div
+          class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10 lg:py-16"
+          data-aos="fade-up"
+          data-aos-duration="700"
+        >
+          <!-- Iframe card -->
+          <div class="rounded-2xl border overflow-hidden shadow-[0_12px_45px_rgba(11,29,42,0.10)]">
+            <div id="iframeSkeleton" class="skeleton h-[50vh] md:h-[40vh]"></div>
+
+            <iframe
+              title="ILM-SA Bursary Application Form"
+              id="applyFrame"
+              class="block w-full"
+              src={FORM_URL}
+              frameborder="0"
+              marginwidth="0"
+              marginheight="0"
+              style="border: none; height: var(--frame-h, 200vh);"  <!-- default fallback -->
+              allowfullscreen
+              webkitallowfullscreen
+              mozallowfullscreen
+              msallowfullscreen
+            ></iframe>
+          </div>
+
+          <!-- Bottom action/fallback bar -->
+          <div
+            class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-white/70 backdrop-blur p-4 mt-8"
+            data-aos="fade-up"
+            data-aos-duration="600"
+          >
+            <div class="text-sm text-slate-600">
+              Click Here if the form is not opening.
+            </div>
+            <a
+              href={FORM_URL.replace("&embed=true", "")}
+              target="_blank"
+              rel="noopener"
+              class="rounded-xl px-4 py-2 border hover:-translate-y-0.5 transition text-sm"
+            >
+              Open form in new tab
+            </a>
+          </div>
+        </div>
       </section>
     </main>
 
     <Footer />
+
+    <script>
+      // Scroll progress bar
+      const sp = document.getElementById('scroll-progress');
+      const onScroll = () => {
+        const h = document.documentElement;
+        const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+        sp.style.width = Math.max(0, Math.min(1, scrolled)) * 100 + '%';
+      };
+      document.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // Set fixed "two-page" height (based on current viewport)
+      // You can tweak PAGES, MIN_PX, MAX_PX if needed.
+      const PAGES = 2;
+      const MIN_PX = 1400;
+      const MAX_PX = 3200;
+
+      const frame = document.getElementById('applyFrame');
+      const skeleton = document.getElementById('iframeSkeleton');
+
+      function setTwoPageHeight() {
+        const target = Math.round(window.innerHeight * PAGES);
+        const clamped = Math.max(MIN_PX, Math.min(MAX_PX, target));
+        document.documentElement.style.setProperty('--frame-h', clamped + 'px');
+      }
+
+      // Initial size + on resize (no auto-grow beyond two pages)
+      setTwoPageHeight();
+      window.addEventListener('resize', setTwoPageHeight);
+
+      // Remove skeleton when iframe loads
+      frame.addEventListener('load', () => skeleton?.remove());
+    </script>
   </body>
 </html>

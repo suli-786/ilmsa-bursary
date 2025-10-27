@@ -2,296 +2,271 @@
 import { withBase } from "../utils/paths";
 
 const contextIntro =
-  "Most of the funding we receive for this bursary comes in the form of zakaah. Zakaah funds must be allocated to specific categories of Muslims. We therefore prioritise Muslim students who qualify for zakaah support; however, all eligible students—Muslim and non-Muslim—are welcome to apply.";
+  "Most of the bursary funding we receive is in the form of zakaah. Zakaah funds must be allocated to specific categories of Muslims. We therefore prioritise Muslim applicants who qualify for zakaah assistance.  However, students who are not Muslim and Muslim students who do not qualify for zakaah assistance are welcome to apply.";
 
 const deadline = {
-  date: "Sunday, 18 January 2026",
-  cutoff: "Applications close sooner once 100 complete submissions are received.",
+  cutoff:
+    "Applications close as soon as we receive 100 submissions or on the 18th of January – whichever occurs first.",
 };
 
 const cardBase =
-  "flex h-full flex-col gap-4 rounded-2xl border px-6 py-6 shadow-[0_12px_45px_rgba(11,29,42,0.12)] transition-transform hover:-translate-y-1 focus-within:-translate-y-1";
+  "flex h-full flex-col justify-between gap-5 rounded-2xl border px-7 py-8 shadow-[0_12px_45px_rgba(11,29,42,0.12)] transition-transform duration-300 hover:-translate-y-0.5 focus-within:-translate-y-0.5";
 
 const toneClasses = {
-  primary: "border-[color-mix(in_lch,var(--brand-primary)_28%,white)] bg-[color-mix(in_lch,var(--brand-primary)_16%,white)] text-[#0b1d2a]",
-  primarySoft: "border-[color-mix(in_lch,var(--brand-primary)_18%,white)] bg-[color-mix(in_lch,var(--brand-primary)_10%,white)] text-[#0b1d2a]",
-  secondary: "border-[color-mix(in_lch,var(--brand-secondary)_36%,white)] bg-[color-mix(in_lch,var(--brand-secondary)_18%,white)] text-[#0b1d2a]",
-  background: "border-[color-mix(in_lch,var(--brand-bg)_32%,white)] bg-[color-mix(in_lch,var(--brand-bg)_16%,white)] text-[#0b1d2a]",
-  light: "border-white/60 bg-white/90 text-[#0b1d2a]",
+  primary:
+    "border-[color-mix(in_lch,var(--brand-primary)_28%,white)] bg-[color-mix(in_lch,var(--brand-primary)_16%,white)] text-[#0b1d2a]",
+  secondary:
+    "border-[color-mix(in_lch,var(--brand-secondary)_36%,white)] bg-[color-mix(in_lch,var(--brand-secondary)_18%,white)] text-[#0b1d2a]",
+  background:
+    "border-[color-mix(in_lch,var(--brand-bg)_32%,white)] bg-[color-mix(in_lch,var(--brand-bg)_16%,white)] text-[#0b1d2a]",
 };
 
-const overviewCards = [
-  {
-    badge: "Zakaah funding",
-    title: "Funding context & fairness",
-    copy: contextIntro,
-    highlightLabel: "Bottom line",
-    highlight: "All qualifying students may apply, but zakaah-eligible Muslim applicants receive first consideration.",
-    tone: "primary",
-  },
-  {
-    badge: "Deadline",
-    title: "Application cut-off",
-    copy: deadline.cutoff,
-    highlightLabel: "Final deadline",
-    highlight: deadline.date,
-    tone: "secondary",
-  },
-];
-
-const detailCards = [
-  {
-    title: "Eligibility checklist",
-    intro: "Make sure you satisfy every requirement before you begin your application.",
-    items: [
-      "You are an undergraduate student (no funding for postgraduate studies).",
-      "You are a South African citizen.",
-      "You reside in KwaZulu Natal. You may study elsewhere if the programme is unavailable locally, but KZN residency is required.",
-    ],
-    tone: "secondary",
-  },
-  {
-    title: "During your bursary year",
-    intro: "You’re expected to:",
-    items: [
-      "Volunteer at ILM-SA events throughout the academic year.",
-      "Attend mentorship sessions and development programmes arranged by the organisation.",
-      "Once you are employed, contribute a monthly donation back to ILM-SA, calculated according to your financial situation.",
-    ],
-    tone: "background",
-  },
-];
-
-const expectationCards = [
-  {
-    title: "Media & visibility",
-    copy:
-      "We regularly publish respectful photographs and videos featuring bursary students on our platforms. Apply only if you and your guardians are comfortable with this level of visibility.",
-    tone: "primary",
-  },
-  {
-    title: "Competition & next steps",
-    copy:
-      "Funding is limited and demand is high. We cannot guarantee support for every applicant, so continue applying for other bursaries and backup options in parallel.",
-    tone: "secondary",
-  },
-];
+const headingCapsule =
+  "inline-flex items-center justify-center rounded-full bg-white/55 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.22em] text-gray-900 shadow-sm backdrop-blur-sm";
 ---
 <section
   id="who-can-apply"
-  class="relative mx-auto max-w-6xl px-4 py-16 scroll-mt-28"
+  class="relative mx-auto max-w-6xl px-5 py-16 md:px-8 lg:px-10 scroll-mt-28"
 >
-  <div class="absolute inset-0 -z-10 rounded-3xl bg-[color-mix(in_lch,var(--brand-primary)_12%,white)] blur-3xl opacity-70"></div>
+  <!-- soft parallax glow -->
+  <div
+    class="pointer-events-none absolute inset-0 -z-10 rounded-3xl blur-3xl opacity-80"
+    style="
+      background:
+        radial-gradient(60% 60% at 12% 12%, color-mix(in lch, var(--brand-primary) 18%, white) 0%, transparent 60%),
+        radial-gradient(60% 60% at 88% 20%, color-mix(in lch, var(--brand-secondary) 16%, white) 0%, transparent 60%),
+        radial-gradient(60% 60% at 50% 90%, color-mix(in lch, var(--brand-bg, #97cbc7) 14%, white) 0%, transparent 60%);
+      transform: translateY(var(--parallax,0px));
+      transition: transform .3s ease;
+    "
+  ></div>
 
   <div class="relative overflow-hidden rounded-3xl border border-[color-mix(in_lch,var(--brand-primary)_20%,white)] bg-white/96 shadow-xl shadow-black/5">
     <div class="absolute left-0 top-0 h-full w-1 bg-[--brand-primary]/80 opacity-90"></div>
 
-    <div class="relative px-6 py-10 md:px-10 lg:px-14">
-      <header class="max-w-3xl space-y-3" data-animate>
-        <span class="inline-flex items-center gap-2 rounded-full bg-[color-mix(in_lch,var(--brand-primary)_18%,white)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-[--brand-primary]">
+    <div class="relative px-6 py-12 md:px-10 lg:px-14 lg:pb-16">
+      <!-- Centered header -->
+      <header class="mx-auto max-w-3xl text-center" data-animate>
+        <span
+          class="inline-flex items-center justify-center rounded-full px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.22em] text-white shadow-sm backdrop-blur-sm"
+          style="background-color: var(--brand-primary, #00a79d);"
+        >
           Read this first
         </span>
-        <h2 class="text-3xl font-extrabold tracking-tight text-gray-900 md:text-4xl">
+
+        <h2 class="mt-4 text-balance font-extrabold tracking-tight text-gray-900"
+            style="font-size: clamp(1.75rem, 3.5vw, 2.625rem); line-height: 1.15;">
           WHAT YOU NEED TO KNOW BEFORE APPLYING
         </h2>
-        <p class="text-base text-gray-600 md:text-lg">
-          We want every applicant to understand the criteria, commitments, and expectations attached to ILM-SA bursary funding.
+
+        <p class="mx-auto mt-3 max-w-prose text-balance text-gray-700"
+           style="font-size: clamp(1.05rem, 1.4vw, 1.1875rem); line-height: 1.65;">
+          We want every applicant to understand the criteria, commitment and expectations attached to ILM-SA bursary funding.
         </p>
       </header>
 
-      <div class="mt-10 grid gap-6 lg:grid-cols-2" style="grid-auto-rows: minmax(0,1fr);">
-        {overviewCards.map((card) => (
-          <article
-            class={`${cardBase} ${toneClasses[card.tone]}`}
+      <!-- OVERVIEW -->
+      <div class="mt-10 grid gap-7 lg:grid-cols-2" style="grid-auto-rows:minmax(0,1fr);">
+        <article class={`${cardBase} ${toneClasses.primary}`} data-animate>
+          <div>
+            <div class="mb-3">
+              <span class={headingCapsule}>Funding context & fairness</span>
+            </div>
+            <p class="text-gray-800" style="font-size: 1rem; line-height: 1.7;">
+              {contextIntro}
+            </p>
+          </div>
+        </article>
+
+        <article class={`${cardBase} ${toneClasses.secondary}`} data-animate>
+          <div>
+            <div class="mb-3">
+              <span class={headingCapsule}>Application cut-off</span>
+            </div>
+            <p class="text-gray-800" style="font-size: 1rem; line-height: 1.7;">
+              {deadline.cutoff}
+            </p>
+          </div>
+
+          <!-- Bottom line -->
+          <div
+            class="mt-5 rounded-xl border border-white/60 bg-white/75 px-4 py-3 text-center font-semibold text-gray-900 shadow-sm"
+            style="font-size: clamp(.98rem, 1.2vw, 1.0625rem); line-height: 1.35;"
             data-animate
           >
-            <span class="inline-flex w-fit items-center gap-2 rounded-full bg-white/45 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-gray-800">
-              {card.badge}
-            </span>
-            <div class="space-y-3 text-sm text-gray-800 md:text-base">
-              <h3 class="text-xl font-semibold text-gray-900">
-                {card.title}
-              </h3>
-              <p>{card.copy}</p>
-            </div>
-            <div class="mt-auto rounded-xl border border-white/60 bg-white/70 px-4 py-3 text-sm font-semibold text-gray-900">
-              <span class="text-xs font-semibold uppercase tracking-[0.32em] text-gray-500">{card.highlightLabel}</span>
-              <span class="mt-1 block text-lg text-gray-900">{card.highlight}</span>
-            </div>
-          </article>
-        ))}
+            BOTTOM LINE: Apply as soon as possible!
+          </div>
+        </article>
       </div>
 
-      <div
-        class="mt-10 grid gap-6 md:grid-cols-2"
-        style="grid-auto-rows: minmax(0, 1fr);"
-      >
-        {detailCards.map((section) => (
-          <article
-            class={`${cardBase} ${toneClasses[section.tone]}`}
-            data-animate
-          >
-            <h3 class="text-lg font-semibold text-gray-900">
-              {section.title}
-            </h3>
-            {section.intro && (
-              <p class="text-sm text-gray-800 md:text-base">
-                {section.intro}
-              </p>
-            )}
-            <ul class="mt-2 space-y-3 text-sm text-gray-800 md:text-base">
-              {section.items.map((item) => (
-                <li class="flex gap-3">
-                  <span class="mt-1 inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full bg-[--brand-secondary]"></span>
-                  <span>{item}</span>
-                </li>
-              ))}
+      <!-- DETAILS -->
+      <div class="mt-10 grid gap-7 md:grid-cols-2" style="grid-auto-rows:minmax(0,1fr);">
+        <article class={`${cardBase} ${toneClasses.secondary}`} data-animate>
+          <div>
+            <div class="mb-3">
+              <span class={headingCapsule}>Eligibility checklist</span>
+            </div>
+            <ul
+              class="marker:text-[--brand-secondary] list-disc text-gray-800"
+              style="padding-left: 1.15rem; font-size: 1rem; line-height: 1.75;"
+            >
+              <li class="mb-1.5">You are an undergraduate student (no funding for postgraduate studies).</li>
+              <li class="mb-1.5">You are a South African citizen.</li>
+              <li>You reside in KwaZulu Natal. You may study elsewhere if the programme is inaccessible locally, but KZN residency is required.</li>
             </ul>
-          </article>
-        ))}
+          </div>
+        </article>
+
+        <article class={`${cardBase} ${toneClasses.background}`} data-animate>
+          <div>
+            <div class="mb-3">
+              <span class={headingCapsule}>If you are accepted into our programme</span>
+            </div>
+            <ul
+              class="marker:text-[--brand-secondary] list-disc text-gray-800"
+              style="padding-left: 1.15rem; font-size: 1rem; line-height: 1.75;"
+            >
+              <li class="mb-1.5">Volunteer at ILM-SA events throughout the academic year.</li>
+              <li class="mb-1.5">Attend mentorship sessions and development programmes arranged by the organisation.</li>
+              <li>Donate to ILM-SA on a monthly basis once you are employed – the specific amount will depend on your financial situation.</li>
+            </ul>
+          </div>
+        </article>
       </div>
 
-      <div
-        class="mt-10 grid gap-6 md:grid-cols-2"
-        style="grid-auto-rows: minmax(0, 1fr);"
-      >
-        {expectationCards.map((card) => (
-          <article
-            class={`${cardBase} ${toneClasses[card.tone]}`}
-            data-animate
-          >
-            <h3 class="text-lg font-semibold text-gray-900">
-              {card.title}
-            </h3>
-            {card.copy && (
-              <p class="text-sm leading-6 text-gray-800 md:text-base">
-                {card.copy}
-              </p>
-            )}
-            {card.list && (
-              <ul class="space-y-2 text-sm text-gray-800 md:text-base">
-                {card.list.map((point) => (
-                  <li class="flex gap-2">
-                    <span class="mt-1 inline-flex h-2.5 w-2.5 flex-shrink-0 items-center justify-center">
-                      <span class="h-2.5 w-2.5 rounded-full bg-[--brand-secondary]"></span>
-                    </span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </article>
-        ))}
+      <!-- EXPECTATIONS -->
+      <div class="mt-10 grid gap-7 md:grid-cols-2" style="grid-auto-rows:minmax(0,1fr);">
+        <article class={`${cardBase} ${toneClasses.primary}`} data-animate>
+          <div>
+            <div class="mb-3">
+              <span class={headingCapsule}>Media & visibility</span>
+            </div>
+            <p class="text-gray-800" style="font-size: 1rem; line-height: 1.7;">
+              We regularly publish photographs and videos featuring our bursary students on our marketing platforms. This is done in the most respectful of ways. Apply only if you and your guardians are comfortable with this level of visibility.
+            </p>
+          </div>
+        </article>
+
+        <article class={`${cardBase} ${toneClasses.secondary}`} data-animate>
+          <div>
+            <div class="mb-3">
+              <span class={headingCapsule}>Apply elsewhere too</span>
+            </div>
+            <p class="text-gray-800" style="font-size: 1rem; line-height: 1.7;">
+              Funding is limited and demand is high. We cannot guarantee support for every applicant, so please continue applying for other bursaries.
+            </p>
+          </div>
+        </article>
       </div>
 
-      <aside
-        class="mt-12 flex flex-col gap-4 rounded-2xl border border-[color-mix(in_lch,var(--brand-primary)_22%,white)] bg-[color-mix(in_lch,var(--brand-primary)_12%,white)] px-6 py-6 text-sm text-gray-900 shadow-sm md:flex-row md:items-center md:justify-between md:text-base"
-        data-animate
-      >
-        <div class="flex items-center gap-3">
-          <span class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[--brand-primary] bg-white text-[--brand-primary]">
-            NEXT
-          </span>
-          <p>
-            Ready to continue? Move on to the application form once you are confident you meet the requirements above and have your supporting documents lined up.
-          </p>
-        </div>
+      <!-- APPLY BUTTON -->
+      <div class="mt-12 flex justify-center" data-animate>
         <a
           href={withBase("/apply")}
-          class="inline-flex items-center justify-center rounded-full border border-[--brand-secondary] px-5 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(246,147,28,0.45)] transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-secondary]/80"
-          style="background-color: var(--brand-secondary);"
+          class="inline-flex items-center justify-center rounded-full px-8 py-3 font-semibold text-white shadow-[0_8px_20px_rgba(246,147,28,0.45)] transition will-change-transform hover:-translate-y-[2px] focus-visible:outline-none focus-visible:ring-2"
+          style="background-color: var(--brand-secondary, #f7921c); border: 1px solid var(--brand-secondary, #f7921c); font-size: clamp(1rem, 1.3vw, 1.0625rem);"
         >
           Apply
         </a>
-      </aside>
+      </div>
     </div>
   </div>
 </section>
 
 <script is:inline>
-  const initWhoCanApplyAnimations = () => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const animatedBlocks = document.querySelectorAll('#who-can-apply [data-animate]');
+  // Scroll reveal + subtle parallax (typography-friendly)
+  (() => {
+    const root = document.getElementById("who-can-apply");
+    if (!root) return;
 
-    if (!animatedBlocks.length) {
-      return;
-    }
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const animated = Array.from(root.querySelectorAll("[data-animate]"));
 
-    const prepareAnimations = () => {
-      animatedBlocks.forEach((el, index) => {
-        el.classList.add('is-preparing');
-        el.style.transitionDelay = `${index * 60}ms`;
-      });
+    animated.forEach((el, i) => {
+      el.classList.add("sr-prep");
+      el.style.setProperty("--sr-delay", `${Math.min(i * 70, 560)}ms`);
+    });
+
+    const bg = root.querySelector(":scope > div.pointer-events-none");
+    const onScroll = () => {
+      if (!bg) return;
+      const rect = root.getBoundingClientRect();
+      const viewportH = window.innerHeight || 800;
+      const progress = Math.max(-rect.top, 0) / (rect.height + viewportH);
+      bg.style.setProperty("--parallax", `${progress * 24 - 12}px`);
     };
 
-    const revealImmediately = () => {
-      animatedBlocks.forEach((el) => {
-        el.classList.remove('is-preparing');
-        el.classList.add('is-visible');
+    if (prefersReduced || !("IntersectionObserver" in window)) {
+      animated.forEach((el) => el.classList.add("sr-show"));
+      onScroll();
+      return;
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("sr-show");
+          io.unobserve(entry.target);
+        }
       });
-    };
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.15 });
 
-    prepareAnimations();
-
-    if (!('IntersectionObserver' in window)) {
-      revealImmediately();
-      return;
-    }
-
-    if (prefersReducedMotion.matches) {
-      revealImmediately();
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            entry.target.classList.remove('is-preparing');
-            obs.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        rootMargin: '0px 0px -10% 0px',
-        threshold: 0.25,
-      },
-    );
-
-    animatedBlocks.forEach((el) => observer.observe(el));
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initWhoCanApplyAnimations, { once: true });
-  } else {
-    initWhoCanApplyAnimations();
-  }
+    animated.forEach((el) => io.observe(el));
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  })();
 </script>
 
 <style>
-  #who-can-apply [data-animate] {
-    opacity: 1;
-    transform: none;
+  :root {
+    --font-sans: "Inter var", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+                 Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+                 "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
 
-  #who-can-apply [data-animate].is-preparing {
+  #who-can-apply {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-kerning: normal;
+    font-variant-numeric: tabular-nums;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Scroll reveal states */
+  #who-can-apply [data-animate].sr-prep {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(22px) scale(.985);
     transition:
-      opacity 0.6s cubic-bezier(0.2, 0.65, 0.3, 1),
-      transform 0.6s cubic-bezier(0.2, 0.65, 0.3, 1);
+      opacity .70s cubic-bezier(.2,.65,.3,1) var(--sr-delay, 0ms),
+      transform .70s cubic-bezier(.2,.65,.3,1) var(--sr-delay, 0ms);
   }
-
-  #who-can-apply [data-animate].is-visible {
+  #who-can-apply [data-animate].sr-show {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    #who-can-apply [data-animate] {
-      opacity: 1;
-      transform: none;
+    #who-can-apply [data-animate].sr-prep,
+    #who-can-apply [data-animate].sr-show {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
     }
+  }
+
+  /* Card focus outline for keyboard nav */
+  #who-can-apply article:focus-within {
+    outline: 2px solid color-mix(in lch, var(--brand-secondary) 40%, white);
+    outline-offset: 2px;
+  }
+
+  /* Bullet polish */
+  #who-can-apply ul {
+    list-style-position: outside;
+  }
+  #who-can-apply ul li::marker {
+    font-size: .9em;
   }
 </style>

@@ -9,6 +9,12 @@
   --font-heading: "Poppins", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+/* PATCH: crisper text rendering across the site */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 @layer utilities {
   .bg-brand-secondary {
     background-color: var(--brand-secondary);
@@ -28,15 +34,9 @@
   }
 
   @keyframes gradientShift {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   [data-header] {
@@ -71,6 +71,13 @@
     transition-delay: 0s;
   }
 
+  /* --- Navigation underline animation (hover-only) --- */
+  .nav-link {
+    position: relative;
+    overflow: hidden;
+    transition: color 0.25s ease;
+  }
+
   .nav-link::after {
     content: "";
     position: absolute;
@@ -91,6 +98,8 @@
   .nav-link[aria-current="page"] {
     color: #ffffff;
   }
+
+  /* (Removed the permanent underline for active links) */
 
   .nav-list > li {
     position: relative;
@@ -141,9 +150,7 @@
     animation: hero-heading-in 0.55s ease forwards;
   }
 
-  .hero-word {
-    display: inline;
-  }
+  .hero-word { display: inline; }
 
   .hero-word--highlight {
     font-weight: 700;
@@ -180,40 +187,26 @@
     border-color: rgba(255, 255, 255, 0.55);
   }
 
-  .hero-nav:active {
-    transform: translateY(0);
-  }
+  .hero-nav:active { transform: translateY(0); }
 
   .hero-nav:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px rgba(5, 165, 156, 0.45);
   }
 
-  .hero-nav svg {
-    width: 1.2rem;
-    height: 1.2rem;
-  }
+  .hero-nav svg { width: 1.2rem; height: 1.2rem; }
 
-  .hero-nav-prev svg {
-    transform: scaleX(-1);
-  }
+  .hero-nav-prev svg { transform: scaleX(-1); }
 
   @keyframes hero-heading-in {
-    0% {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-    60% {
-      opacity: 1;
-      transform: translateY(-4px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    0% { opacity: 0; transform: translateY(18px); }
+    60% { opacity: 1; transform: translateY(-4px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
 
   @media (prefers-reduced-motion: reduce) {
+    /* PATCH: broader respect for reduced motion */
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
     [data-header] {
       transition:
         background-color 0.3s ease,
@@ -221,14 +214,8 @@
         box-shadow 0.3s ease,
         opacity 0.3s ease;
     }
-
-    .hero-slide {
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
-    .hero-nav {
-      transition: background-color 0.2s ease, border-color 0.2s ease;
-    }
+    .hero-slide { transition: opacity 0.4s ease, transform 0.4s ease; }
+    .hero-nav { transition: background-color 0.2s ease, border-color 0.2s ease; }
   }
 
   [data-animated-gradient] {

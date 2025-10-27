@@ -16,7 +16,7 @@ const desktopLinkClasses = `nav-link relative text-sm font-medium text-white/90 
 const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text-gray-800 transition hover:bg-gray-100 ${focusRing}`;
 ---
 <header
-  class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-colors duration-300"
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-all duration-300 will-change-transform"
   data-header
 >
   <a
@@ -25,14 +25,22 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
   >
     Skip to content
   </a>
+
   <nav
     class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-white md:gap-6"
     aria-label="Primary navigation"
   >
     <div class="flex items-center md:flex-1">
       <a href={withBase("/")} class="inline-flex items-center">
-        <img src={withBase("/images/logo-light.png")} alt="ILM-SA" class="h-9 w-auto" />
-      </a>
+  <img
+    src={withBase("/images/ilm_logo.svg")}
+    alt="ILM-SA"
+    class="block h-10 md:h-12 lg:h-16 xl:h-20 2xl:h-24 w-auto
+           drop-shadow-[0_1px_8px_rgba(0,0,0,0.35)]"
+    decoding="async"
+  />
+</a>
+
     </div>
 
     <ul class="nav-list hidden items-center gap-6 md:flex">
@@ -124,22 +132,19 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
   const menuLabel = btn?.querySelector('[data-menu-label]');
   const header = document.querySelector('[data-header]');
 
+  /* ---------- Mobile menu ---------- */
   if (btn && panel) {
     const setMenuState = (open) => {
       btn.setAttribute('aria-expanded', String(open));
       btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      if (menuLabel) {
-        menuLabel.textContent = open ? 'Close menu' : 'Open menu';
-      }
+      if (menuLabel) menuLabel.textContent = open ? 'Close menu' : 'Open menu';
 
       if (open) {
         panel.classList.remove('hidden');
         panel.removeAttribute('hidden');
         panel.setAttribute('aria-hidden', 'false');
         const firstLink = panel.querySelector('a');
-        if (firstLink instanceof HTMLElement) {
-          firstLink.focus();
-        }
+        if (firstLink instanceof HTMLElement) firstLink.focus();
       } else {
         panel.classList.add('hidden');
         panel.setAttribute('hidden', '');
@@ -167,6 +172,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
     });
   }
 
+  /* ---------- Header hide/show on scroll ---------- */
   if (header) {
     let lastScrollY = window.scrollY;
     let ticking = false;
@@ -178,36 +184,20 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
     const SHOW_DELAY = 90;
 
     const showHeader = (immediate = false) => {
-      if (hideTimeout) {
-        window.clearTimeout(hideTimeout);
-        hideTimeout = undefined;
-      }
-      if (showTimeout) {
-        window.clearTimeout(showTimeout);
-        showTimeout = undefined;
-      }
-      if (immediate) {
-        header.classList.remove('is-hidden');
-        return;
-      }
-      if (!header.classList.contains('is-hidden')) {
-        return;
-      }
-      showTimeout = window.setTimeout(() => {
+      if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = undefined; }
+      if (showTimeout) { clearTimeout(showTimeout); showTimeout = undefined; }
+      if (immediate) { header.classList.remove('is-hidden'); return; }
+      if (!header.classList.contains('is-hidden')) return;
+      showTimeout = setTimeout(() => {
         header.classList.remove('is-hidden');
         showTimeout = undefined;
       }, SHOW_DELAY);
     };
 
     const hideHeader = () => {
-      if (showTimeout) {
-        window.clearTimeout(showTimeout);
-        showTimeout = undefined;
-      }
-      if (header.classList.contains('is-hidden') || hideTimeout) {
-        return;
-      }
-      hideTimeout = window.setTimeout(() => {
+      if (showTimeout) { clearTimeout(showTimeout); showTimeout = undefined; }
+      if (header.classList.contains('is-hidden') || hideTimeout) return;
+      hideTimeout = setTimeout(() => {
         header.classList.add('is-hidden');
         hideTimeout = undefined;
       }, HIDE_DELAY);
@@ -217,8 +207,6 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
       const current = window.scrollY;
       const scrolled = current > 8;
       header.classList.toggle('is-scrolled', scrolled);
-      header.classList.toggle('bg-transparent', !scrolled);
-      header.classList.toggle('border-transparent', !scrolled);
 
       const scrollingDown = current > lastScrollY + DIRECTION_THRESHOLD;
       const scrollingUp = current < lastScrollY - DIRECTION_THRESHOLD;
@@ -243,4 +231,60 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
     updateHeader();
     window.addEventListener('scroll', onScroll, { passive: true });
   }
+
+  /* ---------- Smooth in-page scroll with header offset ---------- */
+  const getHeaderOffset = () => {
+    const h = document.querySelector('[data-header]');
+    return h ? h.getBoundingClientRect().height : 0;
+  };
+
+  const smoothScrollToId = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const y = window.pageYOffset + el.getBoundingClientRect().top - getHeaderOffset() - 8; // small breathing space
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  };
+
+  // Intercept same-page hash links (desktop + mobile)
+  const allLinks = document.querySelectorAll('a[href*="#"]');
+  allLinks.forEach((link) => {
+    try {
+      const url = new URL(link.href, window.location.origin);
+      // Only intercept if same origin + same pathname (i.e., same page anchors)
+      if (url.origin === window.location.origin && url.pathname === window.location.pathname && url.hash) {
+        link.addEventListener('click', (e) => {
+          const id = decodeURIComponent(url.hash.replace('#', ''));
+          if (id) {
+            e.preventDefault();
+            smoothScrollToId(id);
+            // Update the URL hash without jumping
+            history.pushState(null, '', `#${id}`);
+          }
+        });
+      }
+    } catch { /* ignore malformed hrefs */ }
+  });
+
+  // Adjust position when arriving with a hash or when hash changes
+  const handleHash = () => {
+    const id = decodeURIComponent(window.location.hash.replace('#', ''));
+    if (id) {
+      // Use a tiny timeout so layout/fonts have painted
+      setTimeout(() => smoothScrollToId(id), 0);
+    }
+  };
+  window.addEventListener('hashchange', handleHash);
+  // Run once on load if there is a hash
+  if (window.location.hash) handleHash();
 </script>
+
+<style is:global>
+  /* Header state styles toggled by JS */
+  [data-header].is-hidden { transform: translateY(-100%); }
+  [data-header].is-scrolled {
+    background-color: rgba(0, 116, 123, 0.9); /* brand primary with alpha */
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: saturate(150%) blur(6px);
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  }
+</style>
