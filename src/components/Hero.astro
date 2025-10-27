@@ -196,9 +196,10 @@ const resolvedScrollTarget = withBase(rawScrollTarget);
     let html = (value || '').replace(/\n/g, '<br>');
     if (highlight && highlight.trim()) {
       const rx = new RegExp(`\\b${escapeRegex(highlight.trim())}\\b`, 'g');
+      const safeHighlight = highlight.trim();
       html = html.replace(
         rx,
-        `<span class="hero-word hero-word--highlight"><span class="hero-word__glow">${highlight.trim()}</span>${highlight.trim()}</span>`
+        `<span class="hero-word hero-word--highlight"><span class="hero-word__glow" aria-hidden="true"></span>${safeHighlight}</span>`
       );
     }
     heading.innerHTML = html;
