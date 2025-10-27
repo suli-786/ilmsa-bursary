@@ -57,7 +57,7 @@ const steps = [
 ];
 ---
 
-<section id="apply-steps" class="relative mx-auto max-w-6xl px-4 py-20 scroll-mt-28">
+<section id="how-to-apply" class="relative mx-auto max-w-6xl px-4 py-20 scroll-mt-28">
   <!-- soft background glow -->
   <div class="pointer-events-none absolute inset-0 -z-10 rounded-[2rem] blur-3xl opacity-70"
        style="background: color-mix(in lch, var(--brand-secondary) 24%, white)"></div>
@@ -163,7 +163,7 @@ const steps = [
 
 <script is:inline>
   (function () {
-    const root = document.getElementById('apply-steps');
+    const root = document.getElementById('how-to-apply');
     if (!root) return;
 
     const panels = Array.from(root.querySelectorAll('[data-step]'));
@@ -267,28 +267,28 @@ const steps = [
 <style>
   /* Reduced motion: show everything without transforms */
   @media (prefers-reduced-motion: reduce) {
-    #apply-steps [data-step] {
+    #how-to-apply [data-step] {
       opacity: 1 !important;
       transform: none !important;
       transition: none !important;
     }
-    #apply-steps .reveal-li {
+    #how-to-apply .reveal-li {
       opacity: 1 !important;
       transform: none !important;
       transition: none !important;
     }
-    #apply-steps .accent-line { width: 96px !important; }
+    #how-to-apply .accent-line { width: 96px !important; }
   }
 
   /* Focus ring on rail links */
-  #apply-steps [data-rail-item] a:focus {
+  #how-to-apply [data-rail-item] a:focus {
     outline: 2px solid color-mix(in lch, var(--brand-secondary) 55%, white);
     outline-offset: 3px;
     border-radius: 0.5rem;
   }
 
   /* Pulse for active rail dot (subtle) */
-  #apply-steps .is-active .rail-dot {
+  #how-to-apply .is-active .rail-dot {
     animation: railPulse 1.6s ease-in-out infinite;
   }
   @keyframes railPulse {
