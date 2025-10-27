@@ -14,8 +14,8 @@ const site = (() => {
 })();
 
 export default defineConfig({
-  site,
-  base,
+  site: process.env.PUBLIC_SITE ?? 'https://bursaries.ilmsa.co.za',
+  base: process.env.PUBLIC_BASE_PATH ?? '/',
   vite: {
     plugins: [tailwindcss()],
   },
