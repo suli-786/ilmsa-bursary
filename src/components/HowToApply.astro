@@ -1,5 +1,5 @@
 ---
-const deadlineText = "Sunday, 18 January 2026";
+const deadlineText = "Monday, 26th January 2026";
 
 const steps = [
   {
@@ -24,7 +24,7 @@ const steps = [
       "Ensure your scans/photos are clear and legible. Use good light and flat surfaces. Keep files within size limits.",
     bullets: [
       "Accepted formats: <strong>PDF, Word, JPG</strong>",
-      "Suggested naming: <code>Lastname_Firstname_DocumentType.pdf</code>",
+      "Suggested naming: <code>E.g. Khan_Ahmed_Trialsresults.pdf</code>",
     ],
     documents: [
       "Identity document <em>(certified)</em>",
@@ -52,7 +52,8 @@ const steps = [
     short: "Wait for outcome",
     title: "Await shortlist updates & interviews",
     body:
-      `If shortlisted, we’ll contact you by <span class="inline-block rounded px-1.5 py-0.5 bg-[color-mix(in_lch,var(--brand-secondary)_18%,white)] font-semibold text-[--brand-secondary]">${deadlineText}</span> to arrange an interview. No news by then means your application was not successful this time.`,
+      `If shortlisted, we’ll contact you by <span class="inline-block rounded px-1.5 py-0.5 bg-[color-mix(in_lch,var(--brand-secondary)_18%,white)] font-semibold text-[--brand-secondary]">${deadlineText}</span> to arrange an interview. If you
+do not hear from us by this date, it means that your application was not successful.`,
   },
 ];
 ---
@@ -135,7 +136,7 @@ const steps = [
               {s.documents && (
                 <div class="doc-box mt-6 rounded-2xl border border-[color-mix(in_lch,var(--brand-primary)_22%,white)] bg-[color-mix(in_lch,var(--brand-primary)_9%,white)] p-4">
                   <p class="mb-3 text-sm font-semibold text-[--brand-primary]">
-                    Please upload the following documents with your application:
+                    You’ll need the following documents to complete your application:
                   </p>
                   <ul class="space-y-2 text-[#0b1d2a]">
                     {s.documents.map((d, i) => (
