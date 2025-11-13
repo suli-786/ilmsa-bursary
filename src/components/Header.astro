@@ -12,11 +12,11 @@ const currentPath = normalizePathname(Astro.url.pathname);
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary]";
-const desktopLinkClasses = `nav-link relative text-sm font-medium text-white/90 transition-colors duration-200 hover:text-white ${focusRing}`;
+const desktopLinkClasses = `nav-link relative text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 ${focusRing}`;
 const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text-gray-800 transition hover:bg-gray-100 ${focusRing}`;
 ---
 <header
-  class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-all duration-300 will-change-transform"
+  class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 bg-[#F7F7F7] transition-all duration-300 will-change-transform"
   data-header
 >
   <a
@@ -27,7 +27,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
   </a>
 
   <nav
-    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-white md:gap-6"
+    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-gray-900 md:gap-6"
     aria-label="Primary navigation"
   >
     <div class="flex items-center md:flex-1">
@@ -72,7 +72,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
         Apply
       </a>
       <button
-        class="inline-flex items-center justify-center rounded-md p-2 text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary] md:hidden"
+        class="inline-flex items-center justify-center rounded-md p-2 text-[--brand-primary] transition hover:bg-[rgba(0,116,123,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary] md:hidden"
         type="button"
         aria-label="Open menu"
         aria-controls="mobile-menu"
