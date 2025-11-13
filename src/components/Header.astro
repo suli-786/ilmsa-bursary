@@ -282,9 +282,30 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
   /* Header state styles toggled by JS */
   [data-header].is-hidden { transform: translateY(-100%); }
   [data-header].is-scrolled {
-    background-color: rgba(247, 247, 247, 0.95);
-    border-bottom-color: rgba(15, 23, 42, 0.08);
+    background-color: rgba(247, 247, 247, 0.97);
+    border-bottom-color: rgba(15, 23, 42, 0.12);
     backdrop-filter: saturate(150%) blur(6px);
-    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+  }
+
+  [data-header].is-scrolled nav {
+    color: rgba(15, 23, 42, 0.92);
+  }
+
+  [data-header].is-scrolled .nav-link {
+    color: rgba(15, 23, 42, 0.82);
+  }
+
+  [data-header].is-scrolled .nav-link:hover,
+  [data-header].is-scrolled .nav-link:focus-visible {
+    color: rgba(15, 23, 42, 1);
+  }
+
+  [data-header].is-scrolled [data-menu-button] {
+    color: var(--brand-primary);
+  }
+
+  [data-header].is-scrolled [data-menu-button]:hover {
+    background-color: rgba(0, 116, 123, 0.08);
   }
 </style>
