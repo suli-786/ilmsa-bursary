@@ -12,11 +12,11 @@ const currentPath = normalizePathname(Astro.url.pathname);
 
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary]";
-const desktopLinkClasses = `nav-link relative text-sm font-medium text-white/90 transition-colors duration-200 hover:text-white ${focusRing}`;
+const desktopLinkClasses = `nav-link relative text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900 ${focusRing}`;
 const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text-gray-800 transition hover:bg-gray-100 ${focusRing}`;
 ---
 <header
-  class="fixed inset-x-0 top-0 z-50 border-b border-transparent bg-transparent transition-all duration-300 will-change-transform"
+  class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 bg-[#F7F7F7] transition-all duration-300 will-change-transform"
   data-header
 >
   <a
@@ -27,7 +27,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
   </a>
 
   <nav
-    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-white md:gap-6"
+    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 text-gray-900 md:gap-6"
     aria-label="Primary navigation"
   >
     <div class="flex items-center md:flex-1">
@@ -72,7 +72,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
         Apply
       </a>
       <button
-        class="inline-flex items-center justify-center rounded-md p-2 text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary] md:hidden"
+        class="inline-flex items-center justify-center rounded-md p-2 text-[--brand-primary] transition hover:bg-[rgba(0,116,123,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--brand-primary] md:hidden"
         type="button"
         aria-label="Open menu"
         aria-controls="mobile-menu"
@@ -90,7 +90,7 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
 
   <div
     id="mobile-menu"
-    class="hidden border-t border-black/5 bg-white md:hidden"
+    class="hidden border-t border-slate-200 bg-[#F7F7F7] md:hidden"
     data-menu-panel
     aria-hidden="true"
     hidden
@@ -282,9 +282,9 @@ const mobileLinkClasses = `block rounded-md px-3 py-2 text-base font-medium text
   /* Header state styles toggled by JS */
   [data-header].is-hidden { transform: translateY(-100%); }
   [data-header].is-scrolled {
-    background-color: rgba(0, 116, 123, 0.9); /* brand primary with alpha */
-    border-bottom-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(247, 247, 247, 0.95);
+    border-bottom-color: rgba(15, 23, 42, 0.08);
     backdrop-filter: saturate(150%) blur(6px);
-    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
   }
 </style>
