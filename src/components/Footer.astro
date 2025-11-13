@@ -5,7 +5,7 @@ import { withBase } from "../utils/paths";
  * Large logo friendly, aligned grid layout.
  */
 ---
-<footer class="mt-20 bg-[#00747b] text-white">
+<footer class="mt-20 bg-[#F7F7F7] text-slate-900">
   <div
     class="mx-auto max-w-6xl px-4 py-14
            grid gap-y-10 md:grid-cols-[minmax(260px,360px)_1px_minmax(260px,1fr)]
@@ -13,12 +13,12 @@ import { withBase } from "../utils/paths";
   >
     {/* Logo + tagline */}
     <div class="flex flex-col">
-      <a href={withBase("/")} class="inline-flex items-start text-white">
+      <a href={withBase("/")} class="inline-flex items-start text-slate-900">
         {/* Make img block to remove baseline gap; keep h-60 */}
         <img src={withBase("/images/ilm_logo.svg")} alt="ILM-SA" class="block h-20 w-auto" />
       </a>
       {/* Pull the tagline closer to the logo; tighten leading */}
-      <p class="mt-3 md:-mt-1 max-w-prose text-sm md:text-base leading-snug text-white/80">
+      <p class="mt-3 md:-mt-1 max-w-prose text-sm md:text-base leading-snug text-slate-600">
         Empowering students with financial support, mentorship and opportunities to give back.
       </p>
     </div>
@@ -32,13 +32,13 @@ import { withBase } from "../utils/paths";
         <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[--brand-secondary]">
           Contact
         </p>
-        <ul class="space-y-2 text-white/90">
+        <ul class="space-y-2 text-slate-700">
           <li class="flex flex-wrap items-center gap-2">
-            <span class="font-medium text-white">Email:</span>
+            <span class="font-medium text-slate-900">Email:</span>
             <a href="mailto:info@ilmsa.co.za" class="border-b border-transparent text-[--brand-secondary] transition hover:border-[--brand-secondary]">
               info@ilmsa.co.za
             </a>
-            <span class="text-white/40">|</span>
+            <span class="text-slate-400">|</span>
             <a href="mailto:admin@ilmsa.co.za" class="border-b border-transparent text-[--brand-secondary] transition hover:border-[--brand-secondary]">
               admin@ilmsa.co.za
             </a>
@@ -50,19 +50,19 @@ import { withBase } from "../utils/paths";
         <p class="text-xs font-semibold uppercase tracking-[0.3em] text-[--brand-secondary]">
           Quick links
         </p>
-        <ul class="space-y-2">
+        <ul class="space-y-2 text-slate-700">
           <li>
-            <a href={withBase("/#who-can-apply")} class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+            <a href={withBase("/#who-can-apply")} class="inline-flex items-center gap-2 text-slate-700 transition hover:text-[--brand-secondary]">
               <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> What you need to know
             </a>
           </li>
           <li>
-            <a href={withBase("/#how-to-apply")} class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+            <a href={withBase("/#how-to-apply")} class="inline-flex items-center gap-2 text-slate-700 transition hover:text-[--brand-secondary]">
               <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> Application steps
             </a>
           </li>
           <li>
-            <a href={withBase("/apply")} class="inline-flex items-center gap-2 text-white/85 transition hover:text-[--brand-secondary]">
+            <a href={withBase("/apply")} class="inline-flex items-center gap-2 text-slate-700 transition hover:text-[--brand-secondary]">
               <span class="h-6 w-1 rounded-full bg-[--brand-secondary]"></span> Submit your application
             </a>
           </li>
@@ -71,7 +71,7 @@ import { withBase } from "../utils/paths";
     </div>
   </div>
 
-  <div class="border-t border-white/15 bg-[#00636a] py-4 text-center text-xs text-white/80">
+  <div class="border-t border-slate-200 bg-[#F7F7F7] py-4 text-center text-xs text-slate-600">
     065-012-NPO
   </div>
 </footer>
