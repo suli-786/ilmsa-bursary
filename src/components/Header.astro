@@ -7,7 +7,7 @@ const navItems = [
   { path: "/#how-to-apply", label: "How to apply" },
 ];
 
-const normalizePathname = (value) => (value.replace(/\/$/, "") || "/");
+const normalizePathname = (value: string) => (value.replace(/\/$/, "") || "/");
 const currentPath = normalizePathname(Astro.url.pathname);
 
 const focusRing =
