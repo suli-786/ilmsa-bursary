@@ -1,6 +1,33 @@
 ---
 import { withBase } from "../utils/paths";
 
+type HeroSlide = {
+  image?: string;
+  title?: string;
+  sub?: string;
+  body?: string;
+  objectPosition?: string;
+  highlight?: string;
+};
+
+type HeroCta = {
+  href?: string;
+  label: string;
+  variant?: "primary" | "outline";
+};
+
+type HeroProps = {
+  slides?: HeroSlide[];
+  sub?: string;
+  headline?: string;
+  body?: string;
+  highlightWord?: string;
+  showButtons?: boolean;
+  ctas?: HeroCta[];
+  scrollCue?: string;
+  scrollTarget?: string;
+};
+
 const {
   slides: customSlides,
   sub: customSub,
@@ -11,16 +38,16 @@ const {
   ctas: providedCtas,
   scrollCue,
   scrollTarget: rawScrollTarget = "#how-to-apply",
-} = Astro.props;
+} = Astro.props as HeroProps;
 
 const defaultSlides = [
   {
     image: "/images/bg1.jpg",
-    title: "ILM-SA Bursary Applications",
-    sub: "Bursary Application Form 2026",
-    body: "Financial assistance, mentorship, and a supportive community to help you thrive in 2026 and beyond.",
+    title: "As salaamu alaikum wa rahmatullahi wa barakaatuh,",
+    sub: "",
+    body: "We have reached our capacity and being a small organisation, we are unable to accommodate further applications. We wish you all the best in pursuing your study goals!",
     objectPosition: "center center",
-    highlight: "ILM-SA",
+    highlight: "As salaamu alaikum",
   },
   {
     image: "/images/bg2.jpg",
@@ -48,7 +75,6 @@ const bodyText =
 const highlightWord = customHighlight ?? firstSlide.highlight ?? "ILM-SA";
 
 const defaultCtas = [
-  { href: "/apply", label: "Apply", variant: "primary" },
   { href: "#how-to-apply", label: "How to apply", variant: "outline" },
 ];
 const ctas = (providedCtas ?? defaultCtas).map((cta) => ({
@@ -62,10 +88,10 @@ const resolvedScrollTarget = withBase(rawScrollTarget);
   {slides.map((slide, index) => (
     <img
       src={slide.image}
-      alt={slide.title.replace(/\n/g, " ")}
+      alt={(slide.title ?? "").replace(/\n/g, " ")}
       loading={index === 0 ? "eager" : "lazy"}
       data-hero-slide
-      data-title={slide.title}
+      data-title={slide.title ?? ""}
       data-sub={slide.sub ?? ""}
       data-body={slide.body ?? ""}
       data-highlight={slide.highlight ?? ""}
