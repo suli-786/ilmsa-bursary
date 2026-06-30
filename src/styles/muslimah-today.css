@@ -175,3 +175,76 @@
     html { scroll-behavior: auto; }
   }
 }
+
+/* ── Motion layer — language "Daybreak" (design/02 motion + design/03 §1) ───────
+   Utilities the sections apply: reveal-on-enter · light-bloom · rule-draw ·
+   portrait-settle · arch-dawn (load). Transform/opacity ONLY. Progressive
+   enhancement: content is fully visible by default; the pre-reveal hidden state is
+   armed only on `:root.js` (set by an inline head script), so no-JS users never see
+   hidden content. Modern browsers animate purely in CSS via scroll-driven timelines
+   (`animation-timeline: view()`); older browsers fall back to a tiny IO that toggles
+   `.is-inview`. Every effect collapses to its FINAL lit state under reduced-motion. */
+@layer motion {
+  /* Resting (final) states — also the no-JS / no-support fallback. */
+  .daybreak-reveal,
+  .daybreak-settle { opacity: 1; transform: none; }
+  .daybreak-rule   { transform: scaleX(1); transform-origin: left; }
+  .daybreak-bloom  {
+    background: var(--mt-glow);
+    opacity: .5;
+    transform: none;
+    pointer-events: none;
+  }
+
+  /* Armed (pre-reveal) states — only when JS is on (something will reveal them). */
+  :root.js .daybreak-reveal { opacity: 0; transform: translateY(var(--motion-rise)); will-change: opacity, transform; }
+  :root.js .daybreak-settle { opacity: 0; transform: scale(var(--motion-scale-from)); will-change: opacity, transform; }
+  :root.js .daybreak-rule   { transform: scaleX(0); will-change: transform; }
+  :root.js .daybreak-bloom  { opacity: 0; transform: scale(.98); will-change: opacity, transform; }
+
+  @keyframes daybreak-reveal-kf { from { opacity: 0; transform: translateY(var(--motion-rise)); } to { opacity: 1; transform: none; } }
+  @keyframes daybreak-settle-kf { from { opacity: 0; transform: scale(var(--motion-scale-from)); } to { opacity: 1; transform: none; } }
+  @keyframes daybreak-rule-kf   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes daybreak-bloom-kf  { from { opacity: 0; transform: scale(.98); } to { opacity: .5; transform: none; } }
+
+  /* Preferred path: CSS scroll-driven, no per-element JS. */
+  @supports (animation-timeline: view()) {
+    :root.js .daybreak-reveal { animation: daybreak-reveal-kf var(--dur-slow) var(--ease-out) both; animation-timeline: view(); animation-range: entry 5% entry 30%; }
+    :root.js .daybreak-settle { animation: daybreak-settle-kf var(--dur-slow) var(--ease-out) both; animation-timeline: view(); animation-range: entry 5% entry 35%; }
+    :root.js .daybreak-rule   { animation: daybreak-rule-kf   var(--dur-base) var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% entry 30%; }
+    :root.js .daybreak-bloom  { animation: daybreak-bloom-kf  var(--dur-bloom) var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+  }
+
+  /* Fallback: IO toggles .is-inview; transition to the final state. */
+  @supports not (animation-timeline: view()) {
+    :root.js .daybreak-reveal,
+    :root.js .daybreak-settle { transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out); }
+    :root.js .daybreak-rule   { transition: transform var(--dur-base) var(--ease-out); }
+    :root.js .daybreak-bloom  { transition: opacity var(--dur-bloom) var(--ease-out), transform var(--dur-bloom) var(--ease-out); }
+    :root.js .daybreak-reveal.is-inview,
+    :root.js .daybreak-settle.is-inview { opacity: 1; transform: none; }
+    :root.js .daybreak-rule.is-inview   { transform: scaleX(1); }
+    :root.js .daybreak-bloom.is-inview  { opacity: .5; transform: none; }
+  }
+
+  /* Stagger children (fallback/transition path); sections set --daybreak-i per child.
+     The scroll-driven path staggers naturally as each child enters the viewport. */
+  .daybreak-stagger > * { transition-delay: calc(var(--daybreak-i, 0) * 70ms); }
+
+  /* arch-dawn — hero, once on LOAD (not scroll-tied): bloom + rise in one beat. */
+  :root.js .daybreak-dawn { animation: daybreak-reveal-kf var(--dur-slow) var(--ease-out) both; }
+  :root.js .daybreak-dawn-bloom { animation: daybreak-bloom-kf var(--dur-bloom) var(--ease-out) both; }
+}
+
+/* Global reduced-motion rule (design/02): kill animation/transition AND force every
+   armed utility to its final lit state (so nothing is left hidden when animation is
+   suppressed). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  :root.js .daybreak-reveal,
+  :root.js .daybreak-settle,
+  :root.js .daybreak-dawn { opacity: 1 !important; transform: none !important; }
+  :root.js .daybreak-rule { transform: scaleX(1) !important; }
+  :root.js .daybreak-bloom,
+  :root.js .daybreak-dawn-bloom { opacity: .5 !important; transform: none !important; }
+}

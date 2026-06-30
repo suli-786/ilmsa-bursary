@@ -25,8 +25,42 @@ const {
     <meta name="description" content={description} />
     <meta name="theme-color" content="#fefdfe" />
     <title>{title}</title>
+    {/* Arm the "Daybreak" pre-reveal state before paint (no FOUC); without JS the
+        page stays fully visible. Runs synchronously in <head>, so is:inline. */}
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
   </head>
   <body>
     <slot />
   </body>
 </html>
+
+<script>
+  // Reveal fallback for browsers without CSS scroll-driven animations: toggle
+  // `.is-inview` on Daybreak elements ~15% into view. Modern browsers use the pure-CSS
+  // `animation-timeline: view()` path and skip this. No-op under reduced-motion (the
+  // CSS already pins those elements to their final state).
+  const supportsScrollDriven =
+    typeof CSS !== "undefined" && CSS.supports("animation-timeline", "view()");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!supportsScrollDriven && !reduced && "IntersectionObserver" in window) {
+    const els = document.querySelectorAll(
+      ".daybreak-reveal, .daybreak-settle, .daybreak-rule, .daybreak-bloom",
+    );
+    if (els.length) {
+      const io = new IntersectionObserver(
+        (entries, obs) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-inview");
+              obs.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.15 },
+      );
+      els.forEach((el) => io.observe(el));
+    }
+  }
+</script>
