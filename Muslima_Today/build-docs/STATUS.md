@@ -9,11 +9,12 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `ecee853` — B1b data modules (verbatim). S1 + B1 + B1b done.
-- **Current segment:** **S2 — Scaffold + system** *(in progress: B1, B1b done)*.
-- **Next action:** S2 · **B1c** (global shell: header/nav + sticky mobile Book bar + skip link;
-  `design/03` §1) → B3 (brand: palette/bracket/arch) → B4 (type: fonts + scale) → B4m (motion).
-- **Loop state:** `RUNNING` — scaffold up; building S2 system.
+- **Last commit:** `7742780` — B1c global shell (Header, sticky Book bar, skip link). S1 + B1 + B1b + B1c done.
+- **Current segment:** **S2 — Scaffold + system** *(in progress: B1, B1b, B1c done)*.
+- **Next action:** S2 · **B3** (brand: bracket-motif SVG component + arch frame; palette already
+  wired in B1 tokens; ILM-SA teal un-recoloured & out of palette) → B4 (type: load fonts + scale)
+  → B4m (motion: Daybreak utilities). Then segment boundary → S3 sections.
+- **Loop state:** `RUNNING` — scaffold + shell up; building S2 brand/type/motion system.
 - **Build-ready?** Partial — page scaffolds & builds to `dist/MT/index.html` (off-white ground,
   tokens live); shell + sections pending. *(verify-mt.sh §4 content checks report **pending** while
   Loop state RUNNING — enforced at handoff; see `[WORKER-CHANGE]`.)*
@@ -39,7 +40,7 @@ fires after a session-limit reset continues purely from here.
 |---|---|---|---|---|
 | B1 | Scaffold route `MT.astro` + `muslimah-today.css` (`@theme` tokens) | DONE | `af50cfc` | route + `BaseLayout.astro` (under `components/muslimah-today/`, since `src/layouts/` is out of scope) + full design/02 tokens in `@theme`/`:root` + base layer; imports only the MT stylesheet; builds to `dist/MT/index.html` (off-white ground, 0 console/a11y) |
 | B1b | Data modules `src/data/muslimah-today/*.ts` (verbatim from `01`) | DONE | `ecee853` | `event` + `speakers`(+jointSession) + `testimonials` + `sponsors`(3 tiers) + `ticket-tiers` + `gallery`; pure typed TS, `tsc --noEmit` clean; images as filenames (component glob-resolves); media-partner display names `[OPEN]` |
-| B1c | Global shell (header/nav, sticky Book bar, skip link) | TODO | — | design/03 §1 |
+| B1c | Global shell (header/nav, sticky Book bar, skip link) | DONE | `7742780` | `Header` (fixed; transparent-over-hero → solid past `[data-mt-hero-sentinel]` via IO, wordmark reveal; SOLID default for pre-S3/no-JS), `BookBar` (sticky mobile-only, safe-area, hidden while hero/#tickets/footer in view), skip link (`#main`), shared `BookButton` (M5 disabled state). 0 console/axe; both viewports inspected. |
 | B3 | Brand (palette, bracket geometry, arch) | TODO | — | design/02 |
 | B4 | Type (`--font-display`/`--font-serif-text`/`--font-body` + scale) | TODO | — | design/02 |
 | B4m | Motion "Daybreak" utilities (RM-guarded, transform/opacity only) | TODO | — | design/02 |
@@ -82,6 +83,11 @@ route `/MT` · standard speaker bg (D26) · disabled Book/Sponsored CTAs until M
 sponsor slots for the 2 pending logos.
 
 ## `[WORKER-CHANGE]` log *(any worker design improvement, within the system)*
+- **Shared `BookButton.astro` (B1c, `7742780`)** — the primary "Book your seat" CTA is **one
+  component** reused by the Header, the sticky Book bar, and (later) Hero + Tickets, rather than
+  re-coding the button per place. Enforces identical look/states everywhere and makes B6 (flip M5
+  `live`) a one-line change. Within the system (design/02 Buttons); the data-driven-repeats
+  principle (design/03 §0.3) applied to the CTA.
 - **verify-mt.sh §4 — content checks pending while building** (`ac6f4af`). Once `MT.astro` exists,
   the copy/anchor checks would hard-fail on sections not yet built (S3/S4), failing every
   incremental leg. Now they report **pending NOTES while STATUS `Loop state: RUNNING`**, and are
@@ -101,6 +107,12 @@ sponsor slots for the 2 pending logos.
   white chip). The build may seat Luxe on a dark mini-panel if chip consistency needs it.
 
 ## `[OPEN]` flags raised during build
+- **Mobile header Book + sticky Book bar can coexist mid-scroll (B1c)** — design/03 §1 lists a Book
+  CTA in the **mobile header** *and* a sticky bottom Book bar; the header is fixed, so once scrolled
+  past the hero both are visible at once on mobile. Implemented faithfully (both present). The
+  "never two Book CTAs at once" rule in §1 is about the bar vs the Tickets/footer CTAs (the bar
+  hides for those). *Confirm at walkthrough* whether the client wants the header's Book hidden on
+  mobile while the bar is active. *Not blocking.*
 - **M6 (Ebrahim res)** — confirmed: source 562×789, processed as specced (no upscale; face
   fills frame). Crisp at the circular grid size; **slightly soft at the larger headliner arch**.
   A higher-res Ebrahim file would improve the arch. *Not blocking.*
