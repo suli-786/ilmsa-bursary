@@ -9,16 +9,18 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `56a6764` — S4 Past-events (§6). **S2 COMPLETE · S3 COMPLETE · S4 IN-PROGRESS**
-  (Testimonials ✓ · Past-events ✓ · Tickets / Footer pending).
+- **Last commit:** `085aacc` — S4 Tickets `#tickets` (§7). **S2 COMPLETE · S3 COMPLETE · S4
+  IN-PROGRESS** (Testimonials ✓ · Past-events ✓ · Tickets ✓ · Footer pending — the last S4 section).
 - **Current segment:** **S4 — Sections B** *(in progress)*.
-- **Next action:** S4 · **Tickets `#tickets`** (`design/03` §7) — the scannable climax + the page's
-  ONE closing magenta moment: featured early-bird card (`R250` the single biggest glance target) +
-  rows (R320/R220/Sponsored) + sales-close tag (Wed 26 Aug) + M5-disabled Book/Sponsored CTAs, all
-  from `ticketTiers[]`/`event.ts`. Then Footer (§8 — attribution + 3 sponsor tiers + socials + Maps;
-  **NO second full-magenta CTA**). Reuse `SectionHeader`/`BookButton`/`Bracket`. Mount after
-  `<PastEvents/>` in `MT.astro`.
-- **Loop state:** `RUNNING` — S4 Testimonials + Past-events done & verified; Tickets + Footer next.
+- **Next action:** S4 · **Footer** (`design/03` §8) — the restrained warm sign-off (Tickets already
+  gave the saturated climax → **NO second full-magenta CTA**). attribution (event.ts, verbatim) +
+  ILM-for-Women + **ILM-SA teal untouched** lockups → 3 sponsor tiers from `sponsors.ts`
+  (Polygon primary · media partners · `auto-fit` sponsor chip grid for the +2 pending, A6) → socials
+  (FB/IG/WhatsApp, 44px) → venue + Maps → grey credit line. Add `data-mt-footer` (the BookBar
+  observer hides the sticky bar over the footer). Mount after `<Tickets/>` in `MT.astro`. After it
+  lands: **all S4 sections done → run final S5? No — S5 (B5/B6) is a separate segment.** Close S4,
+  set the handoff, schedule/stop.
+- **Loop state:** `RUNNING` — S4 Testimonials + Past-events + Tickets done & verified; Footer next.
 - **Build-ready?** Partial — page builds to `dist/MT/index.html` with the full system live (off-white
   ground, fonts, shell, brand primitives, motion utilities); **section content** (Hero…Footer) is
   S3/S4. *(verify-mt.sh §4 content checks report **pending** while Loop state RUNNING — enforced at
@@ -62,7 +64,7 @@ fires after a session-limit reset continues purely from here.
 |---|---|---|---|---|
 | Testimonials | Testimonials (5, verbatim) | DONE | `d50b456` | design/03 §5; `TestimonialCard` looped (glyph + Caslon-italic quote + cite) in ONE track = mobile scroll-snap carousel (keyboard dots, IO-synced, no autoplay) → desktop 2-col grid, Naledi featured (portrait + tint) spans full width. Clare 2022/2023 kept; Fathima≠Fatima. 0 console/axe. |
 | PastEvents | Past-event gallery (no flyers/video) | DONE | `56a6764` | design/03 §6; `gallery[]` in ONE grid → mobile scroll-snap film-strip (edge-bleed, keyboard) / desktop CSS-columns masonry (2→3-col, mixed aspect). astro:assets responsive+lazy; photos only, captions omitted (none in source). 0 console/axe. |
-| Tickets | Tickets `#tickets` (scannable climax) | TODO | — | design/03 §7 |
+| Tickets | Tickets `#tickets` (scannable climax) | DONE | `085aacc` | design/03 §7; variant-driven `TicketTier` looped: featured magenta R250 card (Caslon --text-3xl, biggest number) + rows (R320/R220 right-aligned, dotted leaders) + sales-close pill (Wed 26th Aug verbatim) + M5-disabled Book/Sponsored (WhatsApp live) + verbatim caption. Both deadlines visible; the ONE closing magenta moment. 0 console/axe. |
 | Footer | Footer (attribution + 3 sponsor tiers + socials + Maps) | TODO | — | design/03 §8 |
 
 ### S5 — Hardening
