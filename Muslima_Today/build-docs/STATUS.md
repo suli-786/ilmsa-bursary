@@ -9,14 +9,16 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `d50b456` — S4 Testimonials (§5). **S2 COMPLETE · S3 COMPLETE · S4 IN-PROGRESS**
-  (Testimonials ✓ · Past-events / Tickets / Footer pending).
+- **Last commit:** `56a6764` — S4 Past-events (§6). **S2 COMPLETE · S3 COMPLETE · S4 IN-PROGRESS**
+  (Testimonials ✓ · Past-events ✓ · Tickets / Footer pending).
 - **Current segment:** **S4 — Sections B** *(in progress)*.
-- **Next action:** S4 · **Past-events** (`design/03` §6) — gallery strip→masonry from `gallery[]`,
-  NO flyers/video. Then **Tickets `#tickets`** (§7, the scannable climax — its anchor is still
-  pending in the content checks) → Footer (§8). Build each from `src/data/muslimah-today/*` + named
-  components, reusing `SectionHeader`; mount after `<Testimonials/>` in `MT.astro`, top-to-bottom.
-- **Loop state:** `RUNNING` — S4 Testimonials done & verified; Past-events…Footer next.
+- **Next action:** S4 · **Tickets `#tickets`** (`design/03` §7) — the scannable climax + the page's
+  ONE closing magenta moment: featured early-bird card (`R250` the single biggest glance target) +
+  rows (R320/R220/Sponsored) + sales-close tag (Wed 26 Aug) + M5-disabled Book/Sponsored CTAs, all
+  from `ticketTiers[]`/`event.ts`. Then Footer (§8 — attribution + 3 sponsor tiers + socials + Maps;
+  **NO second full-magenta CTA**). Reuse `SectionHeader`/`BookButton`/`Bracket`. Mount after
+  `<PastEvents/>` in `MT.astro`.
+- **Loop state:** `RUNNING` — S4 Testimonials + Past-events done & verified; Tickets + Footer next.
 - **Build-ready?** Partial — page builds to `dist/MT/index.html` with the full system live (off-white
   ground, fonts, shell, brand primitives, motion utilities); **section content** (Hero…Footer) is
   S3/S4. *(verify-mt.sh §4 content checks report **pending** while Loop state RUNNING — enforced at
@@ -59,7 +61,7 @@ fires after a session-limit reset continues purely from here.
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
 | Testimonials | Testimonials (5, verbatim) | DONE | `d50b456` | design/03 §5; `TestimonialCard` looped (glyph + Caslon-italic quote + cite) in ONE track = mobile scroll-snap carousel (keyboard dots, IO-synced, no autoplay) → desktop 2-col grid, Naledi featured (portrait + tint) spans full width. Clare 2022/2023 kept; Fathima≠Fatima. 0 console/axe. |
-| PastEvents | Past-event gallery (no flyers/video) | TODO | — | design/03 §6 |
+| PastEvents | Past-event gallery (no flyers/video) | DONE | `56a6764` | design/03 §6; `gallery[]` in ONE grid → mobile scroll-snap film-strip (edge-bleed, keyboard) / desktop CSS-columns masonry (2→3-col, mixed aspect). astro:assets responsive+lazy; photos only, captions omitted (none in source). 0 console/axe. |
 | Tickets | Tickets `#tickets` (scannable climax) | TODO | — | design/03 §7 |
 | Footer | Footer (attribution + 3 sponsor tiers + socials + Maps) | TODO | — | design/03 §8 |
 
