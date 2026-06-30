@@ -6,6 +6,13 @@
  * src/layouts/ is out of scope), used as the page layout via <slot/>.
  */
 import "../../styles/muslimah-today.css";
+// B5 perf — preload the two faces used above the fold so first paint doesn't wait on
+// the network (design/02 Typography: "preload the two used faces — Caslon Display 400,
+// Source Sans 600"). woff2 only (the woff is a legacy fallback we don't preload). `?url`
+// makes Vite emit the same hashed asset the @font-face @import already references, so the
+// preload matches the real font request (no double-download).
+import caslonDisplay400 from "@fontsource/libre-caslon-display/files/libre-caslon-display-latin-400-normal.woff2?url";
+import sourceSans600 from "@fontsource/source-sans-3/files/source-sans-3-latin-600-normal.woff2?url";
 
 interface Props {
   title?: string;
@@ -24,6 +31,11 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#fefdfe" />
+    {/* Preload the two above-the-fold faces (Caslon Display 400 · Source Sans 600).
+        `crossorigin` is required even same-origin — fonts are always fetched in CORS
+        (anonymous) mode, so this must match or the browser double-downloads. */}
+    <link rel="preload" href={caslonDisplay400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sourceSans600} as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     {/* Arm the "Daybreak" pre-reveal state before paint (no FOUC); without JS the
         page stays fully visible. Runs synchronously in <head>, so is:inline. */}

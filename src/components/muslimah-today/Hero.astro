@@ -54,6 +54,7 @@ const tagline = event.tagline.join(" · ");
             widths={[240, 320, 480]}
             sizes="(min-width: 768px) 320px, 240px"
             loading="eager"
+            fetchpriority="high"
             style="animation-delay: 120ms"
           />
           <span class="mt-hero__title daybreak-dawn" style="animation-delay: 200ms">{event.title}</span>
