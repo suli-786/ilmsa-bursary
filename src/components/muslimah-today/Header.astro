@@ -1,0 +1,169 @@
+---
+/**
+ * Header — global shell top bar (design/03 §1, design/02 Components).
+ * Behaviour: transparent over the hero, then SOLID (--mt-bg + --shadow-sm) once the
+ * hero sentinel scrolls out, revealing the small MT wordmark (IntersectionObserver,
+ * no scroll libraries). Contents: MT wordmark (left) · desktop anchor nav
+ * About·Speakers·Tickets · Book CTA (right). Mobile: wordmark + Book only (no
+ * hamburger — the page is short and anchored by the sticky Book bar).
+ *
+ * Renders SOLID by default so it is correct (and visible) before the Hero (S3) drops
+ * its `[data-mt-hero-sentinel]`; once that sentinel exists the script toggles
+ * transparent-over-hero. Same-page fragment anchors are bare (#about…) so they stay
+ * on this document regardless of the deployed base path.
+ */
+import { Image } from "astro:assets";
+import wordmark from "../../assets/muslimah-today/logos/logo-muslimah-today.png";
+import BookButton from "./BookButton.astro";
+
+const navLinks = [
+  { label: "About", href: "#about" },
+  { label: "Speakers", href: "#speakers" },
+  { label: "Tickets", href: "#tickets" },
+];
+---
+<header class="mt-header is-solid" data-mt-header>
+  <div class="mt-header__inner">
+    <a class="mt-header__brand" href="#top" aria-label="Muslimah Today — back to top">
+      <Image
+        class="mt-header__wordmark"
+        src={wordmark}
+        alt="Muslimah Today"
+        width={320}
+        height={56}
+        loading="eager"
+      />
+    </a>
+
+    <nav class="mt-header__nav" aria-label="Primary">
+      <ul class="mt-nav__list">
+        {navLinks.map((l) => (
+          <li><a class="mt-nav__link" href={l.href}>{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="mt-header__cta">
+      <BookButton compact showHelper={false} />
+    </div>
+  </div>
+</header>
+
+<style>
+  .mt-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: var(--z-sticky);
+    background: transparent;
+    transition:
+      background-color var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .mt-header.is-solid {
+    background: var(--mt-bg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mt-header__inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    padding: var(--space-3) var(--gutter);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  /* Wordmark — hidden while transparent over the hero, revealed when solid. */
+  .mt-header__brand {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    line-height: 0;
+  }
+  .mt-header__wordmark {
+    display: block;
+    width: auto;
+    height: 1.75rem;
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .mt-header.is-solid .mt-header__wordmark {
+    opacity: 1;
+  }
+
+  /* Desktop anchor nav (hidden on mobile). */
+  .mt-header__nav {
+    display: none;
+  }
+  .mt-nav__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .mt-nav__link {
+    position: relative;
+    display: inline-block;
+    padding-block: var(--space-1);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--track-caps);
+    text-decoration: none;
+    color: var(--mt-text);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .mt-nav__link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .mt-nav__link:hover,
+  .mt-nav__link:focus-visible {
+    color: var(--mt-link);
+  }
+  .mt-nav__link:hover::after,
+  .mt-nav__link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .mt-header__cta {
+    display: flex;
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .mt-header__nav {
+      display: block;
+    }
+    .mt-header__wordmark {
+      height: 2rem;
+    }
+  }
+</style>
+
+<script>
+  // Transparent over the hero → solid past it; reveal the wordmark. Falls back to the
+  // server-rendered SOLID state when no hero sentinel exists yet (pre-S3 / no-JS).
+  const header = document.querySelector<HTMLElement>("[data-mt-header]");
+  const sentinel = document.querySelector("[data-mt-hero-sentinel]");
+  if (header && sentinel && "IntersectionObserver" in window) {
+    header.classList.remove("is-solid"); // start transparent while the hero is in view
+    const io = new IntersectionObserver(
+      ([entry]) => header.classList.toggle("is-solid", !entry.isIntersecting),
+      { threshold: 0 },
+    );
+    io.observe(sentinel);
+  }
+</script>

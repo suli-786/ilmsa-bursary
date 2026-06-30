@@ -1,0 +1,159 @@
+---
+/**
+ * BookButton — the single source for the primary "Book your seat" CTA (design/02
+ * Buttons). Header, the sticky mobile Book bar, Hero and Tickets all render THIS,
+ * so the CTA looks/behaves identically everywhere (one component, not duplicates).
+ *
+ * M5: while `event.links.book.live` is false the Quicket page (MT2026) isn't created
+ * yet → renders the DISABLED state (grey fill, not-allowed, helper "Booking opens
+ * soon"); the live URL is already wired so B6 only flips the data flag. When live it
+ * renders an <a> to the external Quicket page (withBase passes the absolute URL through).
+ */
+import { event } from "../../data/muslimah-today/event.ts";
+import { withBase } from "../../utils/paths.ts";
+
+interface Props {
+  /** Full-width fill (sticky bar / hero / tickets). */
+  block?: boolean;
+  /** Smaller metrics for the header nav. */
+  compact?: boolean;
+  /** Show the "Booking opens soon" helper as visible text; otherwise SR-only. */
+  showHelper?: boolean;
+  /** Extra classes from the host (positioning only). */
+  class?: string;
+}
+
+const { block = false, compact = false, showHelper = true, class: klass = "" } = Astro.props;
+
+const { url, live } = event.links.book;
+const label = "Book your seat";
+const helper = "Booking opens soon";
+const helpId = `mt-book-help-${Math.random().toString(36).slice(2, 8)}`;
+
+const btnClass = ["mt-btn", "mt-btn--primary", block && "mt-btn--block", compact && "mt-btn--compact", klass]
+  .filter(Boolean)
+  .join(" ");
+---
+<span class="mt-book">
+  {live ? (
+    <a class={btnClass} href={withBase(url)} target="_blank" rel="noopener noreferrer">
+      {label}<span class="mt-btn__arrow" aria-hidden="true">→</span>
+    </a>
+  ) : (
+    <button type="button" class={`${btnClass} is-disabled`} disabled aria-describedby={helpId} title={helper}>
+      {label}<span class="mt-btn__arrow" aria-hidden="true">→</span>
+    </button>
+  )}
+  {!live && (
+    <span id={helpId} class={showHelper ? "mt-book__help" : "mt-book__help mt-sr-only"}>{helper}</span>
+  )}
+</span>
+
+<style>
+  .mt-book {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .mt-book:has(.mt-btn--block) {
+    display: flex;
+    width: 100%;
+  }
+
+  .mt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 48px;
+    padding: var(--space-3) var(--space-6);
+    border: 0;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--track-caps);
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+  .mt-btn--primary {
+    background: var(--mt-feature);
+    color: var(--mt-on-feature);
+  }
+  .mt-btn--primary:hover {
+    background: var(--color-mt-magenta-700);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+  .mt-btn--primary:active {
+    background: var(--color-mt-magenta-800);
+    transform: none;
+    box-shadow: none;
+  }
+  .mt-btn__arrow {
+    font-size: 1.1em;
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .mt-btn--primary:hover .mt-btn__arrow {
+    transform: translateX(2px);
+  }
+
+  /* Compact (header) — still ≥44px touch target. */
+  .mt-btn--compact {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  /* Full-width (sticky bar / sections). */
+  .mt-btn--block {
+    width: 100%;
+  }
+
+  /* Disabled (M5 — Quicket page not live). */
+  .mt-btn.is-disabled,
+  .mt-btn:disabled {
+    background: var(--color-mt-grey-200);
+    color: var(--color-mt-grey-500);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+  .mt-btn.is-disabled:hover,
+  .mt-btn:disabled:hover {
+    background: var(--color-mt-grey-200);
+    transform: none;
+    box-shadow: none;
+  }
+  .mt-btn.is-disabled .mt-btn__arrow {
+    transform: none;
+  }
+
+  .mt-book__help {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    letter-spacing: var(--track-caps);
+    text-transform: uppercase;
+    color: var(--mt-text-muted); /* grey-600 — AA for small text (grey-500 fails at 13px) */
+  }
+
+  .mt-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

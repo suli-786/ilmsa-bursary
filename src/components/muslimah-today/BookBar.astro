@@ -1,0 +1,74 @@
+---
+/**
+ * BookBar — sticky mobile Book bar (design/03 §1, design/02 Buttons "[OURS]").
+ * Mobile only. Appears once the hero leaves the viewport; hidden while the hero,
+ * the Tickets section, or the footer is in view, so the page never shows two Book
+ * CTAs at once. Off-white, --shadow-md, full-width primary CTA, safe-area inset.
+ * Reduced-motion: no slide — just present/absent (handled by the global RM rule).
+ *
+ * Pre-S3 (no hero/tickets/footer yet) it has no observe targets, so it renders
+ * visible — verifiable now; once those sections land the observer takes over.
+ */
+import BookButton from "./BookButton.astro";
+---
+<div class="mt-bookbar" data-mt-bookbar aria-hidden="false">
+  <div class="mt-bookbar__inner">
+    <BookButton block />
+  </div>
+</div>
+
+<style>
+  .mt-bookbar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: var(--z-sticky);
+    background: var(--mt-bg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-3) var(--gutter);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+    transform: translateY(110%);
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .mt-bookbar.is-visible {
+    transform: translateY(0);
+  }
+  .mt-bookbar__inner {
+    max-width: var(--measure);
+    margin-inline: auto;
+  }
+
+  /* Mobile-only: the desktop header carries the Book CTA. */
+  @media (min-width: 768px) {
+    .mt-bookbar {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Visible by default, hidden while any "blocker" (hero / tickets / footer) is in
+  // view. With no blockers present yet (pre-S3) it just shows.
+  const bar = document.querySelector<HTMLElement>("[data-mt-bookbar]");
+  if (bar) {
+    const targets = ["[data-mt-hero-sentinel]", "#tickets", "[data-mt-footer]"]
+      .map((s) => document.querySelector(s))
+      .filter((el): el is Element => el !== null);
+
+    if (targets.length === 0 || !("IntersectionObserver" in window)) {
+      bar.classList.add("is-visible");
+    } else {
+      const blockers = new Set<Element>();
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) blockers.add(e.target);
+            else blockers.delete(e.target);
+          }
+          bar.classList.toggle("is-visible", blockers.size === 0);
+        },
+        { threshold: 0 },
+      );
+      targets.forEach((t) => io.observe(t));
+    }
+  }
+</script>
