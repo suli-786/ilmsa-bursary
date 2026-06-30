@@ -9,13 +9,15 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `fae1800` — S3 Hero `#top`. **S2 COMPLETE**; **S3 IN PROGRESS** (Hero done).
-- **Current segment:** **S3 — Sections A** *(Hero ✓ · About next · Speakers)*.
-- **Next action:** S3 · **About `#about`** (`design/03` §3) — eyebrow + Caslon headline +
-  verbatim About paragraph (`01-content` §3) with a SR-safe `::first-letter` drop-cap + one
-  warm full-colour past-event photo. Then Speakers `#speakers` + joint band, order D4/D24 (§4).
-  Mount each in `MT.astro`'s `<main>` after `<Hero/>`, top-to-bottom.
-- **Loop state:** `RUNNING` — S2 system done; S3 sections in progress (Hero built & verified).
+- **Last commit:** `a3d1fd7` — shoot.mjs RM capture (+ `b831c28` S3 About). **S2 COMPLETE**;
+  **S3 IN PROGRESS** (Hero ✓ · About ✓; Speakers next).
+- **Current segment:** **S3 — Sections A** *(Hero ✓ · About ✓ · Speakers next — closes S3)*.
+- **Next action:** S3 · **Speakers `#speakers` + joint band** (`design/03` §4, order D4/D24:
+  Ebrahim → Rosieda → [joint band] → Fatima → Adam → Aisha → Shubnum → Zohra). Build
+  `SpeakerCard.astro` (variant `niche`/`circle`, one component looped over `speakers[]`) +
+  `JointSession.astro` (magenta band). Reuse `SectionHeader`, `Arch` (niche, `ring`),
+  bio-disclosure (`<button aria-expanded>`). Mount after `<About/>` in `MT.astro`. Closes S3.
+- **Loop state:** `RUNNING` — S2 done; S3 Hero + About built & verified; Speakers in progress.
 - **Build-ready?** Partial — page builds to `dist/MT/index.html` with the full system live (off-white
   ground, fonts, shell, brand primitives, motion utilities); **section content** (Hero…Footer) is
   S3/S4. *(verify-mt.sh §4 content checks report **pending** while Loop state RUNNING — enforced at
@@ -51,7 +53,7 @@ fires after a session-limit reset continues purely from here.
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
 | Hero | Hero `#top` | DONE | `fae1800` | design/03 §2; ILM-stacked + arch-dawn bloom + h1 (wordmark image + title) + Caslon-italic tagline + facts strip (date/venue→Maps/Tickets→#tickets) + disabled Book CTA. Sentinel = whole section. ~1 viewport mobile; 0 console/axe. |
-| About | About `#about` | TODO | — | design/03 §3 |
+| About | About `#about` | DONE | `b831c28` | design/03 §3; verbatim para (about.ts) + SR-safe ::first-letter drop-cap (magenta-400 for AA) + warm companion photo (gallery-embrace). Shared `SectionHeader.astro` introduced. 0 console/axe. |
 | Speakers | Speakers `#speakers` + joint band (order D4/D24) | TODO | — | design/03 §4 |
 
 ### S4 — Sections B
@@ -85,6 +87,20 @@ route `/MT` · standard speaker bg (D26) · disabled Book/Sponsored CTAs until M
 sponsor slots for the 2 pending logos.
 
 ## `[WORKER-CHANGE]` log *(any worker design improvement, within the system)*
+- **Shared `SectionHeader.astro` (S3 About, `b831c28`)** — one component renders every section
+  opener (eyebrow `.mt-bracket` + rule-draw hairline + Caslon `h2`), reused by About + Speakers
+  (S3) and Testimonials/Past-events/Tickets (S4). Same DRY/consistency rationale as `BookButton`
+  (design/03 §0.3); within design/02 "Section header / eyebrow".
+- **About drop-cap = magenta-400, not magenta-300 (S3 About, `b831c28`)** — design/02 specs the
+  drop-cap at magenta-300, but as a `::first-letter` it IS real text (the "M" of "Muslimah"), and
+  magenta-300 on off-white is ~2.4:1 — below even the large-text AA floor (3:1). magenta-400 (~3.6:1)
+  is the minimal darkening that passes while keeping the soft look. design/02 AA baseline > exact tint.
+- **`shoot.mjs` emulates reduced-motion for captures (S3 About, `a3d1fd7`)** — the visual harness now
+  sets `reducedMotion: 'reduce'`, so the global RM rule pins every Daybreak reveal/bloom to its FINAL
+  LIT state. Without it, a fullPage (no-scroll) screenshot renders below-fold `.daybreak-reveal`
+  elements at opacity 0 (scroll-driven start) = blank, so below-fold sections can't be inspected. The
+  RM capture shows the page fully revealed AND validates the RM acceptance state (design/03 §10). The
+  console-error + axe gate is unchanged.
 - **Hero dawn-bloom glow (S3 Hero, `fae1800`)** — the hero arch's light-bloom uses a **local**
   radial glow built from **magenta-200 ↔ lilac-200** (still palette ramp tints, no new hue, magenta
   stays "light") instead of the shared `--mt-glow` (magenta-100↔lilac-100). At the bloom's 0.5
