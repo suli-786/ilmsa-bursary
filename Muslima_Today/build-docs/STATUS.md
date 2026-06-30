@@ -9,14 +9,16 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `94ab12b` — B3 brand primitives (Bracket, Eyebrow, Arch). S1 + B1 + B1b + B1c + B3 done.
-- **Current segment:** **S2 — Scaffold + system** *(in progress: B1, B1b, B1c, B3 done)*.
-- **Next action:** S2 · **B4** (type: load the three families + scale) → B4m (motion: Daybreak
-  utilities). Then segment boundary → S3 sections.
-- **Loop state:** `RUNNING` — scaffold + shell up; building S2 brand/type/motion system.
-- **Build-ready?** Partial — page scaffolds & builds to `dist/MT/index.html` (off-white ground,
-  tokens live); shell + sections pending. *(verify-mt.sh §4 content checks report **pending** while
-  Loop state RUNNING — enforced at handoff; see `[WORKER-CHANGE]`.)*
+- **Last commit:** `19c6fa6` — B4m motion layer. **S2 COMPLETE** (S1 + B1 + B1b + B1c + B3 + B4 + B4m done).
+- **Current segment:** **S3 — Sections A** *(next; S2 just closed)*.
+- **Next action:** S3 · **Hero `#top`** (`design/03` §2) — first section. Then About `#about`
+  (§3) → Speakers `#speakers` + joint band, order D4/D24 (§4). Mount each in `MT.astro`'s
+  `<main>`, top-to-bottom, from `src/data/muslimah-today/*` + the named components.
+- **Loop state:** `RUNNING` — S2 system done (shell + brand + type + motion); starting S3 sections.
+- **Build-ready?** Partial — page builds to `dist/MT/index.html` with the full system live (off-white
+  ground, fonts, shell, brand primitives, motion utilities); **section content** (Hero…Footer) is
+  S3/S4. *(verify-mt.sh §4 content checks report **pending** while Loop state RUNNING — enforced at
+  handoff; see `[WORKER-CHANGE]`.)*
 
 ## Status key
 `TODO` · `IN-PROGRESS` · `DONE` · `BLOCKED(why)` · `DEFERRED(why)`
@@ -41,8 +43,8 @@ fires after a session-limit reset continues purely from here.
 | B1b | Data modules `src/data/muslimah-today/*.ts` (verbatim from `01`) | DONE | `ecee853` | `event` + `speakers`(+jointSession) + `testimonials` + `sponsors`(3 tiers) + `ticket-tiers` + `gallery`; pure typed TS, `tsc --noEmit` clean; images as filenames (component glob-resolves); media-partner display names `[OPEN]` |
 | B1c | Global shell (header/nav, sticky Book bar, skip link) | DONE | `7742780` | `Header` (fixed; transparent-over-hero → solid past `[data-mt-hero-sentinel]` via IO, wordmark reveal; SOLID default for pre-S3/no-JS), `BookBar` (sticky mobile-only, safe-area, hidden while hero/#tickets/footer in view), skip link (`#main`), shared `BookButton` (M5 disabled state). 0 console/axe; both viewports inspected. |
 | B3 | Brand (palette, bracket geometry, arch) | DONE | `94ab12b` | `Bracket.astro` (I-beam SVG from measured geometry, `band` variant), `Eyebrow.astro` (lilac band + magenta label on middle bar), `Arch.astro` (rounded-top niche + optional ring). Palette already in B1 tokens. Shapes sanity-checked in isolation; mount in S3. ILM-SA teal stays image-only, out of CSS palette. |
-| B4 | Type (`--font-display`/`--font-serif-text`/`--font-body` + scale) | TODO | — | design/02 |
-| B4m | Motion "Daybreak" utilities (RM-guarded, transform/opacity only) | TODO | — | design/02 |
+| B4 | Type (`--font-display`/`--font-serif-text`/`--font-body` + scale) | DONE | `ab4fd27` | 3 families self-hosted via Fontsource (Latin subset, swap), imported from muslimah-today.css; 7 woff2 bundled into MT chunk (bursary unaffected); h1–h6/em/strong/link base defaults. Scale already in @theme (B1). Preload → B5. |
+| B4m | Motion "Daybreak" utilities (RM-guarded, transform/opacity only) | DONE | `19c6fa6` | `@layer motion`: `.daybreak-reveal/-settle/-rule/-bloom/-dawn`; scroll-driven (`animation-timeline:view()`) + IO fallback; JS-gated arming (no-JS = visible); global RM rule pins final lit state. Proven: nothing stuck hidden under RM. Sections apply the classes in S3+. |
 
 ### S3 — Sections A
 | ID | Task | Status | Commit | Notes |
@@ -122,6 +124,43 @@ sponsor slots for the 2 pending logos.
   regenerated contact sheet + full-res tiles. Ebrahim/Fatima/Aisha stayed clean.
 
 ## Handoff log *(newest first)*
+- `2026-06-30` — **S2 COMPLETE (B1c · B3 · B4 · B4m) → next segment = S3 (Sections A: Hero · About ·
+  Speakers).** This fire built the whole S2 system on top of the B1/B1b foundation:
+  - **B1c** (`7742780`) — global shell. `Header.astro` (fixed; transparent-over-hero → solid past a
+    `[data-mt-hero-sentinel]` via IntersectionObserver, revealing the small MT wordmark; renders
+    SOLID by default so it's correct & visible pre-S3 / no-JS), desktop anchor nav
+    About·Speakers·Tickets (rule-draw underline), mobile = wordmark + Book only. `BookBar.astro`
+    (sticky **mobile-only**, safe-area inset; visible by default, hidden while hero/`#tickets`/footer
+    in view — no targets yet so it shows). Skip link (first focusable → `#main`). **`BookButton.astro`**
+    = the one CTA reused everywhere; M5 disabled state. STATUS commit `7bf19db`.
+  - **B3** (`94ab12b`) — brand primitives: `Bracket.astro` (the I-beam/notched-pill SVG from the
+    measured geometry — end-caps 16% / notch 66% / depth 28% / middle bar 44% / inner r 0.13×H;
+    `band` variant), `Eyebrow.astro` (lilac-100 band + magenta-600 label on the middle bar),
+    `Arch.astro` (rounded-top niche + optional ring). Shapes sanity-checked in isolation. STATUS `bbf3755`.
+  - **B4** (`ab4fd27`) — type: 3 families self-hosted via **Fontsource** (Latin subset, swap),
+    `@import`ed inside `muslimah-today.css` (page still pulls only that file); 7 woff2 bundled into the
+    MT CSS chunk, bursary index references none. h1–h6 → Caslon Display 400 / magenta-700, em/strong/
+    link base defaults. **Preload of the 2 key faces deferred to B5** (Vite-hashed paths = perf-pass job).
+  - **B4m** (`19c6fa6`) — motion `@layer motion`: `.daybreak-reveal/-settle/-rule/-bloom/-dawn`,
+    transform/opacity only; pure-CSS scroll-driven (`animation-timeline: view()`) + IO fallback;
+    **JS-gated arming** (inline `<head>` script adds `.js`; no-JS = content visible); global
+    reduced-motion rule pins every armed utility to its final lit state. Proven via computed-opacity
+    probe: normal → above-fold lit / below-fold awaits scroll; RM → nothing stuck hidden.
+  - **S3 worker — Hero first** (`design/03` §2 + §0 build rules; copy **verbatim** from `01-content.md`
+    §1, run the §5 proofing checklist). Build it in `MT.astro`'s `<main>`. Inputs/components ready:
+    ILM-for-Women **stacked** logo + MT wordmark image (`src/assets/muslimah-today/logos/`), the
+    `Arch.astro` (grand arch holding a `.daybreak-bloom`; wordmark seated on a CLEAR off-white inner
+    zone, never over the glow), `Eyebrow`/`Bracket`, `BookButton` (already disabled-state), the type
+    tokens, and `daybreak-dawn`/`-dawn-bloom` for the one-beat arch-dawn on load. **Place the
+    `[data-mt-hero-sentinel]`** at the bottom of the hero so the Header flips to solid + the BookBar
+    activates (both already wired to it). One `h1` = the conference identity; tagline = the 3-word
+    version (Caslon Text italic); facts strip (date/time `in sha Allah`, `◐ NMJ Islamic Centre ›` →
+    Maps, `Tickets from R250 ›` → `#tickets`). Then About (§3) and Speakers (+joint band, order
+    D4/D24, §4) to close S3. Data is in `src/data/muslimah-today/*`; resolve images via
+    `import.meta.glob` + `astro:assets` `<Image>` (see B1b note above).
+  - **Verify workflow** (unchanged): `git add` new paths **before** `bash Muslima_Today/scripts/
+    verify-mt.sh`; then `node Muslima_Today/scripts/shoot.mjs` and **open `.verify/{mobile,desktop}.png`
+    and inspect CRITICALLY**. As sections land, the §4 content/anchor checks flip from pending → green.
 - `2026-06-30` — **A2b + B1 + B1b done → next leg = B1c (global shell).** This fire closed out
   S1 and built the S2 foundation:
   - **A2b** (`5c6a003`) — re-cut all 7 speaker tiles with rembg `alpha_matting=True` + a gentle
