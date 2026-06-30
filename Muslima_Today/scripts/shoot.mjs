@@ -1,5 +1,12 @@
 // shoot.mjs — VISUAL verification for the Muslimah Today build.
 // Serves dist/, screenshots the page at mobile + desktop, runs axe a11y, writes a report.
+//
+// Contexts emulate `prefers-reduced-motion: reduce` so the global RM rule pins every
+// "Daybreak" reveal/bloom to its FINAL LIT state. Without this a fullPage (no-scroll)
+// capture renders below-fold `.daybreak-reveal` elements at opacity 0 (their scroll-
+// driven start state) — i.e. blank — making below-fold sections impossible to inspect.
+// Reduced-motion = the page fully revealed AND it doubles as the RM acceptance check
+// (an explicit design/03 criterion). See STATUS [WORKER-CHANGE].
 //   node Muslima_Today/scripts/shoot.mjs            # screenshot + axe the built /MT/ page
 //   node Muslima_Today/scripts/shoot.mjs --smoke    # just prove Chromium launches (no page needed)
 //   MT_PATH=/MT/ node ...                           # override the page path
@@ -54,7 +61,7 @@ const browser = await chromium.launch(launchOpts);
 const report = {};
 let bad = 0;
 for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['desktop', { width: 1440, height: 900 }]]) {
-  const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2 });
+  const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   const consoleErrors = [];
   page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
