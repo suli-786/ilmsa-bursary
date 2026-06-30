@@ -28,15 +28,29 @@ else note "MT source not created yet (setup phase) — skipped"; fi
 
 echo "== 4. Content checks (built HTML) =="
 html="$(ls dist/MT/index.html dist/MT.html 2>/dev/null | head -1 || true)"
+# While the build is still RUNNING (per STATUS Loop state), the page is assembled
+# section-by-section — missing copy/anchors for not-yet-built sections are reported
+# as pending NOTES, not failures. They become HARD gates at handoff (any non-RUNNING
+# state: AWAITING-HUMAN / DONE / HALTED) and whenever STATUS is unreadable
+# (fail-safe default = enforce). The wrong-value guards stay hard at all times.
+STATUSMD="$ROOT/Muslima_Today/build-docs/STATUS.md"
+loopstate="$(grep -m1 -i 'Loop state:' "$STATUSMD" 2>/dev/null | grep -oE '`[A-Za-z-]+`' | head -1 | tr -d '`' | tr '[:lower:]' '[:upper:]')"
+[ "$loopstate" = "RUNNING" ] && content_pending=1 || content_pending=0
 if [ -z "$html" ]; then note "MT page not built yet (setup phase) — skipped"; else
   must=( "Sisterhood" "Spiritual Upliftment" "in sha Allah" "NMJ" "2026" \
          "R250" "R320" "R220" "Kilumbilo" "Ebrahim Rasool" "Rosieda Shabodien" \
          "Love, Deen and Life" "Fathima" "Polygon" )
-  miss=0
-  for s in "${must[@]}"; do grep -qiF "$s" "$html" || { err "missing copy: \"$s\""; miss=1; }; done
-  for a in 'id="about"' 'id="speakers"' 'id="tickets"'; do grep -qiF "$a" "$html" || { err "missing anchor: $a"; miss=1; }; done
-  [ "$miss" -eq 0 ] && ok "required copy + anchors present"
-  # guard against the known wrong values
+  miss=0; pend=0
+  contentcheck(){ # $1 = failure message, $2 = string that must be present
+    grep -qiF "$2" "$html" && return
+    if [ "$content_pending" -eq 1 ]; then note "pending (build in progress): $1"; pend=1
+    else err "$1"; miss=1; fi
+  }
+  for s in "${must[@]}"; do contentcheck "missing copy: \"$s\"" "$s"; done
+  for a in 'id="about"' 'id="speakers"' 'id="tickets"'; do contentcheck "missing anchor: $a" "$a"; done
+  if [ "$miss" -eq 0 ] && [ "$pend" -eq 0 ]; then ok "required copy + anchors present"
+  elif [ "$miss" -eq 0 ]; then note "content/anchors pending while Loop state RUNNING — enforced at handoff"; fi
+  # guard against the known wrong values (always hard — only fire if the bad string is present)
   grep -qiF "Mponda" "$html"  && err "found 'Mponda' (must be Kilumbilo)"
   grep -qiF "Spritual" "$html" && err "found flyer typo 'Spritual'"
 fi
