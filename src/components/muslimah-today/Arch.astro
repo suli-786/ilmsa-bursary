@@ -1,0 +1,31 @@
+---
+/**
+ * Arch — the bracket's architectural cousin (design/02 balance rule 3: "the arch is
+ * singular"). A rounded-top "tombstone" frame (--radius-arch) that clips its slot to
+ * the arch shape. Used ONCE large (hero) + ONCE as the headliner niche (Ebrahim /
+ * Rosieda portraits, S4 Speakers) — never elsewhere. Optional off-white ring + 1px
+ * keyline matching the speaker portrait treatment.
+ */
+interface Props {
+  /** Off-white ring + magenta-200 keyline (the portrait/niche treatment). */
+  ring?: boolean;
+  class?: string;
+}
+const { ring = false, class: klass = "" } = Astro.props;
+---
+<div class={`mt-arch ${ring ? "mt-arch--ring" : ""} ${klass}`.trim()}>
+  <slot />
+</div>
+
+<style>
+  .mt-arch {
+    border-radius: var(--radius-arch);
+    overflow: hidden;
+  }
+  .mt-arch--ring {
+    /* 4px off-white ring + 1px magenta-200 keyline (design/02 Imagery / Speaker card) */
+    box-shadow:
+      0 0 0 4px var(--mt-ring),
+      0 0 0 5px var(--mt-border);
+  }
+</style>

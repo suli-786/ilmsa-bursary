@@ -1,0 +1,50 @@
+---
+/**
+ * Eyebrow — section eyebrow per design/02 (Section header / eyebrow): the small
+ * `.mt-bracket` motif as a lilac-100 band with a magenta-600 uppercase label sitting
+ * on the middle bar (Source Sans 600, --track-eyebrow). Each section opens with one
+ * (design/03 §1 scroll-journey). The bracket stretches to the label width.
+ */
+import Bracket from "./Bracket.astro";
+
+interface Props {
+  /** The eyebrow label text (e.g. "About", "Speakers"). Rendered uppercase. */
+  label: string;
+  class?: string;
+}
+const { label, class: klass = "" } = Astro.props;
+---
+<span class={`mt-eyebrow ${klass}`.trim()}>
+  <Bracket class="mt-eyebrow__band" />
+  <span class="mt-eyebrow__label">{label}</span>
+</span>
+
+<style>
+  .mt-eyebrow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.25rem;
+    padding: var(--space-2) var(--space-6);
+  }
+  .mt-eyebrow :global(.mt-eyebrow__band) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--color-mt-lilac-100); /* lilac band (eyebrow variant) */
+    z-index: 0;
+  }
+  .mt-eyebrow__label {
+    position: relative;
+    z-index: 1;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: var(--track-eyebrow);
+    color: var(--mt-accent); /* magenta-600 on lilac-100 — AA */
+  }
+</style>

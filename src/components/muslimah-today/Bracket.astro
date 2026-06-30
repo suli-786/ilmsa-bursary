@@ -1,0 +1,76 @@
+---
+/**
+ * Bracket — the MT brand signature: the wordmark's I-beam / "notched-pill" silhouette
+ * (design/02 → "Bracket-shape usage system", geometry measured from the logo vector).
+ * Inline SVG path, `fill: currentColor`, crisp at any size. Reused for section eyebrows
+ * (small) and feature bands (joint-session, sales-close, closing CTA). The arch is its
+ * architectural cousin and lives in Arch.astro.
+ *
+ * Geometry (proportional — independent of the chosen viewBox aspect):
+ *   end-caps  = 16% of width each, outer corners square
+ *   notch     = 66% of width, centred; depth 28% of height top & bottom
+ *   middle bar= 44% of height (label/wordmark sits here)
+ *   inner notch corners rounded, radius = 0.13 × height
+ */
+interface Props {
+  /** Full-width feature band vs inline motif. */
+  band?: boolean;
+  /** Accessible label; when omitted the SVG is decorative (aria-hidden). */
+  title?: string;
+  class?: string;
+}
+const { band = false, title, class: klass = "" } = Astro.props;
+
+// viewBox at the logo's ~5.6:1 band aspect; the path below is pure proportion.
+// End-caps (16% each, square outer corners) are implied by the 66% notch span.
+const W = 280;
+const H = 50;
+const nx1 = (W - 0.66 * W) / 2; // 47.6 — notch left edge
+const nx2 = W - nx1; // 232.4 — notch right edge
+const d = 0.28 * H; // 14 — notch depth (top & bottom)
+const r = 0.13 * H; // 6.5 — inner corner radius
+const f = (n: number) => Number(n.toFixed(2));
+
+// Outline clockwise from the top-left; outer corners square, notch inner corners filleted.
+const path = [
+  `M0,0`,
+  `H${f(nx1)}`,
+  `V${f(d - r)}`,
+  `A${f(r)},${f(r)} 0 0 0 ${f(nx1 + r)},${f(d)}`,
+  `H${f(nx2 - r)}`,
+  `A${f(r)},${f(r)} 0 0 0 ${f(nx2)},${f(d - r)}`,
+  `V0`,
+  `H${W}`,
+  `V${H}`,
+  `H${f(nx2)}`,
+  `V${f(H - d + r)}`,
+  `A${f(r)},${f(r)} 0 0 0 ${f(nx2 - r)},${f(H - d)}`,
+  `H${f(nx1 + r)}`,
+  `A${f(r)},${f(r)} 0 0 0 ${f(nx1)},${f(H - d + r)}`,
+  `V${H}`,
+  `H0`,
+  `Z`,
+].join(" ");
+
+const aria = title ? { role: "img", "aria-label": title } : { "aria-hidden": "true" };
+---
+<svg
+  class={`mt-bracket ${band ? "mt-bracket--band" : ""} ${klass}`.trim()}
+  viewBox={`0 0 ${W} ${H}`}
+  preserveAspectRatio="none"
+  {...aria}
+>
+  <path d={path} fill="currentColor" />
+</svg>
+
+<style>
+  .mt-bracket {
+    display: block;
+    width: 100%;
+    height: auto;
+    color: var(--color-mt-lilac-200); /* default tint; host sets `color` to recolour the fill */
+  }
+  .mt-bracket--band {
+    color: var(--mt-feature);
+  }
+</style>
