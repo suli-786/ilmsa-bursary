@@ -9,9 +9,9 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `2c0fee4` — build-system setup complete.
-- **Current segment:** S1 — Assets *(not started)*.
-- **Next action:** S1 · **A1** (sort & convert logos).
+- **Last commit:** `c545926` — A1 logos done (20 build-ready PNGs).
+- **Current segment:** S1 — Assets *(in progress: A1 done; A2 next)*.
+- **Next action:** S1 · **A2** (process 7 speakers → D26 bg, circular, ringed).
 - **Loop state:** `RUNNING` — build phase; do the tasks below now.
 - **Build-ready?** No.
 
@@ -23,7 +23,7 @@ fires after a session-limit reset continues purely from here.
 ### S1 — Assets → `src/assets/muslimah-today/**`
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
-| A1 | Sort & convert logos (PDF/TIF→SVG/PNG) into tiers | TODO | — | `pymupdf` in `.venv` |
+| A1 | Sort & convert logos (PDF/TIF→SVG/PNG) into tiers | DONE | `c545926` | 20 PNGs via `scripts/process-logos.py`; ILM-for-Women split→stacked+horizontal; Luxe dark-bg kept (gold legible); Osmans has harmless white box (invisible in white chip) |
 | A2 | Process 7 speakers → standard bg (D26), circular, ringed | TODO | — | `rembg`; design/02 Imagery |
 | A3 | Check speaker resolution; flag low-res | TODO | — | esp. Ebrahim ~91 KB (M6) |
 | A4 | Curate + optimise 6–10 past-event photos | TODO | — | exclude flyers (D19); any photo usable (D30) |
