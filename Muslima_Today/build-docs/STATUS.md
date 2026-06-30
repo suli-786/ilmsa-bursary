@@ -9,12 +9,11 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `8d281fa` — A4 past-events done. **S1 (Assets) COMPLETE.**
-- **Current segment:** **S2 — Scaffold + system** *(not started)*. S1 done (A1–A5; A6 client-blocked).
-- **Next action:** S1 · **A2b** — re-cut speaker tiles to remove cut-out artifacts (see `[OPEN]`),
-  THEN S2 · **B1** (scaffold route `src/pages/MT.astro` + `src/styles/muslimah-today.css` with
-  `design/02` tokens in `@theme`; never import `global.css`) → B1b → B1c → B3 → B4 → B4m.
-- **Loop state:** `RUNNING` — assets complete; next fire builds S2 (scaffold + system).
+- **Last commit:** `5c6a003` — A2b re-cut speaker tiles (alpha matting). **S1 (Assets) FULLY COMPLETE.**
+- **Current segment:** **S2 — Scaffold + system** *(not started)*. S1 done (A1–A5, A2b; A6 client-blocked).
+- **Next action:** S2 · **B1** (scaffold route `src/pages/MT.astro` + `src/styles/muslimah-today.css`
+  with `design/02` tokens in `@theme`; never import `global.css`) → B1b → B1c → B3 → B4 → B4m.
+- **Loop state:** `RUNNING` — assets fully complete; next builds S2 (scaffold + system).
 - **Build-ready?** No (page not scaffolded yet).
 
 ## Status key
@@ -29,7 +28,7 @@ fires after a session-limit reset continues purely from here.
 | A2 | Process 7 speakers → standard bg (D26), circular, ringed | DONE | `99bbb0e` | `scripts/process-speakers.py`; baked square JPEG tiles on D26 gradient; **circle/arch mask + ring applied at BUILD via CSS tokens** (one asset → grid circle + Ebrahim/Rosieda arch); Shubnum uses a manual face box (Haar unreliable on her tilted/foliage shot) |
 | A3 | Check speaker resolution; flag low-res | DONE | `99bbb0e` | All usable. Ebrahim 562×789 but face fills frame (no upscale) → crisp at grid, slightly soft at arch (**M6**, not blocking). Aisha 1.67× upscale (small face in 1536² source) → mildly soft. Others crisp (downscaled). |
 | A4 | Curate + optimise 6–10 past-event photos | DONE | `8d281fa` | `scripts/process-pastevents.py`; 8 gallery + Naledi portrait (testimonial companion); flyers excluded; 1600px JPEG q82 (~2.2MB) |
-| A2b | **Re-cut speaker tiles — clean edges** (fix Rosieda black box + Adam/Shubnum/Zohra dark halos) | TODO | — | re-run `scripts/process-speakers.py` with `rembg` **alpha matting** (`alpha_matting=True`) or a stronger model (`isnet-general-use`/`birefnet-general`); verify edges are clean on the D26 gradient via the contact sheet. If a subject won't clean automatically, flag `[OPEN]` + proceed (**non-blocking**). |
+| A2b | **Re-cut speaker tiles — clean edges** (fixed Rosieda black box + Adam/Shubnum/Zohra dark halos) | DONE | `5c6a003` | `rembg alpha_matting=True` (fg-colour estimation kills dark spill) + gentle alpha erode/feather; `WORK_LONG` kept 3000 so high-res faces stay crisp. All 4 defects gone, Ebrahim/Fatima/Aisha unchanged, hair detail preserved (verified on regenerated `.verify/speakers-contact-sheet.png` + full-res tiles). Script now self-generates the faithful circle/arch+ring contact sheet. |
 | A5 | Image tooling (`rembg`+`pymupdf`+`pillow`) | DONE | (pre-baseline) | in `Muslima_Today/.venv` |
 | A6 | Collect 2 pending sponsor logos | BLOCKED(client) | — | footer uses extensible slot meanwhile |
 
@@ -97,10 +96,9 @@ sponsor slots for the 2 pending logos.
   A higher-res Ebrahim file would improve the arch. *Not blocking.*
 - **Aisha res** — source 1536² with a small in-frame face → ~1.67× upscale, mildly soft at
   grid size. Acceptable; a tighter/higher-res headshot would sharpen her tile.
-- **Speaker cut-out artifacts (A2)** — `rembg` left a hard **black box on Rosieda** (dark top/dark
-  bg not removed) and **dark edge halos on Adam, Shubnum, Zohra**; Ebrahim/Fatima/Aisha are clean.
-  Spotted on the contact sheet during supervision → fix queued as **A2b** (before the page is built
-  on these tiles).
+- **Speaker cut-out artifacts (A2)** — ~~black box on Rosieda + dark halos on Adam/Shubnum/Zohra~~
+  **RESOLVED in A2b** (`5c6a003`) via rembg alpha matting + alpha edge-clean; verified clean on the
+  regenerated contact sheet + full-res tiles. Ebrahim/Fatima/Aisha stayed clean.
 
 ## Handoff log *(newest first)*
 - `2026-06-30` — **S1 (Assets) COMPLETE → next leg = S2 (scaffold + system).** All build-ready
