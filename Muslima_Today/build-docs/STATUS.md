@@ -9,15 +9,14 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `a3d1fd7` — shoot.mjs RM capture (+ `b831c28` S3 About). **S2 COMPLETE**;
-  **S3 IN PROGRESS** (Hero ✓ · About ✓; Speakers next).
-- **Current segment:** **S3 — Sections A** *(Hero ✓ · About ✓ · Speakers next — closes S3)*.
-- **Next action:** S3 · **Speakers `#speakers` + joint band** (`design/03` §4, order D4/D24:
-  Ebrahim → Rosieda → [joint band] → Fatima → Adam → Aisha → Shubnum → Zohra). Build
-  `SpeakerCard.astro` (variant `niche`/`circle`, one component looped over `speakers[]`) +
-  `JointSession.astro` (magenta band). Reuse `SectionHeader`, `Arch` (niche, `ring`),
-  bio-disclosure (`<button aria-expanded>`). Mount after `<About/>` in `MT.astro`. Closes S3.
-- **Loop state:** `RUNNING` — S2 done; S3 Hero + About built & verified; Speakers in progress.
+- **Last commit:** `9d90520` — shoot.mjs lazy-load scroll (+ `8872958` S3 Speakers).
+  **S2 COMPLETE · S3 COMPLETE** (Hero ✓ · About ✓ · Speakers + joint band ✓).
+- **Current segment:** **S4 — Sections B** *(next; S3 just closed)*.
+- **Next action:** S4 · **Testimonials** (`design/03` §5) — first S4 section. Then Past-events
+  (§6) → **Tickets `#tickets`** (§7, the scannable climax — its anchor is still pending in the
+  content checks) → Footer (§8). Build each from `src/data/muslimah-today/*` + named components,
+  reusing `SectionHeader`; mount after `<Speakers/>` in `MT.astro`, top-to-bottom.
+- **Loop state:** `RUNNING` — S3 sections done & verified; S4 (Testimonials…Footer) is next.
 - **Build-ready?** Partial — page builds to `dist/MT/index.html` with the full system live (off-white
   ground, fonts, shell, brand primitives, motion utilities); **section content** (Hero…Footer) is
   S3/S4. *(verify-mt.sh §4 content checks report **pending** while Loop state RUNNING — enforced at
@@ -54,7 +53,7 @@ fires after a session-limit reset continues purely from here.
 |---|---|---|---|---|
 | Hero | Hero `#top` | DONE | `fae1800` | design/03 §2; ILM-stacked + arch-dawn bloom + h1 (wordmark image + title) + Caslon-italic tagline + facts strip (date/venue→Maps/Tickets→#tickets) + disabled Book CTA. Sentinel = whole section. ~1 viewport mobile; 0 console/axe. |
 | About | About `#about` | DONE | `b831c28` | design/03 §3; verbatim para (about.ts) + SR-safe ::first-letter drop-cap (magenta-400 for AA) + warm companion photo (gallery-embrace). Shared `SectionHeader.astro` introduced. 0 console/axe. |
-| Speakers | Speakers `#speakers` + joint band (order D4/D24) | TODO | — | design/03 §4 |
+| Speakers | Speakers `#speakers` + joint band (order D4/D24) | DONE | `8872958` | design/03 §4; `SpeakerCard` (niche/circle, looped) + `JointSession` magenta band. Order EXACT; verbatim (Kilumbilo, doubled-quote joint title); uniform D26 portraits + ring; accessible bio disclosures. 0 console/axe; portraits clean (no halos). |
 
 ### S4 — Sections B
 | ID | Task | Status | Commit | Notes |
@@ -95,12 +94,14 @@ sponsor slots for the 2 pending logos.
   drop-cap at magenta-300, but as a `::first-letter` it IS real text (the "M" of "Muslimah"), and
   magenta-300 on off-white is ~2.4:1 — below even the large-text AA floor (3:1). magenta-400 (~3.6:1)
   is the minimal darkening that passes while keeping the soft look. design/02 AA baseline > exact tint.
-- **`shoot.mjs` emulates reduced-motion for captures (S3 About, `a3d1fd7`)** — the visual harness now
-  sets `reducedMotion: 'reduce'`, so the global RM rule pins every Daybreak reveal/bloom to its FINAL
-  LIT state. Without it, a fullPage (no-scroll) screenshot renders below-fold `.daybreak-reveal`
-  elements at opacity 0 (scroll-driven start) = blank, so below-fold sections can't be inspected. The
-  RM capture shows the page fully revealed AND validates the RM acceptance state (design/03 §10). The
-  console-error + axe gate is unchanged.
+- **`shoot.mjs` capture robustness (S3, `a3d1fd7` + `9d90520`)** — two harness fixes so fullPage
+  captures actually show below-fold content for inspection. **(1)** Contexts emulate
+  `reducedMotion: 'reduce'`, so the global RM rule pins every Daybreak reveal/bloom to its FINAL LIT
+  state; without it a no-scroll fullPage shot renders below-fold `.daybreak-reveal` at opacity 0
+  (scroll-driven start) = blank. Doubles as the RM acceptance check (design/03 §10). **(2)** Before
+  each capture the runner scrolls top→bottom→top so `loading="lazy"` images past Chrome's lazy
+  distance threshold load (else below-fold portraits/gallery shoot blank — worse on the taller mobile
+  page). The console-error + axe gate is unchanged. Helps every remaining leg (esp. the S4 gallery).
 - **Hero dawn-bloom glow (S3 Hero, `fae1800`)** — the hero arch's light-bloom uses a **local**
   radial glow built from **magenta-200 ↔ lilac-200** (still palette ramp tints, no new hue, magenta
   stays "light") instead of the shared `--mt-glow` (magenta-100↔lilac-100). At the bloom's 0.5
@@ -155,6 +156,36 @@ sponsor slots for the 2 pending logos.
   regenerated contact sheet + full-res tiles. Ebrahim/Fatima/Aisha stayed clean.
 
 ## Handoff log *(newest first)*
+- `2026-06-30` — **S3 COMPLETE (Hero · About · Speakers + joint band) → next segment = S4 (Sections
+  B: Testimonials · Past-events · Tickets · Footer).** This fire built all three S3 sections on the
+  S2 system, each verified (structural `verify-mt.sh` PASS + visual `shoot.mjs`, mobile + desktop
+  inspected critically) and committed:
+  - **Hero `#top`** (`fae1800`) — ILM-for-Women stacked logo → the one grand arch holding the
+    "arch-dawn" light-bloom (local magenta-200↔lilac-200 glow so the dawn is visible; see
+    `[WORKER-CHANGE]`), MT wordmark on clear off-white → `h1` (wordmark image + title) +
+    Caslon-italic tagline → facts strip (date/time incl. "in sha Allah" · venue→Maps · Tickets→
+    `#tickets`) → disabled Book CTA (M5) → scroll cue. `[data-mt-hero-sentinel]` on the whole
+    section (Header transparent over the whole hero, BookBar hidden over it; see `[WORKER-CHANGE]`).
+  - **About `#about`** (`b831c28`) — shared **`SectionHeader.astro`** (eyebrow + rule + Caslon h2,
+    reused by Speakers + S4) → verbatim About paragraph (`about.ts`) with a SR-safe `::first-letter`
+    drop-cap (magenta-400 for AA) → warm companion photo (`gallery-embrace`), 2-col on desktop.
+  - **Speakers `#speakers` + joint band** (`8872958`) — `SpeakerCard.astro` looped over `speakers[]`
+    (variant niche=arch / circle=grid; accessible bio disclosure) + `JointSession.astro` (the
+    magenta feature band, doubled-quote Caslon-italic title). Order EXACT (D4/D24); portraits clean.
+  - **Harness** (`a3d1fd7`, `9d90520`) — `shoot.mjs` now emulates reduced-motion AND scrolls to load
+    lazy images, so fullPage captures reliably show below-fold sections (see `[WORKER-CHANGE]`).
+  - **S4 worker — start with Testimonials** (`design/03` §5; copy verbatim from `testimonials.ts` ←
+    `01-content.md` §5 — all 5, Clare's 2022/2023 kept, **Fathima** ≠ speaker **Fatima**). Then
+    Past-events (§6, `gallery[]`, no flyers/video), **Tickets `#tickets`** (§7 — the scannable
+    climax: `R250` the biggest glance target, both deadlines visible; M5-disabled Book/Sponsored),
+    Footer (§8 — attribution + 3 sponsor tiers from `sponsors[]` + socials + Maps; ILM-SA stays
+    teal, out of palette; **no second full-magenta CTA**). Reuse `SectionHeader`/`BookButton`/`Arch`/
+    `Eyebrow`/`Bracket`. Data modules already exist (`testimonials`/`gallery`/`ticket-tiers`/
+    `sponsors`). Mount after `<Speakers/>` in `MT.astro`. **Verify workflow unchanged:** `git add`
+    new paths → `bash Muslima_Today/scripts/verify-mt.sh` → `node Muslima_Today/scripts/shoot.mjs`
+    and **open `.verify/{mobile,desktop}.png` and inspect CRITICALLY** (the §4 content checks for
+    R320/R220/Fathima/Polygon + `id="tickets"` flip pending→green as S4 lands). When S4+S5 are done
+    and the page is complete, write the **final-walkthrough handoff** and set `Loop state: AWAITING-HUMAN`.
 - `2026-06-30` — **S2 COMPLETE (B1c · B3 · B4 · B4m) → next segment = S3 (Sections A: Hero · About ·
   Speakers).** This fire built the whole S2 system on top of the B1/B1b foundation:
   - **B1c** (`7742780`) — global shell. `Header.astro` (fixed; transparent-over-hero → solid past a
