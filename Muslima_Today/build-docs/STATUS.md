@@ -9,9 +9,9 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `c545926` — A1 logos done (20 build-ready PNGs).
-- **Current segment:** S1 — Assets *(in progress: A1 done; A2 next)*.
-- **Next action:** S1 · **A2** (process 7 speakers → D26 bg, circular, ringed).
+- **Last commit:** `99bbb0e` — A2 speakers done (7 D26 tiles); A3 res-check done.
+- **Current segment:** S1 — Assets *(A1–A3 done; A4 next)*.
+- **Next action:** S1 · **A4** (curate + optimise 6–10 past-event photos).
 - **Loop state:** `RUNNING` — build phase; do the tasks below now.
 - **Build-ready?** No.
 
@@ -24,8 +24,8 @@ fires after a session-limit reset continues purely from here.
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
 | A1 | Sort & convert logos (PDF/TIF→SVG/PNG) into tiers | DONE | `c545926` | 20 PNGs via `scripts/process-logos.py`; ILM-for-Women split→stacked+horizontal; Luxe dark-bg kept (gold legible); Osmans has harmless white box (invisible in white chip) |
-| A2 | Process 7 speakers → standard bg (D26), circular, ringed | TODO | — | `rembg`; design/02 Imagery |
-| A3 | Check speaker resolution; flag low-res | TODO | — | esp. Ebrahim ~91 KB (M6) |
+| A2 | Process 7 speakers → standard bg (D26), circular, ringed | DONE | `99bbb0e` | `scripts/process-speakers.py`; baked square JPEG tiles on D26 gradient; **circle/arch mask + ring applied at BUILD via CSS tokens** (one asset → grid circle + Ebrahim/Rosieda arch); Shubnum uses a manual face box (Haar unreliable on her tilted/foliage shot) |
+| A3 | Check speaker resolution; flag low-res | DONE | `99bbb0e` | All usable. Ebrahim 562×789 but face fills frame (no upscale) → crisp at grid, slightly soft at arch (**M6**, not blocking). Aisha 1.67× upscale (small face in 1536² source) → mildly soft. Others crisp (downscaled). |
 | A4 | Curate + optimise 6–10 past-event photos | TODO | — | exclude flyers (D19); any photo usable (D30) |
 | A5 | Image tooling (`rembg`+`pymupdf`+`pillow`) | DONE | (pre-baseline) | in `Muslima_Today/.venv` |
 | A6 | Collect 2 pending sponsor logos | BLOCKED(client) | — | footer uses extensible slot meanwhile |
@@ -78,10 +78,22 @@ route `/MT` · standard speaker bg (D26) · disabled Book/Sponsored CTAs until M
 sponsor slots for the 2 pending logos.
 
 ## `[WORKER-CHANGE]` log *(any worker design improvement, within the system)*
-- *(none yet)*
+- **Speaker tiles (A2) — shape/ring applied at build, not baked.** Tiles are square subject-on-
+  D26-gradient JPEGs; the circular *and* arch masks + off-white ring/keyline are CSS at build
+  (`--radius-circle`/`--radius-arch`, `--mt-ring`, `--mt-border`). Reason: one asset serves both
+  the circular grid and the Ebrahim/Rosieda arch niche (design/02) — baking a circle+ring would
+  block the arch. Within the system (those are all tokens). **S3 worker: apply the mask + ring.**
+- **ILM-for-Women logo (A1)** delivered as two lockups on one page → split into the two official
+  lockups design/02 already specifies: `org-ilm-for-women-stacked` + `-horizontal`.
+- **Luxe logo (A1)** kept on its delivered dark background (gold-on-transparent would vanish in a
+  white chip). The build may seat Luxe on a dark mini-panel if chip consistency needs it.
 
 ## `[OPEN]` flags raised during build
-- *(none yet)*
+- **M6 (Ebrahim res)** — confirmed: source 562×789, processed as specced (no upscale; face
+  fills frame). Crisp at the circular grid size; **slightly soft at the larger headliner arch**.
+  A higher-res Ebrahim file would improve the arch. *Not blocking.*
+- **Aisha res** — source 1536² with a small in-frame face → ~1.67× upscale, mildly soft at
+  grid size. Acceptable; a tighter/higher-res headshot would sharpen her tile.
 
 ## Handoff log *(newest first)*
 - `2026-06-30` — **Build phase START.** Build-system setup complete (`2c0fee4`). The first
