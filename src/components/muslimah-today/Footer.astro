@@ -1,0 +1,363 @@
+---
+/**
+ * Footer — the restrained warm sign-off (design/03 §8, design/02 "Footer"). Tickets
+ * already delivered the saturated magenta climax, so the footer carries NO second
+ * full-magenta CTA — only a small text "Book your seat ›" link back to #tickets.
+ *
+ * Order (mobile, stacked & centred): warm sign-off reusing the verbatim date →
+ * "brought to you by" lockups (ILM-for-Women stacked→horizontal + a division of +
+ * ILM-SA TEAL, UNTOUCHED) → 3 sponsor tiers (Polygon primary · Media Partners ·
+ * Sponsors — `auto-fit` chip grid so the +2 pending logos (A6) drop in with zero
+ * redesign) → socials (FB/IG/WhatsApp, 44px) → venue + Maps → small grey credit.
+ *
+ * Copy verbatim from event.ts (← 01-content.md §1/§6). Sponsors from sponsors.ts,
+ * grouped by tier, every chip a looped SponsorChip. `data-mt-footer` lets the
+ * BookBar observer hide the sticky bar while the footer is in view (design/03 §1).
+ * Motion: blocks reveal; lit & static under reduced-motion.
+ */
+import { Image } from "astro:assets";
+import { event } from "../../data/muslimah-today/event.ts";
+import { primarySponsor, mediaPartners, sponsors } from "../../data/muslimah-today/sponsors.ts";
+import SponsorChip from "./SponsorChip.astro";
+import ilmStacked from "../../assets/muslimah-today/logos/org-ilm-for-women-stacked.png";
+import ilmHorizontal from "../../assets/muslimah-today/logos/org-ilm-for-women-horizontal.png";
+import ilmSa from "../../assets/muslimah-today/logos/org-ilm-sa.png";
+
+const signoff = `${event.date}, ${event.inshaAllah}`;
+---
+<footer class="mt-footer" data-mt-footer aria-labelledby="mt-footer-heading">
+  <h2 id="mt-footer-heading" class="mt-sr-only">Event details, sponsors and contact</h2>
+  <div class="mt-footer__inner daybreak-reveal">
+
+    {/* Warm sign-off — verbatim date + a small Book link (NOT a magenta CTA, design/03 §8). */}
+    <p class="mt-footer__signoff">
+      <span>{signoff}</span>
+      <a class="mt-footer__booklink" href="#tickets">Book your seat<span class="mt-footer__chev" aria-hidden="true">›</span></a>
+    </p>
+
+    {/* Brought to you by — lockups; ILM-SA stays teal, never recoloured. */}
+    <div class="mt-footer__attrib">
+      <p class="mt-footer__lead">{event.attribution.lead}</p>
+      <div class="mt-footer__lockups">
+        <Image class="mt-footer__lockup mt-footer__lockup--stacked" src={ilmStacked} alt={event.attribution.org} loading="lazy" />
+        <Image class="mt-footer__lockup mt-footer__lockup--horizontal" src={ilmHorizontal} alt={event.attribution.org} loading="lazy" />
+        <span class="mt-footer__division">{event.attribution.division}</span>
+        <Image class="mt-footer__lockup mt-footer__lockup--ilmsa" src={ilmSa} alt={event.attribution.parent} loading="lazy" />
+      </div>
+    </div>
+
+    {/* Sponsors — 3 tiers, every chip a looped SponsorChip. */}
+    <div class="mt-footer__sponsors">
+      <div class="mt-footer__tier">
+        <p class="mt-footer__tier-label">Primary Sponsor</p>
+        <div class="mt-footer__primary">
+          <SponsorChip sponsor={primarySponsor} primary />
+        </div>
+      </div>
+
+      {/* [OPEN] media-partner display names pending final confirmation (Q-name); shown as listed. */}
+      <div class="mt-footer__tier">
+        <p class="mt-footer__tier-label">Media Partners</p>
+        <div class="mt-footer__media">
+          {mediaPartners.map((s) => <SponsorChip sponsor={s} />)}
+        </div>
+      </div>
+
+      <div class="mt-footer__tier">
+        <p class="mt-footer__tier-label">Sponsors</p>
+        {/* auto-fit grid — the +2 pending sponsor logos (A6) drop in with no redesign. */}
+        <div class="mt-footer__grid">
+          {sponsors.map((s) => <SponsorChip sponsor={s} />)}
+        </div>
+      </div>
+    </div>
+
+    {/* Socials — icon buttons + handles. */}
+    <ul class="mt-footer__socials">
+      {event.socials.map((s) => (
+        <li>
+          <a class="mt-footer__social" href={s.url} target="_blank" rel="noopener noreferrer" aria-label={`${s.platform} — ${s.handle}`}>
+            <span class="mt-footer__social-icon" aria-hidden="true">
+              {s.platform === "Facebook" && (
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.3l.4-2.9h-2.7V9.3c0-.84.23-1.41 1.43-1.41H16V5.3c-.27-.04-1.2-.12-2.27-.12-2.25 0-3.79 1.37-3.79 3.9v2.02H7.6V14h2.34v7h3.56z" /></svg>
+              )}
+              {s.platform === "Instagram" && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><line x1="17.6" y1="6.4" x2="17.6" y2="6.4" stroke-width="2.6" stroke-linecap="round" /></svg>
+              )}
+              {s.platform === "WhatsApp" && (
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.02zM12.04 20.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.41a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42l-.48-.01c-.17 0-.43.06-.66.31s-.86.85-.86 2.07c0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z" /></svg>
+              )}
+            </span>
+            <span class="mt-footer__social-handle">{s.handle}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {/* Venue + Maps. */}
+    <p class="mt-footer__venue">
+      <a class="mt-footer__maps" href={event.mapsUrl} target="_blank" rel="noopener noreferrer">
+        <svg class="mt-footer__pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0Z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        <span>{event.venue}</span>
+        <span class="mt-footer__chev" aria-hidden="true">›</span>
+      </a>
+    </p>
+
+    <p class="mt-footer__credit">© {event.edition} {event.attribution.parent}</p>
+  </div>
+</footer>
+
+<style>
+  .mt-footer {
+    padding: var(--section-y) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom));
+    background: var(--mt-surface-lilac);
+    border-top: 1px solid var(--mt-border);
+  }
+  .mt-footer__inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-7);
+  }
+
+  /* Warm sign-off + small Book link (text, not a magenta CTA). */
+  .mt-footer__signoff {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-serif-text);
+    font-style: italic;
+    font-size: var(--text-md);
+    color: var(--mt-heading);
+  }
+  .mt-footer__booklink {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    min-height: 44px;
+    font-family: var(--font-body);
+    font-style: normal;
+    font-weight: 600;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--track-caps);
+    color: var(--mt-link);
+    text-decoration: none;
+  }
+  .mt-footer__booklink:hover,
+  .mt-footer__booklink:focus-visible {
+    color: var(--mt-link-hover);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .mt-footer__chev {
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  /* Brought to you by — lockups. */
+  .mt-footer__attrib {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .mt-footer__lead {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--track-eyebrow);
+    color: var(--mt-text-muted);
+  }
+  .mt-footer__lockups {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .mt-footer__lockup {
+    display: block;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .mt-footer__lockup--stacked {
+    max-height: 5rem;
+  }
+  .mt-footer__lockup--horizontal {
+    display: none;
+    max-height: 4rem;
+  }
+  .mt-footer__lockup--ilmsa {
+    max-height: 4.5rem;
+  }
+  .mt-footer__division {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--mt-text-muted);
+  }
+
+  /* Sponsor tiers. */
+  .mt-footer__sponsors {
+    width: 100%;
+    max-width: 60rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .mt-footer__tier {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .mt-footer__tier-label {
+    margin: 0;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--track-eyebrow);
+    color: var(--mt-accent);
+  }
+  .mt-footer__primary {
+    display: flex;
+    justify-content: center;
+  }
+  .mt-footer__primary :global(.mt-chip) {
+    width: 100%;
+    max-width: 18rem;
+  }
+  .mt-footer__media {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  /* auto-fit so the +2 pending sponsor logos (A6) drop in with zero layout change. */
+  .mt-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+    gap: var(--space-3);
+  }
+
+  /* Socials. */
+  .mt-footer__socials {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-4) var(--space-5);
+  }
+  .mt-footer__social {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--mt-text);
+    text-decoration: none;
+  }
+  .mt-footer__social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-circle);
+    background: var(--mt-feature);
+    color: var(--mt-on-feature);
+  }
+  .mt-footer__social-icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+  .mt-footer__social:hover .mt-footer__social-icon,
+  .mt-footer__social:focus-visible .mt-footer__social-icon {
+    background: var(--color-mt-magenta-700);
+  }
+  .mt-footer__social:hover .mt-footer__social-handle,
+  .mt-footer__social:focus-visible .mt-footer__social-handle {
+    color: var(--mt-link-hover);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Venue + Maps. */
+  .mt-footer__venue {
+    margin: 0;
+  }
+  .mt-footer__maps {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    color: var(--mt-link);
+    text-decoration: none;
+  }
+  .mt-footer__maps:hover span:not(.mt-footer__chev),
+  .mt-footer__maps:focus-visible span:not(.mt-footer__chev) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .mt-footer__maps:hover,
+  .mt-footer__maps:focus-visible {
+    color: var(--mt-link-hover);
+  }
+  .mt-footer__pin {
+    flex: none;
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .mt-footer__credit {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    color: var(--mt-text-muted);
+  }
+
+  .mt-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Desktop — horizontal ILM lockups, wider sponsor grids, socials inline. */
+  @media (min-width: 768px) {
+    .mt-footer__lockups {
+      flex-direction: row;
+      gap: var(--space-5);
+    }
+    .mt-footer__lockup--stacked {
+      display: none;
+    }
+    .mt-footer__lockup--horizontal {
+      display: block;
+    }
+    .mt-footer__media {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 40rem;
+      margin-inline: auto;
+    }
+  }
+</style>
