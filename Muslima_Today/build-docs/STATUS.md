@@ -9,22 +9,21 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `085aacc` — S4 Tickets `#tickets` (§7). **S2 COMPLETE · S3 COMPLETE · S4
-  IN-PROGRESS** (Testimonials ✓ · Past-events ✓ · Tickets ✓ · Footer pending — the last S4 section).
-- **Current segment:** **S4 — Sections B** *(in progress)*.
-- **Next action:** S4 · **Footer** (`design/03` §8) — the restrained warm sign-off (Tickets already
-  gave the saturated climax → **NO second full-magenta CTA**). attribution (event.ts, verbatim) +
-  ILM-for-Women + **ILM-SA teal untouched** lockups → 3 sponsor tiers from `sponsors.ts`
-  (Polygon primary · media partners · `auto-fit` sponsor chip grid for the +2 pending, A6) → socials
-  (FB/IG/WhatsApp, 44px) → venue + Maps → grey credit line. Add `data-mt-footer` (the BookBar
-  observer hides the sticky bar over the footer). Mount after `<Tickets/>` in `MT.astro`. After it
-  lands: **all S4 sections done → run final S5? No — S5 (B5/B6) is a separate segment.** Close S4,
-  set the handoff, schedule/stop.
-- **Loop state:** `RUNNING` — S4 Testimonials + Past-events + Tickets done & verified; Footer next.
-- **Build-ready?** Partial — page builds to `dist/MT/index.html` with the full system live (off-white
-  ground, fonts, shell, brand primitives, motion utilities); **section content** (Hero…Footer) is
-  S3/S4. *(verify-mt.sh §4 content checks report **pending** while Loop state RUNNING — enforced at
-  handoff; see `[WORKER-CHANGE]`.)*
+- **Last commit:** `455a26c` — S4 Footer (§8). **S2 COMPLETE · S3 COMPLETE · S4 COMPLETE**
+  (Testimonials ✓ · Past-events ✓ · Tickets `#tickets` ✓ · Footer ✓). **All 7 sections built.**
+- **Current segment:** **S5 — Hardening** *(next; S4 just closed at this segment boundary)*.
+- **Next action:** S5 · **B5 — A11y + mobile-perf pass** (`design/03` §10 global acceptance): font
+  preload of the 2 key faces (now that the Vite-hashed paths exist; deferred from B4), image
+  size/lazy audit, focus/contrast/reduced-motion sweep across the whole page, ≤ one large
+  bracket-band per viewport check. Then **B6 — wire links** (Book→MT2026 / Sponsored→MTSP2026 stay
+  M5-disabled; WhatsApp + Maps + socials already live — confirm all correct). After B5+B6: write the
+  **final-walkthrough handoff** and set `Loop state: AWAITING-HUMAN`.
+- **Loop state:** `RUNNING` — S4 COMPLETE & verified (whole page builds clean, all content/anchor
+  checks GREEN); S5 (B5 a11y/perf, B6 link-wiring) is the next leg.
+- **Build-ready?** YES (pending S5 hardening) — the full page builds to `dist/MT/index.html`:
+  Hero → About → Speakers (+joint) → Testimonials → Past-events → Tickets → Footer, all from
+  `src/data/muslimah-today/*`, on the S2 system. `verify-mt.sh` PASS with **all §4 content/anchor
+  checks now GREEN** (no longer pending) · `shoot.mjs` 0 console / 0 axe at mobile + desktop.
 
 ## Status key
 `TODO` · `IN-PROGRESS` · `DONE` · `BLOCKED(why)` · `DEFERRED(why)`
@@ -65,7 +64,7 @@ fires after a session-limit reset continues purely from here.
 | Testimonials | Testimonials (5, verbatim) | DONE | `d50b456` | design/03 §5; `TestimonialCard` looped (glyph + Caslon-italic quote + cite) in ONE track = mobile scroll-snap carousel (keyboard dots, IO-synced, no autoplay) → desktop 2-col grid, Naledi featured (portrait + tint) spans full width. Clare 2022/2023 kept; Fathima≠Fatima. 0 console/axe. |
 | PastEvents | Past-event gallery (no flyers/video) | DONE | `56a6764` | design/03 §6; `gallery[]` in ONE grid → mobile scroll-snap film-strip (edge-bleed, keyboard) / desktop CSS-columns masonry (2→3-col, mixed aspect). astro:assets responsive+lazy; photos only, captions omitted (none in source). 0 console/axe. |
 | Tickets | Tickets `#tickets` (scannable climax) | DONE | `085aacc` | design/03 §7; variant-driven `TicketTier` looped: featured magenta R250 card (Caslon --text-3xl, biggest number) + rows (R320/R220 right-aligned, dotted leaders) + sales-close pill (Wed 26th Aug verbatim) + M5-disabled Book/Sponsored (WhatsApp live) + verbatim caption. Both deadlines visible; the ONE closing magenta moment. 0 console/axe. |
-| Footer | Footer (attribution + 3 sponsor tiers + socials + Maps) | TODO | — | design/03 §8 |
+| Footer | Footer (attribution + 3 sponsor tiers + socials + Maps) | DONE | `455a26c` | design/03 §8; restrained lilac sign-off (NO 2nd magenta CTA) — verbatim date + text Book link → lockups (ILM-for-Women stacked→horizontal + **ILM-SA teal untouched**) → 3 tiers via looped `SponsorChip` (Polygon primary · media · auto-fit sponsor grid for +2 pending) → socials (44px) → Maps → © credit. `data-mt-footer`. 0 console/axe. |
 
 ### S5 — Hardening
 | ID | Task | Status | Commit | Notes |
@@ -90,6 +89,24 @@ route `/MT` · standard speaker bg (D26) · disabled Book/Sponsored CTAs until M
 sponsor slots for the 2 pending logos.
 
 ## `[WORKER-CHANGE]` log *(any worker design improvement, within the system)*
+- **S4 section headings composed (S4, `d50b456`/`56a6764`/`085aacc`)** — `design/03` leaves the exact
+  Caslon headline text open for some sections (it specifies the eyebrows + "a section title"). Following
+  the S3 precedent (About "About Muslimah Today", Speakers "Speakers & Topics"), the S4 headings are
+  descriptive section titles: Testimonials eyebrow **Voices** / heading **"What attendees say"**;
+  Past-events eyebrow **Moments** / heading **"Moments from past years"**; Tickets eyebrow **Tickets** /
+  heading **"Reserve your place"** (the last verbatim from the `design/03` §7 wireframe). All are plain
+  structural labels (no invented slogans/taglines). *Confirm wording at walkthrough.*
+- **Footer sponsor-tier labels = plain eyebrow-style caps, not the bracket motif (S4 Footer, `455a26c`)**
+  — `design/02` says each sponsor tier is "headed by an eyebrow". Rendered as small magenta-600
+  tracked-caps labels (the eyebrow's *label* styling) WITHOUT the `.mt-bracket` band, to keep the
+  footer restrained (`design/03` §8) and avoid stacking three bracket motifs in one viewport. Within
+  the system (same type/tracking/colour as the eyebrow label); the bracket eyebrow stays the
+  section-opener device (SectionHeader).
+- **Footer socials = magenta-600 icon buttons (S4 Footer, `455a26c`)** — `design/02` Footer specs
+  socials as "magenta-600 icon buttons". These 44px circular icons are the footer's only magenta, and
+  are NOT a CTA band, so they don't violate `design/03` §7/§8 "no second full-magenta closing CTA"
+  (which targets the Tickets-vs-footer Book CTA). The closing magenta CTA remains Tickets-only; the
+  footer Book is a plain text link → `#tickets`.
 - **Shared `SectionHeader.astro` (S3 About, `b831c28`)** — one component renders every section
   opener (eyebrow `.mt-bracket` + rule-draw hairline + Caslon `h2`), reused by About + Speakers
   (S3) and Testimonials/Past-events/Tickets (S4). Same DRY/consistency rationale as `BookButton`
@@ -160,6 +177,42 @@ sponsor slots for the 2 pending logos.
   regenerated contact sheet + full-res tiles. Ebrahim/Fatima/Aisha stayed clean.
 
 ## Handoff log *(newest first)*
+- `2026-06-30` — **S4 COMPLETE (Testimonials · Past-events · Tickets `#tickets` · Footer) → next
+  segment = S5 (Hardening: B5 a11y/perf · B6 wire links).** This fire built all four S4 sections on
+  the S2/S3 system; the whole page (Hero → Footer) now builds clean with **every `verify-mt.sh` §4
+  content/anchor check GREEN** (R250/R320/R220/Fathima/Polygon + `id="tickets"`) and `shoot.mjs`
+  0 console / 0 axe at mobile + desktop (each section cropped & inspected critically). One commit per
+  section:
+  - **Testimonials** (`d50b456`) — `TestimonialCard` looped over `testimonials[]`: oversized
+    magenta-200 quote glyph (data stores quotes unwrapped) + Caslon-italic quote + author/note. ONE
+    track = mobile scroll-snap carousel (keyboard-operable dots, IO-synced active, NO autoplay) →
+    desktop 2-col grid with Naledi's featured card (companion portrait + magenta tint) spanning full
+    width. Clare's 2022/2023 kept; testimonial **Fathima ≠ speaker Fatima**. (a11y fix mid-build: dots
+    are real labelled buttons, not aria-hidden.)
+  - **Past-events** (`56a6764`) — `gallery[]` (photos only, no flyers/video) in ONE grid: mobile
+    horizontal scroll-snap film-strip (edge-bleed peek, keyboard-scrollable) → desktop CSS-columns
+    masonry (2→3-col, mixed aspect). astro:assets responsive + lazy; captions omitted (none in source).
+  - **Tickets `#tickets`** (`085aacc`) — the scannable climax + page's ONE closing magenta moment.
+    Variant-driven `TicketTier` looped over `ticketTiers[]`: featured early-bird card (R250 in Caslon
+    --text-3xl = the single biggest number; until 31 July · then R320 · inclusions with checks) + row
+    list (R320 · R220 with **live** WhatsApp 083 271 4500 · Sponsored apply M5-disabled "opens soon"),
+    dotted leaders + right-aligned/mutually-aligned numbers. Magenta sales-close pill (Wednesday 26th
+    August, verbatim) → M5-disabled Book CTA → verbatim early-bird caption (incl. quota of 100). Both
+    deadlines visible without interaction.
+  - **Footer** (`455a26c`) — restrained lilac sign-off (**no second full-magenta CTA**): verbatim
+    date + text Book link → "brought to you by" lockups (ILM-for-Women stacked→horizontal + **ILM-SA
+    teal, untouched, out of palette**) → 3 sponsor tiers via looped `SponsorChip` (Polygon primary ·
+    Media Partners · Sponsors in `auto-fit minmax(7rem)` so the **+2 pending logos (A6)** drop in with
+    no redesign) → socials FB/IG/WhatsApp (44px icon buttons + handles) → venue → Maps → © credit.
+    `<footer data-mt-footer>` (BookBar observer target). Media-partner display names flagged `[OPEN]`.
+  - **S5 worker — start with B5** (a11y + mobile-perf, `design/03` §10): preload the 2 key Caslon
+    faces (Vite-hashed paths now exist — deferred from B4), audit image sizes/lazy across the page,
+    sweep focus/contrast/reduced-motion + the "≤ one large bracket-band per viewport" rule. Then **B6**
+    (wire links): Book→MT2026 + Sponsored→MTSP2026 stay **M5-disabled** (flip `live` when Raeesah
+    links them); WhatsApp/Maps/socials are already live — confirm correct. Verify workflow unchanged
+    (`verify-mt.sh` + `shoot.mjs`, inspect `.verify/{mobile,desktop}.png`). When B5+B6 are done and the
+    page is complete, write the **final-walkthrough handoff** and set `Loop state: AWAITING-HUMAN`
+    (review targets: the provisional defaults, the `[WORKER-CHANGE]`s above, the `.verify/` screenshots).
 - `2026-06-30` — **S3 COMPLETE (Hero · About · Speakers + joint band) → next segment = S4 (Sections
   B: Testimonials · Past-events · Tickets · Footer).** This fire built all three S3 sections on the
   S2 system, each verified (structural `verify-mt.sh` PASS + visual `shoot.mjs`, mobile + desktop
