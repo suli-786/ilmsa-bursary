@@ -9,12 +9,13 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `19c6fa6` — B4m motion layer. **S2 COMPLETE** (S1 + B1 + B1b + B1c + B3 + B4 + B4m done).
-- **Current segment:** **S3 — Sections A** *(next; S2 just closed)*.
-- **Next action:** S3 · **Hero `#top`** (`design/03` §2) — first section. Then About `#about`
-  (§3) → Speakers `#speakers` + joint band, order D4/D24 (§4). Mount each in `MT.astro`'s
-  `<main>`, top-to-bottom, from `src/data/muslimah-today/*` + the named components.
-- **Loop state:** `RUNNING` — S2 system done (shell + brand + type + motion); starting S3 sections.
+- **Last commit:** `fae1800` — S3 Hero `#top`. **S2 COMPLETE**; **S3 IN PROGRESS** (Hero done).
+- **Current segment:** **S3 — Sections A** *(Hero ✓ · About next · Speakers)*.
+- **Next action:** S3 · **About `#about`** (`design/03` §3) — eyebrow + Caslon headline +
+  verbatim About paragraph (`01-content` §3) with a SR-safe `::first-letter` drop-cap + one
+  warm full-colour past-event photo. Then Speakers `#speakers` + joint band, order D4/D24 (§4).
+  Mount each in `MT.astro`'s `<main>` after `<Hero/>`, top-to-bottom.
+- **Loop state:** `RUNNING` — S2 system done; S3 sections in progress (Hero built & verified).
 - **Build-ready?** Partial — page builds to `dist/MT/index.html` with the full system live (off-white
   ground, fonts, shell, brand primitives, motion utilities); **section content** (Hero…Footer) is
   S3/S4. *(verify-mt.sh §4 content checks report **pending** while Loop state RUNNING — enforced at
@@ -49,7 +50,7 @@ fires after a session-limit reset continues purely from here.
 ### S3 — Sections A
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
-| Hero | Hero `#top` | TODO | — | design/03 §2 |
+| Hero | Hero `#top` | DONE | `fae1800` | design/03 §2; ILM-stacked + arch-dawn bloom + h1 (wordmark image + title) + Caslon-italic tagline + facts strip (date/venue→Maps/Tickets→#tickets) + disabled Book CTA. Sentinel = whole section. ~1 viewport mobile; 0 console/axe. |
 | About | About `#about` | TODO | — | design/03 §3 |
 | Speakers | Speakers `#speakers` + joint band (order D4/D24) | TODO | — | design/03 §4 |
 
@@ -84,6 +85,20 @@ route `/MT` · standard speaker bg (D26) · disabled Book/Sponsored CTAs until M
 sponsor slots for the 2 pending logos.
 
 ## `[WORKER-CHANGE]` log *(any worker design improvement, within the system)*
+- **Hero dawn-bloom glow (S3 Hero, `fae1800`)** — the hero arch's light-bloom uses a **local**
+  radial glow built from **magenta-200 ↔ lilac-200** (still palette ramp tints, no new hue, magenta
+  stays "light") instead of the shared `--mt-glow` (magenta-100↔lilac-100). At the bloom's 0.5
+  opacity the 100-level tints wash out to invisible on off-white, so the signature "arch-dawn" was
+  imperceptible. The 200-level local glow makes the dawn perceptible while staying within the
+  system. Shared `--mt-glow` token unchanged (other sections keep it). Within design/02 balance
+  rule 1 (magenta light, ≤35% coverage — this is a soft tint at the crown only).
+- **Hero sentinel = the whole `<section id="top">` (S3 Hero, `fae1800`)** — the B1c handoff suggested
+  placing `[data-mt-hero-sentinel]` "at the bottom of the hero". Instead it's on the **entire hero
+  section**, because the Header/BookBar IntersectionObservers (B1c) key off it: a full-section
+  sentinel keeps the Header transparent while **any** of the hero is in view (→ solid once fully
+  scrolled past) and the sticky Book bar hidden over the whole hero — matching design/03 §1
+  ("transparent over the hero … solid on scroll past the hero") and robust to hero height. A 1px
+  bottom sentinel would flip the header solid at the top of a taller-than-viewport hero.
 - **Shared `BookButton.astro` (B1c, `7742780`)** — the primary "Book your seat" CTA is **one
   component** reused by the Header, the sticky Book bar, and (later) Hero + Tickets, rather than
   re-coding the button per place. Enforces identical look/states everywhere and makes B6 (flip M5
