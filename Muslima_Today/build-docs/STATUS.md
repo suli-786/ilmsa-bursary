@@ -9,11 +9,10 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `af50cfc` — B1 scaffold (route /MT + design-system CSS). S1 complete.
-- **Current segment:** **S2 — Scaffold + system** *(in progress: B1 done)*.
-- **Next action:** S2 · **B1b** (data modules `src/data/muslimah-today/*.ts` — speakers,
-  testimonials, sponsors, ticket-tiers, gallery — transcribed verbatim from `01-content.md`,
-  `design/03` §3) → B1c (shell) → B3 → B4 → B4m.
+- **Last commit:** `ecee853` — B1b data modules (verbatim). S1 + B1 + B1b done.
+- **Current segment:** **S2 — Scaffold + system** *(in progress: B1, B1b done)*.
+- **Next action:** S2 · **B1c** (global shell: header/nav + sticky mobile Book bar + skip link;
+  `design/03` §1) → B3 (brand: palette/bracket/arch) → B4 (type: fonts + scale) → B4m (motion).
 - **Loop state:** `RUNNING` — scaffold up; building S2 system.
 - **Build-ready?** Partial — page scaffolds & builds to `dist/MT/index.html` (off-white ground,
   tokens live); shell + sections pending. *(verify-mt.sh §4 content checks report **pending** while
@@ -39,7 +38,7 @@ fires after a session-limit reset continues purely from here.
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
 | B1 | Scaffold route `MT.astro` + `muslimah-today.css` (`@theme` tokens) | DONE | `af50cfc` | route + `BaseLayout.astro` (under `components/muslimah-today/`, since `src/layouts/` is out of scope) + full design/02 tokens in `@theme`/`:root` + base layer; imports only the MT stylesheet; builds to `dist/MT/index.html` (off-white ground, 0 console/a11y) |
-| B1b | Data modules `src/data/muslimah-today/*.ts` (verbatim from `01`) | TODO | — | design/03 §3 |
+| B1b | Data modules `src/data/muslimah-today/*.ts` (verbatim from `01`) | DONE | `ecee853` | `event` + `speakers`(+jointSession) + `testimonials` + `sponsors`(3 tiers) + `ticket-tiers` + `gallery`; pure typed TS, `tsc --noEmit` clean; images as filenames (component glob-resolves); media-partner display names `[OPEN]` |
 | B1c | Global shell (header/nav, sticky Book bar, skip link) | TODO | — | design/03 §1 |
 | B3 | Brand (palette, bracket geometry, arch) | TODO | — | design/02 |
 | B4 | Type (`--font-display`/`--font-serif-text`/`--font-body` + scale) | TODO | — | design/02 |
