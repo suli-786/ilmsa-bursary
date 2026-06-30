@@ -9,21 +9,23 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `455a26c` — S4 Footer (§8). **S2 COMPLETE · S3 COMPLETE · S4 COMPLETE**
-  (Testimonials ✓ · Past-events ✓ · Tickets `#tickets` ✓ · Footer ✓). **All 7 sections built.**
-- **Current segment:** **S5 — Hardening** *(next; S4 just closed at this segment boundary)*.
-- **Next action:** S5 · **B5 — A11y + mobile-perf pass** (`design/03` §10 global acceptance): font
-  preload of the 2 key faces (now that the Vite-hashed paths exist; deferred from B4), image
-  size/lazy audit, focus/contrast/reduced-motion sweep across the whole page, ≤ one large
-  bracket-band per viewport check. Then **B6 — wire links** (Book→MT2026 / Sponsored→MTSP2026 stay
-  M5-disabled; WhatsApp + Maps + socials already live — confirm all correct). After B5+B6: write the
-  **final-walkthrough handoff** and set `Loop state: AWAITING-HUMAN`.
-- **Loop state:** `RUNNING` — S4 COMPLETE & verified (whole page builds clean, all content/anchor
-  checks GREEN); S5 (B5 a11y/perf, B6 link-wiring) is the next leg.
-- **Build-ready?** YES (pending S5 hardening) — the full page builds to `dist/MT/index.html`:
-  Hero → About → Speakers (+joint) → Testimonials → Past-events → Tickets → Footer, all from
-  `src/data/muslimah-today/*`, on the S2 system. `verify-mt.sh` PASS with **all §4 content/anchor
-  checks now GREEN** (no longer pending) · `shoot.mjs` 0 console / 0 axe at mobile + desktop.
+- **Last commit:** `eb1c831` — S5 B5 (font preload + LCP priority). **S2 ✓ · S3 ✓ · S4 ✓ · S5
+  COMPLETE** (B5 a11y/perf ✓ · B6 wire-links ✓). **All 7 sections + all build legs done.**
+- **Current segment:** **— (all S1–S5 segments complete).** At the **final-walkthrough gate** (human).
+- **Next action:** **HUMAN final walkthrough** — no further build legs. Review targets: the
+  **provisional defaults** (below), the **`[WORKER-CHANGE]` log** (below), and the `.verify/`
+  screenshots (`mobile.png` / `desktop.png`). The only pending items are external/client blockers
+  (M5 Quicket links, A6 +2 sponsor logos, M6 Ebrahim res) — none build-blocking. **Deploy (C1) is a
+  separate, human-gated step; the loop never deploys.** To activate Book/Sponsored once Raeesah
+  creates the Quicket pages: flip `event.links.book.live` / `event.links.sponsored.live` → `true`
+  in `src/data/muslimah-today/event.ts` (one-line each; URLs already wired).
+- **Loop state:** `AWAITING-HUMAN` — all S1–S5 tasks DONE & verified; page builds clean; the loop
+  stops here for the human's final walkthrough (deploy is separate, human-gated).
+- **Build-ready?** YES — the full page builds to `dist/MT/index.html`: Hero → About → Speakers
+  (+joint) → Testimonials → Past-events → Tickets → Footer, all from `src/data/muslimah-today/*` on
+  the S2 system. `verify-mt.sh` PASS with **all §4 content/anchor checks GREEN, now enforced as HARD
+  gates** (Loop state no longer RUNNING) · `shoot.mjs` 0 console / 0 axe at mobile + desktop · the
+  two above-the-fold faces preloaded · MT bundle confirmed isolated from the bursary Poppins/global.css.
 
 ## Status key
 `TODO` · `IN-PROGRESS` · `DONE` · `BLOCKED(why)` · `DEFERRED(why)`
@@ -69,8 +71,8 @@ fires after a session-limit reset continues purely from here.
 ### S5 — Hardening
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
-| B5 | A11y + mobile-perf pass | TODO | — | global acceptance, design/03 §10 |
-| B6 | Wire links (Book/Sponsored/WhatsApp/socials/Maps) | TODO | — | disabled states while M5 pending |
+| B5 | A11y + mobile-perf pass | DONE | `eb1c831` | Preloaded the 2 above-the-fold faces (Caslon Display 400 + Source Sans 600) — deferred from B4; preload hrefs **===** the @font-face src URLs (no double-download), `crossorigin` set; hero LCP wordmark `fetchpriority="high"`. Sweep verified (no other change needed): one h1 + ordered h2/h3, landmarks, axe 0 (both viewports), RM pins all Daybreak motion lit, every image sized (no CLS) + lazy below / eager above, ≤1 large bracket-band/viewport. MT bundle isolated from bursary Poppins. |
+| B6 | Wire links (Book/Sponsored/WhatsApp/socials/Maps) | DONE | `<this STATUS commit>` | **Confirmation pass — links wired in-place during section build (each component reads central `event.ts`), audit confirms all correct.** Book→MT2026 + Sponsored→MTSP2026 stay **M5-disabled** (`<button disabled>`/`<span aria-disabled>`, not links yet; URLs wired so flipping `live:true` activates them). Live & correct: WhatsApp `wa.me/27832714500`, social `ilmsa.co.za/WA`, Maps `…GhgJAQSFquFEftqX9`, FB `ILM.SouthAfrica`, IG `ilmsouthafrica` — all `target=_blank rel="noopener noreferrer"`. Internal anchors `#top/#about/#speakers/#tickets/#main` resolve. No code change. |
 
 ### Out of the loop's scope
 | ID | Task | Status | Notes |
@@ -89,6 +91,12 @@ route `/MT` · standard speaker bg (D26) · disabled Book/Sponsored CTAs until M
 sponsor slots for the 2 pending logos.
 
 ## `[WORKER-CHANGE]` log *(any worker design improvement, within the system)*
+- **Hero LCP wordmark `fetchpriority="high"` (S5 B5, `eb1c831`)** — `design/02` Typography
+  specifies preloading the 2 above-the-fold faces (done, per spec, not a deviation). Beyond that, the
+  hero MT-wordmark `<Image>` (the `h1` identity image and likely mobile LCP) was marked
+  `fetchpriority="high"` so the browser prioritises it among the eager hero images. Pure load-order
+  hint — no visual/layout change — squarely within the `design/03` §10 "mobile-perf pass" remit.
+  *Confirm acceptable at walkthrough (trivially revertible — remove one attribute).*
 - **S4 section headings composed (S4, `d50b456`/`56a6764`/`085aacc`)** — `design/03` leaves the exact
   Caslon headline text open for some sections (it specifies the eyebrows + "a section title"). Following
   the S3 precedent (About "About Muslimah Today", Speakers "Speakers & Topics"), the S4 headings are
@@ -177,6 +185,35 @@ sponsor slots for the 2 pending logos.
   regenerated contact sheet + full-res tiles. Ebrahim/Fatima/Aisha stayed clean.
 
 ## Handoff log *(newest first)*
+- `2026-06-30` — **S5 COMPLETE (B5 a11y/perf · B6 wire-links) → ALL BUILD LEGS DONE → FINAL-WALKTHROUGH
+  GATE (`Loop state: AWAITING-HUMAN`).** This fire closed the last segment; every S1–S5 task is DONE
+  and verified (`verify-mt.sh` PASS with §4 content/anchor checks now **hard-enforced** since Loop
+  state ≠ RUNNING · `shoot.mjs` 0 console / 0 axe at mobile + desktop, both fullPage screenshots
+  inspected critically — no defects). Two focused commits:
+  - **B5 — a11y + mobile-perf** (`eb1c831`) — the deferred B4 deliverable: preload the 2 above-the-fold
+    faces (**Libre Caslon Display 400 + Source Sans 3 600**, `design/02` Typography) in `BaseLayout`
+    via `?url` imports so Vite emits the SAME hashed asset the `@font-face` `@import` already
+    references — **verified the preload `href`s exactly equal the built `@font-face` `src` URLs** (no
+    double-download); `crossorigin` set (fonts fetch anonymous-CORS). Hero LCP wordmark
+    `fetchpriority="high"` (`[WORKER-CHANGE]`). The rest of `design/03` §10 was a sweep needing no
+    change: one h1 + ordered h2/h3, all landmarks, axe 0 both viewports, reduced-motion pins every
+    Daybreak reveal/bloom to its lit state, every image sized (no CLS) + lazy-below / eager-above,
+    ≤ one large bracket-band per viewport. Confirmed the MT bundle loads **only** `MT.*.css` — never
+    the bursary `index.*.css` (which carries Poppins/Google-Fonts) — so the brand fence holds.
+  - **B6 — wire links** (this STATUS commit) — a confirmation pass (links were wired in-place during
+    section construction, each component reading the central `event.ts`); the audit confirms all
+    targets correct. **Book→`MT2026` + Sponsored→`MTSP2026` remain M5-disabled** (`<button disabled>`
+    / `<span aria-disabled>` with "opens soon" helper — not anchors yet; URLs wired so flipping
+    `live:true` in `event.ts` activates them). **Live & correct:** WhatsApp booking `wa.me/27832714500`,
+    WhatsApp social `ilmsa.co.za/WA`, Maps `…GhgJAQSFquFEftqX9`, FB `ILM.SouthAfrica`,
+    IG `ilmsouthafrica` — all `target=_blank rel="noopener noreferrer"`; internal anchors all resolve.
+  - **HUMAN — final walkthrough (deploy is separate).** Review: (1) the **provisional defaults** list
+    above (direction "Noor", section order, fonts incl. the Caslon Text italic companion, route `/MT`,
+    D26 speaker bg, disabled CTAs until M5, extensible sponsor slots); (2) the **`[WORKER-CHANGE]`
+    log** (every within-system design improvement); (3) the `.verify/{mobile,desktop}.png`
+    screenshots. Outstanding items are all **external/client** (M5 Quicket pages, A6 +2 sponsor logos,
+    M6 Ebrahim res) and non-blocking. On sign-off, **C1 deploy** (`/MT` base-path/hosting) is the
+    separate human-gated step — **the loop does not deploy.**
 - `2026-06-30` — **S4 COMPLETE (Testimonials · Past-events · Tickets `#tickets` · Footer) → next
   segment = S5 (Hardening: B5 a11y/perf · B6 wire links).** This fire built all four S4 sections on
   the S2/S3 system; the whole page (Hero → Footer) now builds clean with **every `verify-mt.sh` §4
