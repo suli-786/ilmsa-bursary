@@ -72,6 +72,10 @@ Ignore everything under `design/_archive/` and the superseded `03-design.md` —
   built page at **mobile (~390px) + desktop**; **open the screenshots and inspect them** — confirm
   the section renders correctly, on-brand, no overflow/clipping, no console errors — and run the
   **axe** a11y pass. Iterate until it looks right and passes. Screenshots go to `Muslima_Today/.verify/`.
+- **S1 (assets) exception —** there is no page yet, so "visual" for the asset segment means **open
+  the produced images and sanity-check them**: speakers cropped to head + upper body, background
+  removed and composited on the standard bg, consistent ring/size; logos transparent & legible.
+  Page screenshots (`shoot.mjs`) begin at **S2+**.
 
 ## 6. Commit + STATUS discipline
 - **One commit per task**, on `muslimah-today`, **no push, never `main`.** Message:
@@ -89,13 +93,21 @@ Ignore everything under `design/_archive/` and the superseded `03-design.md` —
 - **+2 pending sponsor logos** → leave the extensible `auto-fit` grid slot; no redesign.
 - **M6** (Ebrahim photo borderline res) → process as specced; flag if a better file is needed.
 
-## 8. Loop automation (resumption)
-- The loop is **self-paced**: after a leg you **schedule the next wake** (short delay while actively
-  building) and stop; the next fire continues from `STATUS.md`. Configured in setup Step 5.
-- **Session-limit / interruption:** because state is in the repo, the next scheduled fire (after the
-  limit resets) simply re-reads `STATUS.md` + the last commit and continues. No memory of the prior
-  chat is needed.
-- **End the loop** (stop rescheduling) when `STATUS.md` shows all build legs done **or** a hard stop.
+## 8. Loop automation — local headless cron
+- **Mechanism:** an OS cron job runs `Muslima_Today/scripts/build-loop.sh` every ~20 min. Each fire
+  is a **fresh headless `claude` process** (`claude --print --model opus --permission-mode
+  bypassPermissions`) given the §9 kickoff; it does the next segment, verifies, commits, updates
+  STATUS, and exits. Cron re-fires for the next segment. The script **locks** (no overlap), **guards
+  the branch**, honours a **STOP** file, and **no-ops** once STATUS `Loop state:` is terminal.
+- **You set `Loop state:`** in STATUS as you go: `RUNNING` while building · `AWAITING-HUMAN` at the
+  final-walkthrough gate · `HALTED` on a hard stop · `DONE` when fully finished. The cron stops doing
+  real work the moment it sees `DONE`/`HALTED`/`AWAITING-HUMAN`.
+- **Session-limit / interruption:** state is in the repo, so the next cron fire (after any reset)
+  re-reads STATUS + last commit and continues — no memory of a prior run needed.
+- **Kill switch:** `touch Muslima_Today/.loop/STOP` halts immediately (delete to resume). Logs:
+  `Muslima_Today/.loop/loop.log`.
+- **Crontab** (installed at setup Step 7, after a supervised first leg):
+  `*/20 * * * * /home/suleiman/code/ilmsa-bursary/Muslima_Today/scripts/build-loop.sh`
 
 ## 9. Kickoff prompt (idempotent — same text every fire)
 ```

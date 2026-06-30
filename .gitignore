@@ -31,3 +31,6 @@ Muslima_Today/assets-raw/
 
 # Muslimah Today verification screenshots
 Muslima_Today/.verify/
+
+# Muslimah Today autonomous build-loop logs / lock / STOP switch
+Muslima_Today/.loop/
