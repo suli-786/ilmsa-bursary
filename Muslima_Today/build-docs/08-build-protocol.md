@@ -75,9 +75,11 @@ Ignore everything under `design/_archive/` and the superseded `03-design.md` —
   clean; built HTML contains the required verbatim copy + anchors; the lint finds no bursary
   hexes/`Poppins`/`global.css` import/gold and **no changed paths outside the scope fence**.
 - **Visual —** run the Playwright runner (`node Muslima_Today/scripts/shoot.mjs`) to screenshot the
-  built page at **mobile (~390px) + desktop**; **open the screenshots and inspect them** — confirm
-  the section renders correctly, on-brand, no overflow/clipping, no console errors — and run the
-  **axe** a11y pass. Iterate until it looks right and passes. Screenshots go to `Muslima_Today/.verify/`.
+  built page at **mobile (~390px) + desktop**; **open the screenshots and inspect them CRITICALLY** —
+  hunt for real defects (image cut-out fringes / halos / dark boxes, overflow, clipping, misalignment,
+  wrong colours, broken or missing images), **not just "does it load."** If you'd be embarrassed to
+  ship it, fix it. Then run the **axe** a11y pass. Iterate until it genuinely looks right and passes.
+  Screenshots go to `Muslima_Today/.verify/`.
 - **S1 (assets) exception —** there is no page yet, so "visual" for the asset segment means **open
   the produced images and sanity-check them**: speakers cropped to head + upper body, background
   removed and composited on the standard bg, consistent ring/size; logos transparent & legible.
