@@ -9,10 +9,10 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `64cbc99` — baseline context pack + locked design (checkpoint #0).
+- **Last commit:** `2c0fee4` — build-system setup complete.
 - **Current segment:** S1 — Assets *(not started)*.
 - **Next action:** S1 · **A1** (sort & convert logos).
-- **Loop state:** `SETUP` — automation not yet enabled (system being set up step by step).
+- **Loop state:** `RUNNING` — build phase; do the tasks below now.
 - **Build-ready?** No.
 
 ## Status key
@@ -84,5 +84,7 @@ sponsor slots for the 2 pending logos.
 - *(none yet)*
 
 ## Handoff log *(newest first)*
-- `2026-06-30` — System setup: baseline committed (`64cbc99`); `08-build-protocol.md` + this
-  ledger created. Next: finish setup (verify harness, loop automation), then run S1.
+- `2026-06-30` — **Build phase START.** Build-system setup complete (`2c0fee4`). The first
+  supervised S1 leg produced nothing — the headless worker mis-read the old `SETUP` state and
+  asked the user (headless = no user to answer). Fixed: state → `RUNNING`; kickoff/protocol
+  hardened (non-interactive, "you are the worker"). **Do S1 now.**

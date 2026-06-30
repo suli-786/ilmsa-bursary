@@ -8,6 +8,12 @@ any fresh worker — including one that fires after a session-limit reset — ca
 > **Three lines you never cross:** never touch the bursary site or `main`; never `git push`;
 > never deploy. You work only on the `muslimah-today` branch, only in MT namespaces.
 
+> **You are NON-INTERACTIVE (headless).** There is **no human to answer questions** — if you ask
+> or present options, the run just ends and nothing is built. **Never ask, never present options,
+> never deliberate about whether to start — DO the next task.** **You ARE the worker;** any
+> running `claude` / `build-loop` process you might notice is **yourself** — ignore it, don't
+> inspect processes, don't try to coordinate. Just build.
+
 ---
 
 ## 1. Read-path (the only sources of truth)
