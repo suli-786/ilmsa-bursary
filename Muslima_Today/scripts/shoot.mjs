@@ -67,6 +67,23 @@ for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['deskt
   page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
   page.on('pageerror', (e) => consoleErrors.push(String(e)));
   const resp = await page.goto(BASE + PAGE, { waitUntil: 'networkidle' }).catch((e) => { consoleErrors.push('goto: ' + e.message); return null; });
+  // Scroll through the page so below-fold `loading="lazy"` images actually load — a
+  // static fullPage capture otherwise leaves images past Chrome's lazy distance
+  // threshold blank (worse on the taller mobile page). Then return to the top. (RM is
+  // emulated, so this scroll triggers no animation state.)
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      let y = 0;
+      const step = () => {
+        window.scrollTo(0, y);
+        y += Math.round(window.innerHeight * 0.9);
+        if (y < document.body.scrollHeight) setTimeout(step, 80);
+        else { window.scrollTo(0, 0); setTimeout(resolve, 150); }
+      };
+      step();
+    });
+  });
+  await page.waitForLoadState('networkidle').catch(() => {});
   await page.screenshot({ path: join(OUT, `${name}.png`), fullPage: true });
   let violations = [];
   if (axe) {
