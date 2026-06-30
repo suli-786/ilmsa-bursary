@@ -9,12 +9,15 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `5c6a003` — A2b re-cut speaker tiles (alpha matting). **S1 (Assets) FULLY COMPLETE.**
-- **Current segment:** **S2 — Scaffold + system** *(not started)*. S1 done (A1–A5, A2b; A6 client-blocked).
-- **Next action:** S2 · **B1** (scaffold route `src/pages/MT.astro` + `src/styles/muslimah-today.css`
-  with `design/02` tokens in `@theme`; never import `global.css`) → B1b → B1c → B3 → B4 → B4m.
-- **Loop state:** `RUNNING` — assets fully complete; next builds S2 (scaffold + system).
-- **Build-ready?** No (page not scaffolded yet).
+- **Last commit:** `af50cfc` — B1 scaffold (route /MT + design-system CSS). S1 complete.
+- **Current segment:** **S2 — Scaffold + system** *(in progress: B1 done)*.
+- **Next action:** S2 · **B1b** (data modules `src/data/muslimah-today/*.ts` — speakers,
+  testimonials, sponsors, ticket-tiers, gallery — transcribed verbatim from `01-content.md`,
+  `design/03` §3) → B1c (shell) → B3 → B4 → B4m.
+- **Loop state:** `RUNNING` — scaffold up; building S2 system.
+- **Build-ready?** Partial — page scaffolds & builds to `dist/MT/index.html` (off-white ground,
+  tokens live); shell + sections pending. *(verify-mt.sh §4 content checks report **pending** while
+  Loop state RUNNING — enforced at handoff; see `[WORKER-CHANGE]`.)*
 
 ## Status key
 `TODO` · `IN-PROGRESS` · `DONE` · `BLOCKED(why)` · `DEFERRED(why)`
@@ -35,7 +38,7 @@ fires after a session-limit reset continues purely from here.
 ### S2 — Scaffold + system
 | ID | Task | Status | Commit | Notes |
 |---|---|---|---|---|
-| B1 | Scaffold route `MT.astro` + `muslimah-today.css` (`@theme` tokens) | TODO | — | `05-build`; never `global.css` |
+| B1 | Scaffold route `MT.astro` + `muslimah-today.css` (`@theme` tokens) | DONE | `af50cfc` | route + `BaseLayout.astro` (under `components/muslimah-today/`, since `src/layouts/` is out of scope) + full design/02 tokens in `@theme`/`:root` + base layer; imports only the MT stylesheet; builds to `dist/MT/index.html` (off-white ground, 0 console/a11y) |
 | B1b | Data modules `src/data/muslimah-today/*.ts` (verbatim from `01`) | TODO | — | design/03 §3 |
 | B1c | Global shell (header/nav, sticky Book bar, skip link) | TODO | — | design/03 §1 |
 | B3 | Brand (palette, bracket geometry, arch) | TODO | — | design/02 |
@@ -80,6 +83,14 @@ route `/MT` · standard speaker bg (D26) · disabled Book/Sponsored CTAs until M
 sponsor slots for the 2 pending logos.
 
 ## `[WORKER-CHANGE]` log *(any worker design improvement, within the system)*
+- **verify-mt.sh §4 — content checks pending while building** (`ac6f4af`). Once `MT.astro` exists,
+  the copy/anchor checks would hard-fail on sections not yet built (S3/S4), failing every
+  incremental leg. Now they report **pending NOTES while STATUS `Loop state: RUNNING`**, and are
+  enforced as hard gates at handoff (any non-RUNNING state) or if STATUS is unreadable (fail-safe =
+  enforce). The final completion gate is preserved; wrong-value guards (Mponda/Spritual) stay hard.
+  **Build/scope/forbidden-token gates remain hard at all times.**
+- **B1 layout location** — the "minimal MT layout" lives at `src/components/muslimah-today/BaseLayout.astro`
+  (a slotted component), because `src/layouts/` is **outside** the scope fence. Functionally identical.
 - **Speaker tiles (A2) — shape/ring applied at build, not baked.** Tiles are square subject-on-
   D26-gradient JPEGs; the circular *and* arch masks + off-white ring/keyline are CSS at build
   (`--radius-circle`/`--radius-arch`, `--mt-ring`, `--mt-border`). Reason: one asset serves both
