@@ -14,7 +14,7 @@ fires after a session-limit reset continues purely from here.
 - **Next action:** S1 · **A2b** — re-cut speaker tiles to remove cut-out artifacts (see `[OPEN]`),
   THEN S2 · **B1** (scaffold route `src/pages/MT.astro` + `src/styles/muslimah-today.css` with
   `design/02` tokens in `@theme`; never import `global.css`) → B1b → B1c → B3 → B4 → B4m.
-- **Loop state:** `RUNNING` — assets done; next fire builds S2 (scaffold + system).
+- **Loop state:** `RUNNING` — assets complete; next fire builds S2 (scaffold + system).
 - **Build-ready?** No (page not scaffolded yet).
 
 ## Status key

@@ -37,9 +37,11 @@ cd "$REPO" || { log "repo not found: $REPO"; exit 1; }
 [ -f "$LOOPDIR/STOP" ] && { log "STOP file present — halt."; exit 0; }
 cur="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 [ "$cur" = "$BRANCH" ] || { log "not on $BRANCH (on '$cur') — refuse."; exit 0; }
-if grep -qiE 'Loop state:.*(DONE|HALTED|AWAITING-HUMAN)' "$STATUS" 2>/dev/null; then
-  log "STATUS shows build done/halted — nothing to do."; exit 0
-fi
+# terminal-state guard — read ONLY the backticked Loop-state token (never match prose like "assets done")
+state="$(grep -m1 -i 'Loop state:' "$STATUS" 2>/dev/null | grep -oE '`[A-Za-z-]+`' | head -1 | tr -d '`' | tr '[:lower:]' '[:upper:]')"
+case "$state" in
+  DONE|HALTED|AWAITING-HUMAN) log "STATUS Loop state=$state — nothing to do."; exit 0 ;;
+esac
 
 KICKOFF='You are running NON-INTERACTIVELY (headless): there is NO human to answer questions — never ask anything, never present options, never deliberate about whether to start; just DO the work. You ARE the worker (any running claude or build-loop process you notice is yourself — ignore it; do not inspect processes). Read and follow Muslima_Today/build-docs/08-build-protocol.md exactly, then continue from Muslima_Today/build-docs/STATUS.md: do the next unblocked task(s) up to the end of the current segment, verifying each (structural via "bash Muslima_Today/scripts/verify-mt.sh" and visual via "node Muslima_Today/scripts/shoot.mjs"), committing each task on the muslimah-today branch (NEVER push, NEVER main, NEVER deploy), and updating STATUS.md after each. Stay strictly in MT namespaces. If you hit a hard stop, or finish all build legs, set the STATUS "Loop state:" line accordingly (HALTED / AWAITING-HUMAN / DONE) and stop. Use extended thinking.'
 
