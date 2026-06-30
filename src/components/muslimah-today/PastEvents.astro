@@ -1,0 +1,131 @@
+---
+/**
+ * PastEvents — section (design/03 §6). Proof in pictures: the warmth, scale and
+ * diversity of the day; the emotional crescendo into Tickets. PHOTOS ONLY — no
+ * flyers, no video (D18/D19). Eyebrow + short Caslon headline → the curated
+ * full-colour shots from gallery[] (← A4). Every tile is rendered from data.
+ *
+ * Layout: ONE grid that is a horizontal scroll-snap film-strip on mobile (uniform
+ * height, natural widths, keyboard-scrollable) and a CSS-columns masonry on desktop
+ * (3 across, mixed portrait/landscape). Astro <Image> gives responsive srcset +
+ * lazy-load + intrinsic sizing (no CLS). Captions are intentionally OMITTED —
+ * 01-content.md provides none and we do not invent copy ([OPEN] captions: none).
+ * Motion: tiles reveal staggered; lit & static under reduced-motion.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { gallery } from "../../data/muslimah-today/gallery.ts";
+import SectionHeader from "./SectionHeader.astro";
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  "../../assets/muslimah-today/past-events/*.{jpg,jpeg,png}",
+  { eager: true },
+);
+const resolved = gallery
+  .map((g) => ({ ...g, src: images[`../../assets/muslimah-today/past-events/${g.image}`]?.default }))
+  .filter((g) => g.src);
+---
+<section class="mt-gallery" aria-labelledby="mt-gallery-title">
+  <div class="mt-gallery__inner">
+    <SectionHeader eyebrow="Moments" heading="Moments from past years" headingId="mt-gallery-title" />
+
+    <div class="mt-gallery__grid daybreak-stagger" role="group" aria-label="Photos from past Muslimah Today conferences" tabindex="0">
+      {resolved.map((g, i) => (
+        <figure class="mt-gallery__item daybreak-reveal" style={`--daybreak-i: ${i}`}>
+          <Image
+            class="mt-gallery__img"
+            src={g.src!}
+            alt={g.alt}
+            widths={[400, 800, 1200]}
+            sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 80vw"
+            loading="lazy"
+          />
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .mt-gallery {
+    padding: var(--section-y) var(--gutter);
+    background: var(--mt-bg);
+  }
+  .mt-gallery__inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  /* Mobile — horizontal scroll-snap film-strip; uniform height, natural widths. */
+  .mt-gallery__grid {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: var(--space-3);
+    /* bleed the strip to the page edge so the next tile peeks in */
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+  }
+  .mt-gallery__grid::-webkit-scrollbar {
+    display: none;
+  }
+  .mt-gallery__grid:focus-visible {
+    outline: 3px solid var(--mt-focus);
+    outline-offset: 4px;
+    border-radius: var(--radius-md);
+  }
+  .mt-gallery__item {
+    flex: 0 0 auto;
+    height: clamp(13rem, 52vw, 17rem);
+    margin: 0;
+    scroll-snap-align: start;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--mt-border);
+    box-shadow: var(--shadow-sm);
+  }
+  .mt-gallery__img {
+    display: block;
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+  }
+
+  /* Desktop — CSS-columns masonry, mixed portrait/landscape, 3 across. */
+  @media (min-width: 768px) {
+    .mt-gallery__grid {
+      display: block;
+      columns: 2;
+      column-gap: var(--space-5);
+      overflow: visible;
+      scroll-snap-type: none;
+      margin-inline: 0;
+      padding: 0;
+    }
+    .mt-gallery__item {
+      height: auto;
+      width: 100%;
+      margin-bottom: var(--space-5);
+      break-inside: avoid;
+    }
+    .mt-gallery__img {
+      width: 100%;
+      height: auto;
+      transition: transform var(--dur-base) var(--ease-out);
+    }
+    .mt-gallery__item:hover .mt-gallery__img {
+      transform: scale(1.03);
+    }
+  }
+  @media (min-width: 1024px) {
+    .mt-gallery__grid {
+      columns: 3;
+    }
+  }
+</style>

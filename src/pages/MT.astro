@@ -17,6 +17,7 @@ import Hero from "../components/muslimah-today/Hero.astro";
 import About from "../components/muslimah-today/About.astro";
 import Speakers from "../components/muslimah-today/Speakers.astro";
 import Testimonials from "../components/muslimah-today/Testimonials.astro";
+import PastEvents from "../components/muslimah-today/PastEvents.astro";
 ---
 <BaseLayout>
   <a class="mt-skip-link" href="#main">Skip to content</a>
@@ -26,7 +27,8 @@ import Testimonials from "../components/muslimah-today/Testimonials.astro";
     <About />
     <Speakers />
     <Testimonials />
-    {/* [OPEN] sections (Past-events → Tickets → Footer) build here, top-to-bottom (S4). */}
+    <PastEvents />
+    {/* [OPEN] sections (Tickets → Footer) build here, top-to-bottom (S4). */}
   </main>
   <BookBar />
 </BaseLayout>
