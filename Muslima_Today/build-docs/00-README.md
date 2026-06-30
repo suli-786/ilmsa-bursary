@@ -20,6 +20,8 @@ failed by inventing details and writing them down as fact — these docs prevent
 | `05-build.md` | Technical/build spec — how the page plugs into this Astro repo |
 | `06-open-questions.md` | Decisions log + living tracker of everything still unresolved |
 | `07-tasks.md` | **Task backlog for execution chats** (the work to be done) |
+| `08-build-protocol.md` | **Autonomous build loop** operating manual (read-path, loop, guardrails, kickoff) |
+| `STATUS.md` | **Live build ledger** — segment/task status, blockers, last commit (the resume anchor) |
 | `design/02-design-system.md` | **Design system** — tokens, components, motion, imagery (Direction "Noor") |
 | `design/03-section-specs.md` | **Per-section build spec** — order, layout, motion, acceptance; **§0 = how to build** |
 | `design/_archive/` | Historical design-phase artifacts (directions, brief, kickoff) — **not build inputs** |
@@ -32,6 +34,8 @@ failed by inventing details and writing them down as fact — these docs prevent
   **§9** = build sequence.
 - **Facts / constraints:** `02-brand.md` (brand) · `04-assets.md` (assets) · `05-build.md`
   (tech) · `06-open-questions.md` (decisions/open) · `07-tasks.md` (backlog).
+- **Autonomous build orchestration:** `08-build-protocol.md` (the loop's manual) + `STATUS.md`
+  (the live ledger / resume anchor).
 - **Superseded / historical — do NOT build from:** `03-design.md` (stub) and
   `design/_archive/*` (rejected directions + the design brief/kickoff).
 
