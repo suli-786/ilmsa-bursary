@@ -1,0 +1,80 @@
+---
+/**
+ * Speakers — section #speakers (design/03 §4). The draw: headliner emphasis +
+ * breadth, absolute clarity of name & topic, bios available but not overwhelming.
+ *
+ * Order D4/D24 (verbatim from speakers[]): Ebrahim Rasool → Rosieda Shabodien →
+ * [joint-session band] → Fatima Asmal → Adam Deane → Aisha Kilumbilo → Shubnum Khan
+ * → Zohra Sooliman. The two `niche` headliners render first (arch niches, side-by-side
+ * on desktop), then the JointSession magenta band, then the five `circle` speakers in
+ * a 1→2→3-col grid. Every card is one SpeakerCard looped over the data.
+ */
+import { speakers } from "../../data/muslimah-today/speakers.ts";
+import SectionHeader from "./SectionHeader.astro";
+import SpeakerCard from "./SpeakerCard.astro";
+import JointSession from "./JointSession.astro";
+
+const niche = speakers.filter((s) => s.variant === "niche");
+const circle = speakers.filter((s) => s.variant === "circle");
+---
+<section id="speakers" class="mt-speakers" aria-labelledby="mt-speakers-title">
+  <div class="mt-speakers__inner">
+    <SectionHeader eyebrow="Speakers" heading="Speakers & Topics" headingId="mt-speakers-title" />
+
+    <div class="mt-speakers__niches daybreak-stagger">
+      {niche.map((s, i) => <SpeakerCard speaker={s} index={i} />)}
+    </div>
+
+    <JointSession />
+
+    <div class="mt-speakers__grid daybreak-stagger">
+      {circle.map((s, i) => <SpeakerCard speaker={s} index={i} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .mt-speakers {
+    padding: var(--section-y) var(--gutter);
+    background: var(--mt-bg);
+  }
+  .mt-speakers__inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  /* Headliner niches — 1-col mobile → 2-col desktop (pair side-by-side). */
+  .mt-speakers__niches {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  /* Circular grid — 1-col mobile → 2-col md → 3-col lg. */
+  .mt-speakers__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+
+  @media (min-width: 768px) {
+    .mt-speakers__niches {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6);
+      max-width: 52rem;
+      margin-inline: auto;
+    }
+    .mt-speakers__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6);
+    }
+  }
+  @media (min-width: 1024px) {
+    .mt-speakers__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

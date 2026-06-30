@@ -1,0 +1,105 @@
+---
+/**
+ * JointSession — the featured magenta band for the Ebrahim & Rosieda joint session
+ * (design/02 "Joint-session block", design/03 §4). One of Noor's three saturated
+ * magenta moments. Placed immediately after the two headliner niches, before Fatima
+ * (D24). Copy VERBATIM from jointSession (← 01-content.md §4), incl. the brief's
+ * doubled quotes in the title. Off-white text on magenta-600 (AA ~5.7:1) + an inner
+ * --mt-glow light-bloom. Motion: reveal + bloom; lit & static under reduced-motion.
+ *
+ * The paired portraits are decorative (the names are real adjacent text) → the group
+ * is aria-hidden so screen readers aren't read the names twice.
+ */
+import { Image } from "astro:assets";
+import { jointSession } from "../../data/muslimah-today/speakers.ts";
+import ebrahim from "../../assets/muslimah-today/speakers/speaker-ebrahim-rasool.jpg";
+import rosieda from "../../assets/muslimah-today/speakers/speaker-rosieda-shabodien.jpg";
+
+const names = jointSession.speakers.join(" & ");
+---
+<div class="mt-joint daybreak-reveal">
+  <div class="mt-joint__bloom daybreak-bloom" aria-hidden="true"></div>
+  <div class="mt-joint__inner">
+    <p class="mt-joint__eyebrow">{jointSession.eyebrow}</p>
+    <p class="mt-joint__title">{jointSession.title}</p>
+    <div class="mt-joint__portraits" aria-hidden="true">
+      <span class="mt-joint__portrait"><Image src={ebrahim} alt="" width={128} height={128} loading="lazy" /></span>
+      <span class="mt-joint__portrait"><Image src={rosieda} alt="" width={128} height={128} loading="lazy" /></span>
+    </div>
+    <p class="mt-joint__names">{names}</p>
+  </div>
+</div>
+
+<style>
+  .mt-joint {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background: var(--mt-feature);
+    color: var(--mt-on-feature);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-7) var(--gutter);
+  }
+  .mt-joint__bloom {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .mt-joint__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-4);
+    max-width: var(--measure);
+    margin-inline: auto;
+  }
+  .mt-joint__eyebrow {
+    margin: 0;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--track-eyebrow);
+    color: var(--mt-on-feature);
+  }
+  .mt-joint__title {
+    margin: 0;
+    font-family: var(--font-serif-text);
+    font-style: italic;
+    font-size: var(--text-xl);
+    line-height: var(--lh-snug);
+    color: var(--mt-on-feature);
+    text-wrap: balance;
+  }
+  .mt-joint__portraits {
+    display: flex;
+    align-items: center;
+  }
+  .mt-joint__portrait {
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-circle);
+    overflow: hidden;
+    box-shadow: 0 0 0 3px var(--mt-ring);
+  }
+  .mt-joint__portrait + .mt-joint__portrait {
+    margin-left: -0.85rem;
+  }
+  .mt-joint__portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .mt-joint__names {
+    margin: 0;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    letter-spacing: var(--track-caps);
+    color: var(--mt-on-feature);
+  }
+</style>
