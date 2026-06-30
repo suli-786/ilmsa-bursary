@@ -9,11 +9,10 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `7742780` — B1c global shell (Header, sticky Book bar, skip link). S1 + B1 + B1b + B1c done.
-- **Current segment:** **S2 — Scaffold + system** *(in progress: B1, B1b, B1c done)*.
-- **Next action:** S2 · **B3** (brand: bracket-motif SVG component + arch frame; palette already
-  wired in B1 tokens; ILM-SA teal un-recoloured & out of palette) → B4 (type: load fonts + scale)
-  → B4m (motion: Daybreak utilities). Then segment boundary → S3 sections.
+- **Last commit:** `94ab12b` — B3 brand primitives (Bracket, Eyebrow, Arch). S1 + B1 + B1b + B1c + B3 done.
+- **Current segment:** **S2 — Scaffold + system** *(in progress: B1, B1b, B1c, B3 done)*.
+- **Next action:** S2 · **B4** (type: load the three families + scale) → B4m (motion: Daybreak
+  utilities). Then segment boundary → S3 sections.
 - **Loop state:** `RUNNING` — scaffold + shell up; building S2 brand/type/motion system.
 - **Build-ready?** Partial — page scaffolds & builds to `dist/MT/index.html` (off-white ground,
   tokens live); shell + sections pending. *(verify-mt.sh §4 content checks report **pending** while
@@ -41,7 +40,7 @@ fires after a session-limit reset continues purely from here.
 | B1 | Scaffold route `MT.astro` + `muslimah-today.css` (`@theme` tokens) | DONE | `af50cfc` | route + `BaseLayout.astro` (under `components/muslimah-today/`, since `src/layouts/` is out of scope) + full design/02 tokens in `@theme`/`:root` + base layer; imports only the MT stylesheet; builds to `dist/MT/index.html` (off-white ground, 0 console/a11y) |
 | B1b | Data modules `src/data/muslimah-today/*.ts` (verbatim from `01`) | DONE | `ecee853` | `event` + `speakers`(+jointSession) + `testimonials` + `sponsors`(3 tiers) + `ticket-tiers` + `gallery`; pure typed TS, `tsc --noEmit` clean; images as filenames (component glob-resolves); media-partner display names `[OPEN]` |
 | B1c | Global shell (header/nav, sticky Book bar, skip link) | DONE | `7742780` | `Header` (fixed; transparent-over-hero → solid past `[data-mt-hero-sentinel]` via IO, wordmark reveal; SOLID default for pre-S3/no-JS), `BookBar` (sticky mobile-only, safe-area, hidden while hero/#tickets/footer in view), skip link (`#main`), shared `BookButton` (M5 disabled state). 0 console/axe; both viewports inspected. |
-| B3 | Brand (palette, bracket geometry, arch) | TODO | — | design/02 |
+| B3 | Brand (palette, bracket geometry, arch) | DONE | `94ab12b` | `Bracket.astro` (I-beam SVG from measured geometry, `band` variant), `Eyebrow.astro` (lilac band + magenta label on middle bar), `Arch.astro` (rounded-top niche + optional ring). Palette already in B1 tokens. Shapes sanity-checked in isolation; mount in S3. ILM-SA teal stays image-only, out of CSS palette. |
 | B4 | Type (`--font-display`/`--font-serif-text`/`--font-body` + scale) | TODO | — | design/02 |
 | B4m | Motion "Daybreak" utilities (RM-guarded, transform/opacity only) | TODO | — | design/02 |
 
