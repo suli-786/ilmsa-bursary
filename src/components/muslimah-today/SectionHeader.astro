@@ -1,0 +1,60 @@
+---
+/**
+ * SectionHeader — shared section opener (design/02 "Section header / eyebrow",
+ * design/03 §1 scroll-journey: "each section opens with a bracket eyebrow").
+ * Eyebrow (the lilac `.mt-bracket` motif + label) → a rule-draw hairline → the
+ * Caslon headline (h2). [OURS] one component so About / Speakers (S3) and
+ * Testimonials / Past-events / Tickets (S4) share identical header rhythm.
+ *
+ * Motion: the block reveals (.daybreak-reveal) and the hairline draws
+ * (.daybreak-rule); both collapse to their final lit state under reduced-motion.
+ */
+import Eyebrow from "./Eyebrow.astro";
+
+interface Props {
+  /** Eyebrow label (uppercased by the Eyebrow component). */
+  eyebrow: string;
+  /** Caslon headline text (rendered as the section's h2). */
+  heading: string;
+  /** Alignment — section headers are left on About/Speakers, centred on Tickets etc. */
+  align?: "left" | "center";
+  /** id for the h2 (so the section can aria-labelledby it). */
+  headingId?: string;
+  class?: string;
+}
+const { eyebrow, heading, align = "left", headingId, class: klass = "" } = Astro.props;
+---
+<header class={`mt-sectionhead mt-sectionhead--${align} daybreak-reveal ${klass}`.trim()}>
+  <Eyebrow label={eyebrow} />
+  <span class="mt-sectionhead__rule daybreak-rule" aria-hidden="true"></span>
+  <h2 class="mt-sectionhead__title" id={headingId}>{heading}</h2>
+</header>
+
+<style>
+  .mt-sectionhead {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .mt-sectionhead--center {
+    align-items: center;
+    text-align: center;
+  }
+  .mt-sectionhead--left {
+    align-items: flex-start;
+    text-align: left;
+  }
+  /* Rule-draw hairline under the eyebrow (design/03 §3 motion). */
+  .mt-sectionhead__rule {
+    width: 3rem;
+    height: 2px;
+    background: var(--mt-border);
+    border-radius: var(--radius-pill);
+  }
+  .mt-sectionhead__title {
+    margin: 0;
+    font-size: var(--text-xl);
+    color: var(--mt-heading);
+    max-width: 22ch;
+  }
+</style>

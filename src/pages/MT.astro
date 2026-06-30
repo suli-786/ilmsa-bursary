@@ -14,13 +14,15 @@ import BaseLayout from "../components/muslimah-today/BaseLayout.astro";
 import Header from "../components/muslimah-today/Header.astro";
 import BookBar from "../components/muslimah-today/BookBar.astro";
 import Hero from "../components/muslimah-today/Hero.astro";
+import About from "../components/muslimah-today/About.astro";
 ---
 <BaseLayout>
   <a class="mt-skip-link" href="#main">Skip to content</a>
   <Header />
   <main id="main" tabindex="-1">
     <Hero />
-    {/* [OPEN] sections (About → Speakers → Testimonials → Past-events → Tickets → Footer) build here, top-to-bottom (S3–S4). */}
+    <About />
+    {/* [OPEN] sections (Speakers → Testimonials → Past-events → Tickets → Footer) build here, top-to-bottom (S3–S4). */}
   </main>
   <BookBar />
 </BaseLayout>
