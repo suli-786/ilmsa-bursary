@@ -15,7 +15,9 @@ if npm run build >/tmp/mt-build.log 2>&1; then ok "astro build clean"; else err 
 
 echo "== 2. Scope fence (no out-of-scope changes) =="
 allow='^(src/pages/MT\.astro|src/components/muslimah-today/|src/styles/muslimah-today\.css|src/assets/muslimah-today/|src/data/muslimah-today/|Muslima_Today/|package\.json|package-lock\.json|\.gitignore)'
-offenders="$(git status --porcelain | awk '{print $2}' | grep -Ev "$allow" || true)"
+# -uall lists untracked files individually (a brand-new dir like src/data/ would
+# otherwise collapse to one entry that misses the more specific allow-prefix).
+offenders="$(git status --porcelain -uall | awk '{print $2}' | grep -Ev "$allow" || true)"
 if [ -n "$offenders" ]; then err "changes outside the MT scope fence:"; printf '     %s\n' $offenders; else ok "all working changes are in scope"; fi
 
 echo "== 3. Forbidden tokens in MT source =="
