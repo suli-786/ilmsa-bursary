@@ -1,0 +1,19 @@
+---
+/**
+ * Muslimah Today 2026 — route /MT (D23).
+ * Self-contained MT page: uses the namespaced BaseLayout + the dedicated
+ * muslimah-today.css design system. Never pulls in the bursary global styles or
+ * any bursary component. Book CTA target → www.ilmsa.co.za/MT2026 (Quicket, M5-gated).
+ *
+ * Build state (S2/B1): scaffold only — tokens + layout + route wired.
+ * The global shell (header/nav, sticky Book bar, skip link) lands in B1c and the
+ * sections (Hero → About → Speakers → Testimonials → Past-events → Tickets →
+ * Footer) in S3–S4, each rendered from src/data/muslimah-today/*.
+ */
+import BaseLayout from "../components/muslimah-today/BaseLayout.astro";
+---
+<BaseLayout>
+  <main id="main">
+    {/* [OPEN] global shell (B1c) + sections (S3–S4) build here, top-to-bottom. */}
+  </main>
+</BaseLayout>

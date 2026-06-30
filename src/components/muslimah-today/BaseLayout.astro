@@ -1,0 +1,32 @@
+---
+/**
+ * BaseLayout — minimal, MT-specific page shell (own <head>, title, meta).
+ * Imports ONLY the Muslimah Today stylesheet — never the bursary global styles
+ * or any bursary component. Lives under src/components/muslimah-today/ (scope fence;
+ * src/layouts/ is out of scope), used as the page layout via <slot/>.
+ */
+import "../../styles/muslimah-today.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Muslimah Today 2026 — 13th Annual Women's Conference",
+  description = "Muslimah Today: Sisterhood · Inspiration · Spiritual Upliftment. Saturday, 29th August 2026, NMJ Islamic Centre, Durban. Hosted by ILM for Women, a division of ILM-SA.",
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#fefdfe" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
