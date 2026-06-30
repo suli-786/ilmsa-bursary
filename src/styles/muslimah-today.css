@@ -7,6 +7,19 @@
    ========================================================================== */
 @import "tailwindcss";
 
+/* ── Self-hosted fonts (Latin subset, font-display:swap via Fontsource) ───────
+   D22 families: Libre Caslon Display (400 only) · Libre Caslon Text (400 / 400
+   italic / 700, the italic companion [OURS]) · Source Sans 3 (400 / 600 / 700).
+   Self-hosted (no third-party CDN); Vite bundles the woff2. Imported here so the
+   page still pulls ONLY muslimah-today.css. */
+@import "@fontsource/libre-caslon-display/latin-400.css";
+@import "@fontsource/libre-caslon-text/latin-400.css";
+@import "@fontsource/libre-caslon-text/latin-400-italic.css";
+@import "@fontsource/libre-caslon-text/latin-700.css";
+@import "@fontsource/source-sans-3/latin-400.css";
+@import "@fontsource/source-sans-3/latin-600.css";
+@import "@fontsource/source-sans-3/latin-700.css";
+
 /* ── Utility-generating tokens (Tailwind namespaces) ───────────────────────── */
 @theme {
   /* Colour — base (locked, do not alter) */
@@ -140,6 +153,21 @@
     line-height: var(--lh-relaxed);
     font-weight: 400;
   }
+  /* Type system defaults (design/02 Typography): headlines = Libre Caslon Display
+     (400-only) in magenta-700; emphasis/links keep the body sans. Sections set the
+     per-element scale step + any per-section colour. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: var(--lh-snug);
+    letter-spacing: var(--track-display);
+    color: var(--mt-heading);
+    text-wrap: balance;
+  }
+  strong, b { font-weight: 600; }
+  em, i, cite { font-style: italic; }
+  a { color: var(--mt-link); }
+  a:hover { color: var(--mt-link-hover); }
   ::selection { background: var(--color-mt-magenta-100); color: var(--color-mt-ink); }
   :focus-visible { outline: 3px solid var(--mt-focus); outline-offset: 2px; }
 
