@@ -1,0 +1,143 @@
+---
+/**
+ * TestimonialCard — one component looped over testimonials[] (design/03 §5,
+ * design/02 "Testimonial card"). The quote text is stored UNWRAPPED in the data
+ * (testimonials.ts) — the surrounding quotation marks are the card's oversized
+ * magenta-200 quote glyph (decorative, aria-hidden), so the readable quote stays
+ * clean. Caslon Text italic quote → attribution (Source Sans 600 name + grey-600
+ * note). `featured` (Naledi) gets light emphasis: a companion portrait + a wider
+ * span on the desktop grid (set by the Testimonials section).
+ *
+ * Semantics: <figure> + <blockquote> + <figcaption> (the canonical testimonial
+ * pattern); the quote is real text. Motion: card reveals (.daybreak-reveal); lit &
+ * static under reduced-motion.
+ */
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import type { Testimonial } from "../../data/muslimah-today/testimonials.ts";
+
+interface Props {
+  testimonial: Testimonial;
+  /** Stagger index (reveal fallback delay). */
+  index?: number;
+}
+const { testimonial, index = 0 } = Astro.props;
+
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  "../../assets/muslimah-today/past-events/*.{jpg,jpeg,png}",
+  { eager: true },
+);
+const img = testimonial.image
+  ? images[`../../assets/muslimah-today/past-events/${testimonial.image}`]?.default
+  : undefined;
+---
+<figure
+  class={`mt-tm-card ${testimonial.featured ? "mt-tm-card--featured" : ""} daybreak-reveal`}
+  style={`--daybreak-i: ${index}`}
+>
+  {img && (
+    <div class="mt-tm-card__media">
+      <Image src={img} alt={testimonial.author} width={320} height={320} loading="lazy" />
+    </div>
+  )}
+  <div class="mt-tm-card__body">
+    <span class="mt-tm-card__glyph" aria-hidden="true">&#8220;</span>
+    <blockquote class="mt-tm-card__quote">{testimonial.quote}</blockquote>
+    <figcaption class="mt-tm-card__cite">
+      <span class="mt-tm-card__author">{testimonial.author}</span>
+      {testimonial.note && <span class="mt-tm-card__note">{testimonial.note}</span>}
+    </figcaption>
+  </div>
+</figure>
+
+<style>
+  .mt-tm-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-6) var(--space-5) var(--space-5);
+    background: var(--mt-surface);
+    border: 1px solid var(--mt-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Companion portrait (Naledi, featured) — circular, ringed like the speakers. */
+  .mt-tm-card__media {
+    flex: none;
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: var(--radius-circle);
+    overflow: hidden;
+    box-shadow: 0 0 0 4px var(--mt-ring), 0 0 0 5px var(--mt-border);
+  }
+  .mt-tm-card__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mt-tm-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  /* Oversized opening quote glyph — decorative; supplies the “ the data omits. */
+  .mt-tm-card__glyph {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    line-height: 0.5;
+    color: var(--color-mt-magenta-200);
+    height: 0.5em;
+  }
+  .mt-tm-card__quote {
+    margin: 0;
+    font-family: var(--font-serif-text);
+    font-style: italic;
+    font-size: var(--text-md);
+    line-height: var(--lh-normal);
+    color: var(--mt-text);
+    text-wrap: pretty;
+  }
+  .mt-tm-card__cite {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .mt-tm-card__author {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    color: var(--mt-heading);
+    font-style: normal;
+  }
+  .mt-tm-card__note {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    color: var(--mt-text-muted);
+    font-style: normal;
+  }
+
+  /* Featured (Naledi) — soft magenta wash + the portrait beside the quote on desktop. */
+  .mt-tm-card--featured {
+    background: var(--mt-surface-tint);
+  }
+  @media (min-width: 768px) {
+    .mt-tm-card--featured {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-7) var(--space-7) var(--space-7) var(--space-6);
+    }
+    .mt-tm-card--featured .mt-tm-card__media {
+      width: 8rem;
+      height: 8rem;
+    }
+    .mt-tm-card--featured .mt-tm-card__quote {
+      font-size: var(--text-lg);
+    }
+  }
+</style>

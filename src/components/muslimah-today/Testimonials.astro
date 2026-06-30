@@ -1,0 +1,174 @@
+---
+/**
+ * Testimonials — section (design/03 §5). Social proof in attendees' own words.
+ * Eyebrow + Caslon headline → the 5 verbatim testimonials (testimonials.ts ←
+ * 01-content.md §5). Every card is one TestimonialCard looped over the data.
+ *
+ * Layout: ONE track that is a horizontal scroll-snap carousel on mobile (one card
+ * per view + position dots, no autoplay) and a 2-col grid on desktop, where the
+ * featured Naledi card spans the full width with her companion portrait. The dots
+ * are mobile-only and keyboard-operable; an IntersectionObserver keeps the active
+ * dot in sync with the scroll position. Motion: cards reveal; RM = manual, static.
+ */
+import { testimonials } from "../../data/muslimah-today/testimonials.ts";
+import SectionHeader from "./SectionHeader.astro";
+import TestimonialCard from "./TestimonialCard.astro";
+---
+<section class="mt-tm" aria-labelledby="mt-tm-title">
+  <div class="mt-tm__inner">
+    <SectionHeader eyebrow="Voices" heading="What attendees say" headingId="mt-tm-title" />
+
+    <div class="mt-tm__track" role="group" aria-label="Attendee testimonials" tabindex="0">
+      {testimonials.map((t, i) => (
+        <div class="mt-tm__slide">
+          <TestimonialCard testimonial={t} index={i} />
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-tm__dots">
+      {testimonials.map((t, i) => (
+        <button
+          type="button"
+          class="mt-tm__dot"
+          data-index={i}
+          aria-label={`Show testimonial ${i + 1} of ${testimonials.length}`}
+          aria-current={i === 0 ? "true" : "false"}
+        ></button>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .mt-tm {
+    padding: var(--section-y) var(--gutter);
+    background: var(--mt-bg);
+  }
+  .mt-tm__inner {
+    max-width: var(--container);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  /* Mobile — horizontal scroll-snap carousel, one card per view. */
+  .mt-tm__track {
+    position: relative;
+    display: flex;
+    gap: var(--space-5);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* room so card shadows aren't clipped; negative margin keeps edge alignment */
+    padding: var(--space-2) var(--space-1) var(--space-4);
+    margin-inline: calc(var(--space-1) * -1);
+  }
+  .mt-tm__track::-webkit-scrollbar {
+    display: none;
+  }
+  .mt-tm__track:focus-visible {
+    outline: 3px solid var(--mt-focus);
+    outline-offset: 4px;
+    border-radius: var(--radius-md);
+  }
+  .mt-tm__slide {
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+  }
+
+  /* Position dots — mobile only; ≥44px hit area, small visual dot. */
+  .mt-tm__dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-1);
+  }
+  .mt-tm__dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .mt-tm__dot::before {
+    content: "";
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: var(--radius-circle);
+    background: var(--color-mt-magenta-200);
+    transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+  }
+  .mt-tm__dot[aria-current="true"]::before {
+    background: var(--mt-feature);
+    transform: scale(1.25);
+  }
+  .mt-tm__dot:focus-visible {
+    outline: 3px solid var(--mt-focus);
+    outline-offset: -4px;
+    border-radius: var(--radius-circle);
+  }
+
+  /* Desktop — 2-col grid; featured Naledi spans the full width. No carousel. */
+  @media (min-width: 768px) {
+    .mt-tm__track {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6);
+      overflow: visible;
+      scroll-snap-type: none;
+      padding: 0;
+      margin-inline: 0;
+    }
+    .mt-tm__slide {
+      flex: initial;
+    }
+    .mt-tm__slide:has(.mt-tm-card--featured) {
+      grid-column: 1 / -1;
+    }
+    .mt-tm__dots {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Testimonials carousel — keep the active dot in sync with the scroll position and
+  // let dots scroll to their card. No autoplay (design/03 §5). Reduced-motion → jump
+  // (behavior:auto) instead of smooth scroll. Desktop hides the dots, so the click
+  // handlers simply never fire there; the IO is harmless.
+  const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+  for (const section of document.querySelectorAll<HTMLElement>(".mt-tm")) {
+    const track = section.querySelector<HTMLElement>(".mt-tm__track");
+    const slides = Array.from(section.querySelectorAll<HTMLElement>(".mt-tm__slide"));
+    const dots = Array.from(section.querySelectorAll<HTMLButtonElement>(".mt-tm__dot"));
+    if (!track || !slides.length) continue;
+
+    const setActive = (idx: number) => {
+      dots.forEach((d, i) => d.setAttribute("aria-current", String(i === idx)));
+    };
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => {
+        const slide = slides[i];
+        track.scrollTo({ left: slide.offsetLeft, behavior: rm.matches ? "auto" : "smooth" });
+        setActive(i);
+      });
+    });
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) setActive(slides.indexOf(e.target as HTMLElement));
+        }
+      },
+      { root: track, threshold: 0.6 },
+    );
+    slides.forEach((s) => io.observe(s));
+  }
+</script>
