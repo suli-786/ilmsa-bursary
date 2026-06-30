@@ -9,11 +9,12 @@ fires after a session-limit reset continues purely from here.
 
 ## Snapshot  *(update every fire)*
 - **Branch:** `muslimah-today`  ·  **never** push / `main` / deploy.
-- **Last commit:** `99bbb0e` — A2 speakers done (7 D26 tiles); A3 res-check done.
-- **Current segment:** S1 — Assets *(A1–A3 done; A4 next)*.
-- **Next action:** S1 · **A4** (curate + optimise 6–10 past-event photos).
-- **Loop state:** `RUNNING` — build phase; do the tasks below now.
-- **Build-ready?** No.
+- **Last commit:** `8d281fa` — A4 past-events done. **S1 (Assets) COMPLETE.**
+- **Current segment:** **S2 — Scaffold + system** *(not started)*. S1 done (A1–A5; A6 client-blocked).
+- **Next action:** S2 · **B1** (scaffold route `src/pages/MT.astro` + `src/styles/muslimah-today.css`
+  with `design/02` tokens in `@theme`; never import `global.css`). Then B1b → B1c → B3 → B4 → B4m.
+- **Loop state:** `RUNNING` — assets done; next fire builds S2 (scaffold + system).
+- **Build-ready?** No (page not scaffolded yet).
 
 ## Status key
 `TODO` · `IN-PROGRESS` · `DONE` · `BLOCKED(why)` · `DEFERRED(why)`
@@ -26,7 +27,7 @@ fires after a session-limit reset continues purely from here.
 | A1 | Sort & convert logos (PDF/TIF→SVG/PNG) into tiers | DONE | `c545926` | 20 PNGs via `scripts/process-logos.py`; ILM-for-Women split→stacked+horizontal; Luxe dark-bg kept (gold legible); Osmans has harmless white box (invisible in white chip) |
 | A2 | Process 7 speakers → standard bg (D26), circular, ringed | DONE | `99bbb0e` | `scripts/process-speakers.py`; baked square JPEG tiles on D26 gradient; **circle/arch mask + ring applied at BUILD via CSS tokens** (one asset → grid circle + Ebrahim/Rosieda arch); Shubnum uses a manual face box (Haar unreliable on her tilted/foliage shot) |
 | A3 | Check speaker resolution; flag low-res | DONE | `99bbb0e` | All usable. Ebrahim 562×789 but face fills frame (no upscale) → crisp at grid, slightly soft at arch (**M6**, not blocking). Aisha 1.67× upscale (small face in 1536² source) → mildly soft. Others crisp (downscaled). |
-| A4 | Curate + optimise 6–10 past-event photos | TODO | — | exclude flyers (D19); any photo usable (D30) |
+| A4 | Curate + optimise 6–10 past-event photos | DONE | `8d281fa` | `scripts/process-pastevents.py`; 8 gallery + Naledi portrait (testimonial companion); flyers excluded; 1600px JPEG q82 (~2.2MB) |
 | A5 | Image tooling (`rembg`+`pymupdf`+`pillow`) | DONE | (pre-baseline) | in `Muslima_Today/.venv` |
 | A6 | Collect 2 pending sponsor logos | BLOCKED(client) | — | footer uses extensible slot meanwhile |
 
@@ -96,6 +97,22 @@ sponsor slots for the 2 pending logos.
   grid size. Acceptable; a tighter/higher-res headshot would sharpen her tile.
 
 ## Handoff log *(newest first)*
+- `2026-06-30` — **S1 (Assets) COMPLETE → next leg = S2 (scaffold + system).** All build-ready
+  assets are in `src/assets/muslimah-today/**` (3 scripts in `Muslima_Today/scripts/process-*.py`
+  regenerate them). Inventory for B1b/B2:
+  - **logos/** (20 PNG): `logo-muslimah-today` · `org-ilm-for-women-stacked` · `org-ilm-for-women-horizontal`
+    · `org-ilm-sa` (teal, un-recoloured) · `sponsor-polygon` (primary) · `sponsor-{osmans,impress,rvbd,
+    sasol,arctic,nmj,pastry-shack,tlb,luxe,gq-tissue,willowton-group,cellular-citi}` · `media-{tabloid,
+    weekly-gazette,radio-al-ansaar}`. (Arctic/TLB are full-bleed brand tiles; Luxe is gold-on-dark.)
+  - **speakers/** (7 JPG square D26 tiles): `speaker-{ebrahim-rasool,rosieda-shabodien,fatima-asmal,
+    adam-deane,aisha-kilumbilo,shubnum-khan,zohra-sooliman}`. **Apply circle/arch mask + ring in CSS**
+    (see `[WORKER-CHANGE]`): grid = circle; Ebrahim & Rosieda = arch niche.
+  - **past-events/** (9 JPG): `gallery-{audience,embrace,venue,welcome-arch,goodie-bag,group-elegant,
+    speaker,group-vibrant}` + `past-event-naledi` (Naledi Pandor → her testimonial companion).
+  - Verification artifacts (gitignored) in `Muslima_Today/.verify/`: `logos-contact-sheet.png`,
+    `speakers-contact-sheet.png` (circular+ringed preview), `pastevents-output.png`.
+  - Open flags carried forward: **M6** (Ebrahim soft at arch), **Aisha** (mild upscale), **A6** (+2
+    sponsor logos pending — `auto-fit` slot). None block S2.
 - `2026-06-30` — **Build phase START.** Build-system setup complete (`2c0fee4`). The first
   supervised S1 leg produced nothing — the headless worker mis-read the old `SETUP` state and
   asked the user (headless = no user to answer). Fixed: state → `RUNNING`; kickoff/protocol
