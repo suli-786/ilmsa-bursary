@@ -60,7 +60,7 @@ try { axe = await readFile(join(ROOT, 'node_modules/axe-core/axe.min.js'), 'utf8
 const browser = await chromium.launch(launchOpts);
 const report = {};
 let bad = 0;
-for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['desktop', { width: 1440, height: 900 }]]) {
+for (const [name, viewport] of [['mobile', { width: 360, height: 800 }], ['desktop', { width: 1440, height: 900 }]]) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   const consoleErrors = [];

@@ -24,6 +24,12 @@ import ilmHorizontal from "../../assets/muslimah-today/logos/org-ilm-for-women-h
 import ilmSa from "../../assets/muslimah-today/logos/org-ilm-sa.png";
 
 const signoff = `${event.date}, ${event.inshaAllah}`;
+
+// Sponsors split across two marquee rows that scroll in opposite directions
+// (same seamless-loop technique as the past-events gallery).
+const half = Math.ceil(sponsors.length / 2);
+const sponsorsRowA = sponsors.slice(0, half);
+const sponsorsRowB = sponsors.slice(half);
 ---
 <footer class="mt-footer" data-mt-footer aria-labelledby="mt-footer-heading">
   <h2 id="mt-footer-heading" class="mt-sr-only">Event details, sponsors and contact</h2>
@@ -59,15 +65,32 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
       <div class="mt-footer__tier">
         <p class="mt-footer__tier-label">Media Partners</p>
         <div class="mt-footer__media">
-          {mediaPartners.map((s) => <SponsorChip sponsor={s} />)}
+          {mediaPartners.map((s) => <div class="mt-footer__media-cell"><SponsorChip sponsor={s} /></div>)}
         </div>
       </div>
 
       <div class="mt-footer__tier">
         <p class="mt-footer__tier-label">Sponsors</p>
-        {/* auto-fit grid — the +2 pending sponsor logos (A6) drop in with no redesign. */}
-        <div class="mt-footer__grid">
-          {sponsors.map((s) => <SponsorChip sponsor={s} />)}
+        {/* Two rows scrolling in opposite directions — same seamless marquee as the
+            gallery: each track holds two identical copies; translateX(-50%) = one copy,
+            so it loops with no visible reset. Reduced-motion holds them static. */}
+        <div class="mt-footer__wall">
+          <div class="mt-footer__mq">
+            <div class="mt-footer__mq-track mt-footer__mq-track--a">
+              {sponsorsRowA.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              <div class="mt-footer__mq-dup" aria-hidden="true">
+                {sponsorsRowA.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              </div>
+            </div>
+          </div>
+          <div class="mt-footer__mq">
+            <div class="mt-footer__mq-track mt-footer__mq-track--b">
+              {sponsorsRowB.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              <div class="mt-footer__mq-dup" aria-hidden="true">
+                {sponsorsRowB.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -236,16 +259,62 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
     width: 100%;
     max-width: 18rem;
   }
+  /* Exactly 3 partners — centred flex wraps 2+1 (mobile) / 3-across (desktop)
+     with no orphaned/stretched cells. */
   .mt-footer__media {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: var(--space-3);
   }
-  /* auto-fit so the +2 pending sponsor logos (A6) drop in with zero layout change. */
-  .mt-footer__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  .mt-footer__media-cell {
+    flex: 0 0 auto;
+    width: min(12rem, 42%); /* mobile: 2 per row, 3rd centres — no orphan */
+  }
+  .mt-footer__media-cell :global(.mt-chip) {
+    width: 100%;
+  }
+  /* Sponsors — two marquee rows scrolling in opposite directions (gallery pattern).
+     +2 pending sponsor logos (A6) drop into a row array with zero layout change. */
+  .mt-footer__wall {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-3);
+  }
+  .mt-footer__mq {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .mt-footer__mq-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: mt-logo-scroll 50s linear infinite;
+  }
+  .mt-footer__mq-track--b {
+    animation-direction: reverse; /* → opposite direction */
+  }
+  .mt-footer__mq-dup {
+    display: contents; /* the duplicate copy joins the same flex row */
+  }
+  .mt-footer__mq-cell {
+    flex: none;
+    width: clamp(7rem, 26vw, 10rem);
+    margin-right: var(--space-3); /* margin (not gap) so -50% is one exact copy */
+  }
+  .mt-footer__mq-cell :global(.mt-chip) {
+    width: 100%;
+  }
+  @keyframes mt-logo-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mt-footer__mq-track {
+      animation: none;
+    }
   }
 
   /* Socials. */
@@ -354,10 +423,8 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
     .mt-footer__lockup--horizontal {
       display: block;
     }
-    .mt-footer__media {
-      grid-template-columns: repeat(3, 1fr);
-      max-width: 40rem;
-      margin-inline: auto;
+    .mt-footer__media-cell {
+      width: 12rem; /* desktop: 3 across, centred */
     }
   }
 </style>
