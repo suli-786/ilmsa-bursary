@@ -1,19 +1,21 @@
 ---
 /**
- * Footer — the restrained warm sign-off (design/03 §8, design/02 "Footer"). Tickets
- * already delivered the saturated magenta climax, so the footer carries NO second
- * full-magenta CTA — only a small text "Book your seat ›" link back to #tickets.
+ * Footer — the restrained warm sign-off. The page already delivers its saturated
+ * magenta CTA in the Tickets section, so the footer carries NO second full-magenta
+ * CTA — only a small text "Book your seat ›" link back to #tickets.
  *
- * Order (mobile, stacked & centred): warm sign-off reusing the verbatim date →
- * "brought to you by" lockups (ILM-for-Women stacked→horizontal + a division of +
- * ILM-SA TEAL, UNTOUCHED) → 3 sponsor tiers (Polygon primary · Media Partners ·
- * Sponsors — `auto-fit` chip grid so the +2 pending logos (A6) drop in with zero
- * redesign) → socials (FB/IG/WhatsApp, 44px) → venue + Maps → small grey credit.
+ * Order (stacked & centred, keyline dividers between zones):
+ *   1. event essentials — verbatim date · venue + Maps · Book link
+ *   2. socials (FB/IG/WhatsApp, 44px targets)
+ *   3. credits — "brought to you by" lockups (ILM-for-Women stacked→horizontal +
+ *      "a division of" + ILM-SA, teal logo never recoloured) → verbatim
+ *      "In conjunction with:" → 3 sponsor tiers (Polygon primary · Media
+ *      Partners · a two-row sponsor marquee)
+ *   4. small grey credit.
  *
- * Copy verbatim from event.ts (← 01-content.md §1/§6). Sponsors from sponsors.ts,
- * grouped by tier, every chip a looped SponsorChip. `data-mt-footer` lets the
- * BookBar observer hide the sticky bar while the footer is in view (design/03 §1).
- * Motion: blocks reveal; lit & static under reduced-motion.
+ * Copy is verbatim via event.ts; sponsors from sponsors.ts, grouped by tier,
+ * every chip a looped SponsorChip. Expects the token names bridged in the page's
+ * :root (see MT.astro).
  */
 import { Image } from "astro:assets";
 import { event } from "../../data/muslimah-today/event.ts";
@@ -24,16 +26,61 @@ import ilmHorizontal from "../../assets/muslimah-today/logos/org-ilm-for-women-h
 import ilmSa from "../../assets/muslimah-today/logos/org-ilm-sa.png";
 
 const signoff = `${event.date}, ${event.inshaAllah}`;
----
-<footer class="mt-footer" data-mt-footer aria-labelledby="mt-footer-heading">
-  <h2 id="mt-footer-heading" class="mt-sr-only">Event details, sponsors and contact</h2>
-  <div class="mt-footer__inner daybreak-reveal">
 
-    {/* Warm sign-off — verbatim date + a small Book link (NOT a magenta CTA, design/03 §8). */}
-    <p class="mt-footer__signoff">
-      <span>{signoff}</span>
+// Sponsors split across two marquee rows that scroll in opposite directions
+// (same seamless-loop technique as the past-events gallery).
+const half = Math.ceil(sponsors.length / 2);
+const sponsorsRowA = sponsors.slice(0, half);
+const sponsorsRowB = sponsors.slice(half);
+---
+<footer class="mt-footer" aria-labelledby="mt-footer-heading">
+  <h2 id="mt-footer-heading" class="mt-sr-only">Event details, sponsors and contact</h2>
+  <div class="mt-footer__inner">
+
+    {/* Zone 1 — event essentials: verbatim date · venue → Maps · Book link. */}
+    <div class="mt-footer__zone mt-footer__zone--essentials">
+      <p class="mt-footer__signoff">{signoff}</p>
+      <p class="mt-footer__venue">
+        <a class="mt-footer__maps" href={event.mapsUrl} target="_blank" rel="noopener noreferrer">
+          <svg class="mt-footer__pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0Z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <span>{event.venue}</span>
+          <span class="mt-footer__chev" aria-hidden="true">›</span>
+        </a>
+      </p>
       <a class="mt-footer__booklink" href="#tickets">Book your seat<span class="mt-footer__chev" aria-hidden="true">›</span></a>
-    </p>
+    </div>
+
+    <hr class="mt-footer__rule" aria-hidden="true" />
+
+    {/* Zone 2 — stay connected: icon buttons + handles / CTA. */}
+    <ul class="mt-footer__socials">
+      {event.socials.map((s) => (
+        <li>
+          <a class="mt-footer__social" href={s.url} target="_blank" rel="noopener noreferrer" aria-label={`${s.platform} — ${s.label ?? s.handle}`}>
+            <span class="mt-footer__social-icon" aria-hidden="true">
+              {s.platform === "Facebook" && (
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.3l.4-2.9h-2.7V9.3c0-.84.23-1.41 1.43-1.41H16V5.3c-.27-.04-1.2-.12-2.27-.12-2.25 0-3.79 1.37-3.79 3.9v2.02H7.6V14h2.34v7h3.56z" /></svg>
+              )}
+              {s.platform === "Instagram" && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><line x1="17.6" y1="6.4" x2="17.6" y2="6.4" stroke-width="2.6" stroke-linecap="round" /></svg>
+              )}
+              {s.platform === "WhatsApp" && (
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.02zM12.04 20.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.41a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42l-.48-.01c-.17 0-.43.06-.66.31s-.86.85-.86 2.07c0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z" /></svg>
+              )}
+            </span>
+            <span class="mt-footer__social-handle">{s.label ?? s.handle}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <hr class="mt-footer__rule" aria-hidden="true" />
+
+    {/* Zone 3 — credits: brought to you by → in conjunction with → sponsor tiers. */}
+    <div class="mt-footer__zone mt-footer__zone--credits">
 
     {/* Brought to you by — lockups; ILM-SA stays teal, never recoloured. */}
     <div class="mt-footer__attrib">
@@ -46,6 +93,8 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
       </div>
     </div>
 
+    <p class="mt-footer__lead">{event.attribution.conjunction}</p>
+
     {/* Sponsors — 3 tiers, every chip a looped SponsorChip. */}
     <div class="mt-footer__sponsors">
       <div class="mt-footer__tier">
@@ -55,56 +104,44 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
         </div>
       </div>
 
-      {/* [OPEN] media-partner display names pending final confirmation (Q-name); shown as listed. */}
+      {/* [OPEN] media-partner display names pending final client confirmation; shown as listed. */}
       <div class="mt-footer__tier">
         <p class="mt-footer__tier-label">Media Partners</p>
         <div class="mt-footer__media">
-          {mediaPartners.map((s) => <SponsorChip sponsor={s} />)}
+          {mediaPartners.map((s) => <div class="mt-footer__media-cell"><SponsorChip sponsor={s} compact /></div>)}
         </div>
       </div>
 
       <div class="mt-footer__tier">
         <p class="mt-footer__tier-label">Sponsors</p>
-        {/* auto-fit grid — the +2 pending sponsor logos (A6) drop in with no redesign. */}
-        <div class="mt-footer__grid">
-          {sponsors.map((s) => <SponsorChip sponsor={s} />)}
+        {/* Two rows scrolling in opposite directions — same seamless marquee as the
+            gallery: each track holds two identical copies; translateX(-50%) = one copy,
+            so it loops with no visible reset. Reduced-motion holds them static. */}
+        <div class="mt-footer__wall">
+          <div class="mt-footer__mq">
+            <div class="mt-footer__mq-track mt-footer__mq-track--a">
+              {sponsorsRowA.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              <div class="mt-footer__mq-dup" aria-hidden="true">
+                {sponsorsRowA.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              </div>
+            </div>
+          </div>
+          <div class="mt-footer__mq">
+            <div class="mt-footer__mq-track mt-footer__mq-track--b">
+              {sponsorsRowB.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              <div class="mt-footer__mq-dup" aria-hidden="true">
+                {sponsorsRowB.map((s) => <div class="mt-footer__mq-cell"><SponsorChip sponsor={s} compact /></div>)}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    {/* Socials — icon buttons + handles. */}
-    <ul class="mt-footer__socials">
-      {event.socials.map((s) => (
-        <li>
-          <a class="mt-footer__social" href={s.url} target="_blank" rel="noopener noreferrer" aria-label={`${s.platform} — ${s.handle}`}>
-            <span class="mt-footer__social-icon" aria-hidden="true">
-              {s.platform === "Facebook" && (
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.3l.4-2.9h-2.7V9.3c0-.84.23-1.41 1.43-1.41H16V5.3c-.27-.04-1.2-.12-2.27-.12-2.25 0-3.79 1.37-3.79 3.9v2.02H7.6V14h2.34v7h3.56z" /></svg>
-              )}
-              {s.platform === "Instagram" && (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><line x1="17.6" y1="6.4" x2="17.6" y2="6.4" stroke-width="2.6" stroke-linecap="round" /></svg>
-              )}
-              {s.platform === "WhatsApp" && (
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.02zM12.04 20.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.41a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42l-.48-.01c-.17 0-.43.06-.66.31s-.86.85-.86 2.07c0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z" /></svg>
-              )}
-            </span>
-            <span class="mt-footer__social-handle">{s.handle}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
 
-    {/* Venue + Maps. */}
-    <p class="mt-footer__venue">
-      <a class="mt-footer__maps" href={event.mapsUrl} target="_blank" rel="noopener noreferrer">
-        <svg class="mt-footer__pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0Z" />
-          <circle cx="12" cy="10" r="3" />
-        </svg>
-        <span>{event.venue}</span>
-        <span class="mt-footer__chev" aria-hidden="true">›</span>
-      </a>
-    </p>
+
+
+    </div>
 
     <p class="mt-footer__credit">© {event.edition} {event.attribution.parent}</p>
   </div>
@@ -114,6 +151,9 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
   .mt-footer {
     padding: var(--section-y) var(--gutter) calc(var(--space-8) + env(safe-area-inset-bottom));
     background: var(--mt-surface-lilac);
+    /* soft bloom under the essentials — continues the page's atmosphere system */
+    background-image: radial-gradient(620px 420px at 50% 0%,
+      rgba(219, 170, 205, 0.28), rgba(219, 170, 205, 0) 72%);
     border-top: 1px solid var(--mt-border);
   }
   .mt-footer__inner {
@@ -124,6 +164,25 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
     align-items: center;
     text-align: center;
     gap: var(--space-7);
+  }
+
+  /* Zone wrappers + keyline dividers between the three zones. */
+  .mt-footer__zone {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .mt-footer__zone--credits {
+    gap: var(--space-6);
+  }
+  .mt-footer__rule {
+    width: min(28rem, 100%);
+    height: 1px;
+    border: 0;
+    margin: 0;
+    background: var(--mt-border);
   }
 
   /* Warm sign-off + small Book link (text, not a magenta CTA). */
@@ -236,16 +295,63 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
     width: 100%;
     max-width: 18rem;
   }
+  /* Exactly 3 partners — one centred line at the same compact size as the
+     scrolling sponsor chips (cell width mirrors .mt-footer__mq-cell). */
   .mt-footer__media {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    justify-content: center;
     gap: var(--space-3);
   }
-  /* auto-fit so the +2 pending sponsor logos (A6) drop in with zero layout change. */
-  .mt-footer__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  .mt-footer__media-cell {
+    /* basis mirrors the marquee cell width; shrink (never wrap/clip) on narrow
+       phones where 3 full-width cells exceed the padded tier */
+    flex: 0 1 clamp(7rem, 26vw, 10rem);
+    min-width: 0;
+  }
+  .mt-footer__media-cell :global(.mt-chip) {
+    width: 100%;
+  }
+  /* Sponsors — two marquee rows scrolling in opposite directions (gallery pattern).
+     Pending sponsor logos drop into a row array with zero layout change. */
+  .mt-footer__wall {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-3);
+  }
+  .mt-footer__mq {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+  .mt-footer__mq-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: mt-logo-scroll 50s linear infinite;
+  }
+  .mt-footer__mq-track--b {
+    animation-direction: reverse; /* → opposite direction */
+  }
+  .mt-footer__mq-dup {
+    display: contents; /* the duplicate copy joins the same flex row */
+  }
+  .mt-footer__mq-cell {
+    flex: none;
+    width: clamp(7rem, 26vw, 10rem);
+    margin-right: var(--space-3); /* margin (not gap) so -50% is one exact copy */
+  }
+  .mt-footer__mq-cell :global(.mt-chip) {
+    width: 100%;
+  }
+  @keyframes mt-logo-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mt-footer__mq-track {
+      animation: none;
+    }
   }
 
   /* Socials. */
@@ -353,11 +459,6 @@ const signoff = `${event.date}, ${event.inshaAllah}`;
     }
     .mt-footer__lockup--horizontal {
       display: block;
-    }
-    .mt-footer__media {
-      grid-template-columns: repeat(3, 1fr);
-      max-width: 40rem;
-      margin-inline: auto;
     }
   }
 </style>

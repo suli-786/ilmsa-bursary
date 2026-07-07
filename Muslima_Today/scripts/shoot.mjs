@@ -1,17 +1,16 @@
-// shoot.mjs — VISUAL verification for the Muslimah Today build.
+// shoot.mjs — VISUAL verification for the Muslimah Today page.
 // Serves dist/, screenshots the page at mobile + desktop, runs axe a11y, writes a report.
 //
-// Contexts emulate `prefers-reduced-motion: reduce` so the global RM rule pins every
-// "Daybreak" reveal/bloom to its FINAL LIT state. Without this a fullPage (no-scroll)
-// capture renders below-fold `.daybreak-reveal` elements at opacity 0 (their scroll-
-// driven start state) — i.e. blank — making below-fold sections impossible to inspect.
-// Reduced-motion = the page fully revealed AND it doubles as the RM acceptance check
-// (an explicit design/03 criterion). See STATUS [WORKER-CHANGE].
+// Contexts emulate `prefers-reduced-motion: reduce` so every scroll-driven reveal
+// renders in its final visible state. Without this a fullPage (no-scroll) capture
+// renders below-fold reveal elements at opacity 0 (their start state) — i.e. blank —
+// making below-fold sections impossible to inspect. It also doubles as the
+// reduced-motion acceptance check (the page must be fully readable without motion).
 //   node Muslima_Today/scripts/shoot.mjs            # screenshot + axe the built /MT/ page
 //   node Muslima_Today/scripts/shoot.mjs --smoke    # just prove Chromium launches (no page needed)
 //   MT_PATH=/MT/ node ...                           # override the page path
-// Screenshots + report → Muslima_Today/.verify/ (gitignored). Exit non-zero on console errors
-// or serious/critical a11y violations, so the loop can gate on it.
+// Screenshots + report → Muslima_Today/.verify/ (gitignored). Exit non-zero on console
+// errors or serious/critical a11y violations, so automated checks can gate on it.
 import { chromium } from 'playwright';
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -60,7 +59,7 @@ try { axe = await readFile(join(ROOT, 'node_modules/axe-core/axe.min.js'), 'utf8
 const browser = await chromium.launch(launchOpts);
 const report = {};
 let bad = 0;
-for (const [name, viewport] of [['mobile', { width: 390, height: 844 }], ['desktop', { width: 1440, height: 900 }]]) {
+for (const [name, viewport] of [['mobile', { width: 360, height: 800 }], ['desktop', { width: 1440, height: 900 }]]) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: 2, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   const consoleErrors = [];

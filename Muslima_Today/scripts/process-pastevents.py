@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""A4 — curate & optimise past-event photos for the Muslimah Today gallery.
+"""Curate & optimise past-event photos for the Muslimah Today gallery.
 
 Selected 8 gallery photos (atmosphere / sisterhood / branding / joy / speakers) + the
-Naledi Pandor portrait (companion for her testimonial). Digital flyers excluded (D19);
-any past-event photo is usable (D30). Photos kept full-colour & natural — the optional
-"warm grade" / magenta-duotone treatments (design/02) are CSS at build.
+Naledi Pandor portrait (companion for her testimonial). Digital flyers excluded;
+any past-event photo is usable (client-approved). Photos kept full-colour & natural —
+any colour treatment is CSS at build.
 Output: src/assets/muslimah-today/past-events/. Run via Muslima_Today/.venv/bin/python.
 """
 import os

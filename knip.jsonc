@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    // Verification script run directly via `node`, not imported by the site.
+    "Muslima_Today/scripts/shoot.mjs"
+  ],
+  "ignoreDependencies": [
+    // shoot.mjs injects node_modules/axe-core/axe.min.js via readFile, which
+    // knip can't trace as an import.
+    "axe-core"
+  ]
+}

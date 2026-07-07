@@ -1,65 +1,1265 @@
 ---
-/**
- * Muslimah Today 2026 — route /MT (D23).
- * Self-contained MT page: uses the namespaced BaseLayout + the dedicated
- * muslimah-today.css design system. Never pulls in the bursary global styles or
- * any bursary component. Book CTA target → www.ilmsa.co.za/MT2026 (Quicket, M5-gated).
- *
- * Build state (S2/B1c): scaffold + global shell wired (skip link · Header · sticky
- * Book bar). The sections (Hero → About → Speakers → Testimonials → Past-events →
- * Tickets → Footer) land in S3–S4 inside <main>, each rendered from
- * src/data/muslimah-today/*.
- */
-import BaseLayout from "../components/muslimah-today/BaseLayout.astro";
-import Header from "../components/muslimah-today/Header.astro";
-import BookBar from "../components/muslimah-today/BookBar.astro";
-import Hero from "../components/muslimah-today/Hero.astro";
-import About from "../components/muslimah-today/About.astro";
-import Speakers from "../components/muslimah-today/Speakers.astro";
-import Testimonials from "../components/muslimah-today/Testimonials.astro";
-import PastEvents from "../components/muslimah-today/PastEvents.astro";
-import Tickets from "../components/muslimah-today/Tickets.astro";
-import Footer from "../components/muslimah-today/Footer.astro";
----
-<BaseLayout>
-  <a class="mt-skip-link" href="#main">Skip to content</a>
-  <Header />
-  <main id="main" tabindex="-1">
-    <Hero />
-    <About />
-    <Speakers />
-    <Testimonials />
-    <PastEvents />
-    <Tickets />
-  </main>
-  <Footer />
-  <BookBar />
-</BaseLayout>
+// Muslimah Today 2026 — route /MT. The whole landing page in one file: the
+// Canva-designed SVG hero (topper + logo + wordmark + content block, assembled
+// from raw SVG below), then Tickets → About (pinned scrollytelling + the
+// Testimonials panel) → Speakers → Past-events marquee, closed by the shared
+// Footer component. Copy is verbatim from Muslima_Today/overview.md.
+//
+// Hero assembly: logo_hero.svg is nested INTO topper.svg at the white-box
+// position (units x=79.88 y=11.27, size 110.25x38.25) so it sits 5px above the
+// box bottom and scales locked to the topper. The topper viewBox is cropped to
+// the band height and width/height dropped so it's fluid (width:100% → scales).
+// The SVG source files are never modified — all adjustments are string
+// transforms here.
+import topperRaw from "../assets/muslimah-today/hero/topper.svg?raw";
+import logoRaw from "../assets/muslimah-today/hero/logo_hero.svg?raw";
+import contentRaw from "../assets/muslimah-today/hero/hero_content_block.svg?raw";
+import wordmarkRaw from "../assets/muslimah-today/hero/muslimah_today_hero.svg?raw";
 
-<style>
-  /* Skip link — first focusable element; visually hidden until focused (design/03 §1). */
-  .mt-skip-link {
-    position: fixed;
-    top: var(--space-4);
-    left: var(--space-4);
-    z-index: var(--z-modal);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-pill);
-    background: var(--mt-feature);
-    color: var(--mt-on-feature);
-    font-family: var(--font-body);
-    font-weight: 600;
-    font-size: var(--text-sm);
-    text-decoration: none;
-    box-shadow: var(--shadow-md);
-    transform: translateY(calc(-100% - var(--space-6)));
-    transition: transform var(--dur-fast) var(--ease-out);
-  }
-  .mt-skip-link:focus {
-    transform: translateY(0);
-  }
-  /* main receives focus from the skip link without showing a focus outline on click. */
-  #main:focus {
-    outline: none;
-  }
-</style>
+// Fonts for the live body text (the SVG topper/wordmark are vector outlines and
+// need no fonts). Caslon = display moments (mirrors the wordmark serif); Source
+// Sans = the clarity-critical date/venue/CTA text.
+import "@fontsource/libre-caslon-display/latin-400.css";
+import "@fontsource/libre-caslon-text/latin-400.css";
+import "@fontsource/libre-caslon-text/latin-400-italic.css";
+import "@fontsource/source-sans-3/latin-400.css";
+import "@fontsource/source-sans-3/latin-600.css";
+import "@fontsource/source-sans-3/latin-700.css";
+
+// Shared footer component (expects the token names bridged in :root below).
+import Footer from "../components/muslimah-today/Footer.astro";
+
+// Speaker portraits — uniform 900×900 face-aligned tiles from process-speakers.py
+// (head-and-shoulders crop, same subject scale, brand-gradient bg); the circle
+// mask + keyline come from the .sp-med CSS frame.
+import { Image } from "astro:assets";
+import imgAdam from "../assets/muslimah-today/speakers/speaker-adam-deane.jpg";
+import imgAisha from "../assets/muslimah-today/speakers/speaker-aisha-kilumbilo.jpg";
+import imgEbrahim from "../assets/muslimah-today/speakers/speaker-ebrahim-rasool.jpg";
+import imgFatima from "../assets/muslimah-today/speakers/speaker-fatima-asmal.jpg";
+import imgRosieda from "../assets/muslimah-today/speakers/speaker-rosieda-shabodien.jpg";
+import imgShubnum from "../assets/muslimah-today/speakers/speaker-shubnum-khan.jpg";
+import imgZohra from "../assets/muslimah-today/speakers/speaker-zohra-sooliman.jpg";
+
+// Logo -> nested <svg>: position in the topper's white box, size in topper units.
+const logo = logoRaw
+  .replace("<svg ", '<svg x="79.88" y="11.27" ')
+  .replace('width="147"', 'width="110.25"')
+  .replace('height="51"', 'height="38.25"');
+
+// Topper -> fluid + cropped to the band, with the logo injected on top.
+const topper = topperRaw
+  .replace(/<svg\b[^>]*>/, (tag) =>
+    tag
+      .replace(/\s(?:width|height)="[^"]*"/g, "")
+      .replace(/viewBox="[^"]*"/, 'viewBox="0 0 270 60.72"')
+  )
+  .replace("</svg>", logo + "</svg>");
+
+// Content block (tagline pill + body block). Cropped from the topper LIP
+// (y60.72) down to the body bottom (y324.93), so the 40px design gap between
+// lip and pill is baked in as transparent space at the top and scales with the
+// SVG. Stacked flush under the topper. Made fluid.
+// Wordmark "MUSLIMAH TODAY" -> nested into the gap between the lips, scaled 0.5
+// (height 15u = 20px), centered (x=41.25u), top 10px below the topper lip (y=68.22u).
+const wordmark = wordmarkRaw
+  .replace("<svg ", '<svg x="41.25" y="68.22" ')
+  .replace('width="500"', 'width="187.5"')
+  .replace('height="40"', 'height="15"');
+
+// Content SVG is cropped to the topper lip (y60.72) down to y112.47 (= 150px on
+// the 360 design) — i.e. it keeps the gap + wordmark + pill + the body block's
+// rounded TOP, cut where the body's sides go straight. The body then continues
+// as an expandable CSS magenta block (.body) that joins seamlessly.
+const content = contentRaw
+  .replace(/<svg\b[^>]*>/, (tag) =>
+    tag
+      .replace(/\s(?:width|height)="[^"]*"/g, "")
+      .replace(/viewBox="[^"]*"/, 'viewBox="0 60.722656 270 51.75"')
+  )
+  .replace("</svg>", wordmark + "</svg>");
+
+// Speakers — topics AND bios VERBATIM from overview.md (hard-wrapped source lines
+// joined with a single space; do not shorten or paraphrase).
+// Portraits: the processed uniform tiles (imported above) in the circular frame —
+// consistent crop/scale by construction, per the brief's "heads and shoulders only".
+const speakers = [
+  { img: imgAdam, name: "Adam Deane", topic: "Be prepared: Personal safety for women",
+    bio: "Adam is a Human Behaviour and Capability Strategist with over 20 years of experience in strategy, communication, security and community leadership. A PSIRA-registered security professional and active community policing member, Adam and his partner Ridhwaan run Aegis Elite which specialises in defensive firearm and fitness training for civilians. Recognised as a pioneer of Calisthenics in South Africa, he is a passionate advocate for physical capability and real-world resilience. As a father and community leader, he brings a unique, grounded perspective on human behaviour, personal safety, and building stronger, more resilient communities through discipline, purpose and service." },
+  { img: imgAisha, name: "Aisha Kilumbilo", topic: "Words of Inspiration: Spoken word poetry",
+    bio: "Aisha is a multi-disciplinary professional and creative who blends strategy with heart. Armed with a BTech in Human Resources and a BCom Honours in Marketing, she spent a decade in the corporate world before transitioning into freelance and advocacy work. She channels her skillset into community, art and cultural empowerment as a member of the Palestine House management team, a board member for the Nanda Sooben Art and Education Foundation, and a director of Wage Peace International. A mum of two daughters and a passionate poet, Aisha is also part of the planning committee for the The Tha’alabah Sisterhood and a co-writer and editor of the Womandla women's writing collection." },
+  { img: imgEbrahim, name: "Ebrahim Rasool", topic: "Standing Firm: When your convictions cost you everything",
+    bio: "Ebrahim holds an arts degree from the University of Cape Town, Honorary Doctorates from Roosevelt and Chatham Universities, and is a Senior Fellow at Georgetown and Rutgers Universities. A veteran of the anti-apartheid struggle, his convictions cost him his job, imprisonment, and years living underground. He worked alongside Nelson Mandela during South Africa's transition to democracy, engaging religious communities and laying groundwork for negotiations. He later served as Premier of the Western Cape and twice as South Africa's Ambassador to the USA — the second time ending when the Trump administration declared him persona non grata for condemning supremacist policies." },
+  { img: imgFatima, name: "Fatima Asmal", topic: "The greatest love of all",
+    bio: "Fatima is the founder of the Institute for Learning and Motivation - South Africa (ILM-SA), a Durban-based charity engaged in numerous socio-economic upliftment and educational projects. As a freelance journalist, she wrote articles for amongst others, the Mail & Guardian, as well as presented various radio and television programs on community-based platforms. In her early twenties, she founded two Islamic publications  - An-Nisaa and The Straight Path.   A single mum, Fatima is passionate about studying Islam and has attended numerous Islamic studies seminars. She is currently a Qur’anic Arabic student." },
+  { img: imgRosieda, name: "Rosieda Shabodien", topic: "Knowing your value as a Muslim woman",
+    bio: "Rosieda is a human rights advocate, gender activist and life coach who has spent decades working at the intersection of women's empowerment and social justice. Born in the Cape Flats during apartheid, she began her activism at fourteen and went on to play a pivotal role in developing gender equality legislation in South Africa. She has held leadership roles across human rights and women's advocacy organisations, including serving as head of the Commission for Gender Equality. The CEO of Actualize and Success Lab, Rosieda holds a Master's in Management Coaching from Stellenbosch University and is the author of What Women Want Coaches to Know." },
+  { img: imgShubnum, name: "Shubnum Khan", topic: "Blood, sweat and tears: My journey as a writer",
+    bio: "Shubnum is a South African author and artist. Her latest novel, The Lost Love of Akbar Manzil is a USA Today bestseller, a New York Times Editor's Choice and was named Best Books Of 2024 by NPR. She is the first Indian woman to win South Africa's most prestigious literary award, the Sunday Times Literary Award for fiction and she has also won the University of Johannesburg Main Prize and the HSS Award for Best Novel. She is a board member at Imbiza Journal for African Writing and a mentor at Led By Foundation which focuses on developing Muslim women’s career skills in India. Her writing has appeared in The New York Times, McSweeney's Quarterly Concern, HuffPost, O the Oprah Magazine amongst others." },
+  { img: imgZohra, name: "Zohra Sooliman", topic: "Trauma interventions for the children of Gaza",
+    bio: "Zohra is the co-founder of Gift of the Givers Foundation. A Counselling Psychologist with a Master's degree from the University of KwaZulu-Natal, she established the Gift of the Givers Careline — a counselling service supporting individuals and communities through various challenges — in 1997. Her work spans trauma support, community capacity building and psychological intervention. A recipient of numerous awards, including the Living Legends Award from the Ethekwini Municipality and Office of the Premier, and the Congress of Business and Economics Women's Excellence in Leadership Award (2025), Zohra is a mother of five and grandmother of ten." },
+];
+const joint = {
+  title: "Love, Deen and Life: an honest conversation about marriage and family",
+  who: "Ebrahim Rasool & Rosieda Shabodien",
+};
+
+// Testimonials — `full` is VERBATIM from overview.md (L73–77). Pinned screens show
+// `short` (a contiguous verbatim excerpt) + a Read-more button opening a <dialog>
+// with the full quote; the stacked base mode (no JS / reduced motion) shows the
+// full quote inline and hides the button. [DECISION 2026-07-07: client asked for
+// excerpt + Read-more popup so every pinned screen fits one viewport.]
+const naledi = {
+  id: "naledi", name: "Naledi Pandor", role: "2025 Speaker",
+  full: "I think it was very well organised.  All the speakers were excellent.  There were so many educational contributions – a lot of learning about the ummah, the Qur’an, our own understanding of our faith so I found it valuable.  What I thought was very important was that women had a voice in this space and they felt comfortable to speak up and that was really wonderful because often women don’t get that public space, so I loved that about this conference and I congratulate the team for putting together an illustrious set of speakers – entertaining, educational, amusing.  It had all the ingredients.",
+  short: "I congratulate the team for putting together an illustrious set of speakers – entertaining, educational, amusing.  It had all the ingredients.",
+};
+const testimonials = [
+  { id: "clare", name: "Clare", role: null,
+    full: "As a new revert, due to Muslimah Today, I have found a sense of belonging in Islam, I found my path, I found good friends, I felt inspired, I was touched by the experience of such motivational speakers – to this day, their words have been cemented in my mind. I'm grateful for the opportunity of having attended in 2022 and I can't wait to see what 2023 holds! Because of such a motivational event, I was inspired to join ILM-SA as a volunteer and I'm so thankful for this opportunity that Allah has blessed me with.",
+    short: "As a new revert, due to Muslimah Today, I have found a sense of belonging in Islam…" },
+  { id: "zee", name: "Zee", role: null,
+    full: "I have to say what a classy event – kudos to the organisers who pulled off this remarkable function.  Loved the presentations – the food was wow, and the lovely gifts as well. The speakers were fantastic.  We take back a lot from women empowering women.",
+    short: "The speakers were fantastic.  We take back a lot from women empowering women." },
+  { id: "fahmida", name: "Fahmida", role: null,
+    full: "What a wonderful conference.  All the speakers were brilliant.  Muslimah Today is always the highlight of the year.",
+    short: null }, // short enough to show whole in every mode
+  { id: "fathima", name: "Fathima", role: null,
+    full: "Incredible – I felt truly revived and spiritually uplifted by the inspiring talks and warm atmosphere.  All the speakers were fantastic. I have been attending Muslimah Today every year and each time, I leave feeling enlightened and eager to return.  Thank you once again for an unforgettable experience.",
+    short: "I felt truly revived and spiritually uplifted by the inspiring talks and warm atmosphere." },
+];
+const dialogs = [naledi, ...testimonials.filter((t) => t.short)];
+
+// Past-events marquee — one continuous row of photos drifting left (rendered twice
+// for a seamless loop; the 2nd copy is aria-hidden). Mix of landscape + portrait.
+const pastEvents = [
+  { src: "audience",      alt: "The audience during a Muslimah Today session", w: 1000, h: 667 },
+  { src: "embrace",       alt: "Two delegates share an embrace",               w: 667,  h: 1000 },
+  { src: "sisters-1",     alt: "Attendees gathered together at the conference", w: 1000, h: 667 },
+  { src: "goodie-bag",    alt: "An attendee with her goodie bag",              w: 667,  h: 1000 },
+  { src: "group-elegant", alt: "A group of attendees in colourful dress",      w: 1400, h: 933 },
+  { src: "naledi",        alt: "Naledi Pandor addresses the conference",       w: 667,  h: 1000 },
+  { src: "sisters-2",     alt: "Attendees together in colourful dress",        w: 1000, h: 667 },
+  { src: "speaker",       alt: "A speaker at the podium",                      w: 667,  h: 1000 },
+  { src: "welcome-arch",  alt: "The floral welcome arch at the entrance",      w: 933,  h: 1400 },
+  { src: "backdrop",      alt: "The Muslimah Today stage and floral backdrop", w: 667,  h: 1000 },
+];
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Muslimah Today: Sisterhood · Inspiration · Spiritual Upliftment. Saturday, 29th August 2026, NMJ Islamic Centre, Durban. Hosted by ILM for Women, a division of ILM-SA." />
+  <meta name="theme-color" content="#fefdfe" />
+  <title>Muslimah Today 2026 — 13th Annual Women's Conference</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --mt-magenta:#b92c73;   --mt-magenta-700:#9c2461;
+      --mt-magenta-50:#fbeef5;            /* secondary text on magenta — AA 5.08:1 */
+      --mt-offwhite:#fefdfe;              /* focal text on magenta — AA 5.64:1   */
+      --mt-lilac:#c296d9;                 /* decorative accent (rules · star · pin) only */
+      --font-display:"Libre Caslon Display",Georgia,serif;
+      --font-serif:"Libre Caslon Text",Georgia,serif;
+      --font-body:"Source Sans 3",system-ui,-apple-system,Segoe UI,sans-serif;
+      --ease-out:cubic-bezier(.22,1,.36,1);
+      --page-bg:#fefdfe;                   /* desktop field ground (brand off-white) */
+      --mt-ink:#2a2228;                    /* body text on off-white */
+      --mt-grey-600:#6b6b6b;               /* muted body on off-white */
+      --mt-border:rgba(122,29,78,.15);     /* soft magenta hairline */
+      --mt-lilac-50:#f5eef9;               /* soft lilac ground (About panel) */
+      --mt-magenta-200:#edb3d0;            /* decorative quote glyph */
+
+      /* --- Footer tokens: Footer.astro + SponsorChip style themselves with
+         these var names. Defined on :root so they cascade into the child
+         components; they don't collide with the section styles above. */
+      --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem;
+      --space-5:1.5rem; --space-6:2rem; --space-7:3rem; --space-8:4rem;
+      --section-y:clamp(4rem,2rem + 6vw,8rem);
+      --gutter:clamp(1.5rem,1rem + 2vw,3rem);
+      --container:75rem;
+      --text-xs:.8125rem; --text-sm:.9375rem; --text-base:1.125rem; --text-md:1.25rem;
+      --track-caps:.06em; --track-eyebrow:.18em;
+      --radius-md:.875rem; --radius-circle:50%;
+      --color-mt-magenta-700:#9c2461;
+      --mt-surface:#ffffff;
+      --mt-surface-lilac:var(--mt-lilac-50);
+      --mt-divider:#d3d3d3;
+      --mt-heading:var(--mt-magenta-700);
+      --mt-text:var(--mt-ink);
+      --mt-text-muted:var(--mt-grey-600);
+      --mt-accent:var(--mt-magenta);
+      --mt-feature:var(--mt-magenta);
+      --mt-on-feature:var(--mt-offwhite);
+      --mt-link:var(--mt-magenta-700);
+      --mt-link-hover:#7e1d4e;
+      --font-serif-text:var(--font-serif);
+    }
+    html,body{background:var(--page-bg);overflow-x:clip}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+      overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+    .hero{width:100%;max-width:720px;margin:0 auto;container-type:inline-size}
+    .topper{width:100%}
+    .topper :global(svg){display:block;width:100%;height:auto}
+    /* content block stacks flush; its 40px top gap is baked into the viewBox.
+       It ends inside the body block's straight side, where .body takes over. */
+    .content{width:100%}
+    .content :global(svg){display:block;width:100%;height:auto;margin-bottom:-1px}
+    /* expandable body — continues the SVG body block: same 320px width (88.89cqw),
+       magenta, rounded bottom (10px = 2.778cqw), grows with content. */
+    .body{position:relative;width:88.889cqw;margin:0 auto;background:var(--mt-magenta);
+      border-radius:0 0 2.778cqw 2.778cqw;min-height:62cqw;overflow:hidden;
+      padding:6cqw 8.5cqw 9cqw;color:var(--mt-offwhite)}
+
+    /* Glow — a warm bloom behind the 13 so the flat magenta reads as lit from
+       within; breathes slowly for ambient life. NOTE: on a magenta field with
+       off-white text, the bloom must stay DARK (lighter-magenta, never a light
+       pink/lilac wash) or it tanks contrast. Core ≈ magenta-400/500 keeps
+       off-white ≥4.5:1; the bright zone is held high/tight so it sits behind
+       the big 13 only. */
+    .glow{position:absolute;left:50%;top:-4cqw;width:118%;height:52%;
+      transform:translateX(-50%);pointer-events:none;z-index:0;
+      background:radial-gradient(52% 52% at 50% 38%,
+        rgba(208,95,155,.5) 0%,
+        rgba(208,95,155,.22) 38%,
+        rgba(194,150,217,.10) 60%,
+        rgba(185,44,115,0) 74%)}
+
+    /* Edition-led stack — the "13" is the one bold moment (13 years of heritage);
+       everything below it stays quiet. Live text scales with the artboard (cqw)
+       but floors at readable px so it never drops below the 16px a11y minimum. */
+    .details{position:relative;z-index:1;display:flex;flex-direction:column;
+      align-items:center;text-align:center}
+
+    /* the signature: the edition number, counts up once on load. The "13" is
+       centred on its own width — the ordinal is taken out of flow (absolute) so
+       it never pushes the number off-centre, and a small italic-serif superscript
+       reads as one elegant "13th" instead of a heavy block caps. */
+    .ed{display:flex;flex-direction:column;align-items:center}
+    .bignum{position:relative;display:inline-block;font-family:var(--font-display);
+      line-height:.8;letter-spacing:.01em;color:var(--mt-offwhite);font-size:max(102px,34cqw)}
+    .bignum .digits{display:inline-block;min-width:2ch;text-align:center;
+      font-variant-numeric:tabular-nums}
+    .bignum .ord{position:absolute;left:90%;top:.12em;padding-left:0;
+      font-family:var(--font-serif);font-style:italic;font-size:.26em;letter-spacing:.01em;
+      color:var(--mt-magenta-50);transition:opacity .45s var(--ease-out)}
+
+    .annual{display:flex;align-items:center;justify-content:center;gap:3.5cqw;margin-top:4cqw;
+      font-family:var(--font-body);font-weight:600;text-transform:uppercase;letter-spacing:.4em;
+      padding-left:.4em;color:var(--mt-magenta-50);font-size:max(11px,3cqw)}
+    .annual .rl{height:1px;width:max(20px,7cqw);background:var(--mt-lilac);opacity:.8}
+
+    .title{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.05em;
+      line-height:1.06;color:var(--mt-offwhite);margin-top:3.5cqw;font-size:max(19px,6cqw)}
+
+    .when{font-family:var(--font-body);line-height:1.65;color:var(--mt-offwhite);
+      margin-top:8cqw;font-size:max(16px,4.3cqw)}
+
+    /* location — pin + name on one line; only the name carries a light underline
+       so the link affordance reads without a heavy rule under the icon. */
+    .venue{display:inline-flex;align-items:center;gap:2.5cqw;margin-top:5.5cqw;
+      font-family:var(--font-body);color:var(--mt-offwhite);text-decoration:none;
+      font-size:max(16px,4.3cqw)}
+    .venue .vtext{text-decoration:underline;text-decoration-thickness:1px;
+      text-underline-offset:4px;text-decoration-color:rgba(254,253,254,.4);
+      transition:text-decoration-color .2s var(--ease-out)}
+    .venue:hover .vtext{text-decoration-color:var(--mt-offwhite)}
+    .venue:focus-visible{outline:3px solid var(--mt-offwhite);outline-offset:4px;border-radius:3px}
+    .venue .pin{width:max(17px,4.6cqw);height:max(17px,4.6cqw);flex:none;color:var(--mt-lilac)}
+
+    /* devotional close — its own line, after the logistics */
+    .insha{font-family:var(--font-serif);font-style:italic;color:var(--mt-magenta-50);
+      margin-top:3.5cqw;font-size:max(16px,4.5cqw);letter-spacing:.01em}
+
+    .cta{margin-top:8cqw;display:inline-flex;align-items:center;gap:.6em;
+      min-height:48px;padding:3.2cqw 8cqw;border-radius:999px;
+      background:var(--mt-offwhite);color:var(--mt-magenta-700);
+      font-family:var(--font-body);font-weight:700;letter-spacing:.1em;
+      text-transform:uppercase;text-decoration:none;font-size:max(15px,4cqw);
+      box-shadow:0 6px 20px rgba(63,14,38,.28);
+      transition:transform .18s var(--ease-out),box-shadow .18s var(--ease-out),background-color .18s var(--ease-out)}
+    .cta .arrow{transition:transform .18s var(--ease-out)}
+    .cta:hover{transform:translateY(-2px);background:#fff;box-shadow:0 10px 28px rgba(63,14,38,.36)}
+    .cta:hover .arrow{transform:translateX(3px)}
+    .cta:active{transform:translateY(0)}
+    .cta:focus-visible{outline:3px solid var(--mt-offwhite);outline-offset:3px}
+
+    /* one quiet load beat — dawn-style rise, reduced-motion shows final state.
+       The glow breathes slowly (ambient life); reduced-motion pins it static. */
+    @media (prefers-reduced-motion:no-preference){
+      .details > *{opacity:0;animation:riseIn .6s var(--ease-out) both}
+      .details > :nth-child(1){animation-delay:.05s}
+      .details > :nth-child(2){animation-delay:.18s}
+      .details > :nth-child(3){animation-delay:.28s}
+      .details > :nth-child(4){animation-delay:.38s}
+      .details > :nth-child(5){animation-delay:.48s}
+      .glow{animation:breathe 7s ease-in-out .4s infinite alternate}
+    }
+    @keyframes riseIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    @keyframes breathe{
+      from{opacity:.7;transform:translateX(-50%) scale(.97)}
+      to{opacity:1;transform:translateX(-50%) scale(1.05)}}
+
+    /* ===================== TICKETS (early-bird + prices) =====================
+       On the off-white ground below the hero. Signature = the Early-Bird "ticket"
+       with a real perforation notch (ticket-stub cut that echoes the brand
+       bracket). Other tiers stay a clean scannable list; the sponsored seat gets
+       a warm callout (the brief's non-elitist ethos). */
+    .tickets{position:relative;z-index:1;background:var(--page-bg);color:var(--mt-ink);
+      padding:clamp(3rem,8vw,5rem) 1.5rem clamp(3.5rem,9vw,6rem)}
+    .tk-wrap{max-width:60rem;margin:0 auto}
+    .tk-head{font-family:var(--font-display);font-weight:400;color:var(--mt-magenta-700);
+      text-align:center;line-height:1.04;letter-spacing:.01em;margin-top:.5rem;
+      font-size:clamp(2rem,1.2rem + 3.4vw,3.1rem)}
+    /* Early-bird countdown — the urgency device. Days computed live in JS. */
+    .tk-cd-wrap{text-align:center;margin-top:1.25rem}
+    .tk-countdown{display:inline-flex;align-items:center;gap:.55rem;
+      padding:.5rem 1.05rem;border-radius:999px;background:var(--mt-magenta-50);
+      color:var(--mt-magenta-700);font-family:var(--font-body);font-size:.9375rem;
+      line-height:1;letter-spacing:.005em}
+    .tk-countdown b{font-weight:700}
+    .tk-dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--mt-magenta);flex:none}
+    @media (prefers-reduced-motion:no-preference){
+      .js .tk-dot{animation:cd-pulse 1.9s var(--ease-out) infinite}
+    }
+    @keyframes cd-pulse{0%,100%{opacity:.35;transform:scale(.75)}50%{opacity:1;transform:scale(1)}}
+
+    .tk-grid{display:grid;grid-template-columns:1fr;gap:clamp(1.5rem,3.5vw,2.25rem);
+      margin-top:clamp(2rem,4.5vw,3rem);align-items:start}
+
+    .ticket{position:relative;background:var(--mt-magenta);color:var(--mt-offwhite);
+      border-radius:1.25rem;box-shadow:0 18px 44px rgba(122,29,78,.22)}
+    .ticket-top{text-align:center;
+      padding:clamp(1.75rem,4.5vw,2.4rem) clamp(1.5rem,4vw,2.25rem) clamp(1.1rem,3vw,1.4rem)}
+    .ticket-label{font-family:var(--font-body);font-weight:600;text-transform:uppercase;
+      letter-spacing:.22em;font-size:.8125rem;color:var(--mt-magenta-50)}
+    .ticket-price{font-family:var(--font-display);line-height:.88;margin-top:.5rem;
+      font-size:clamp(3.75rem,2rem + 8vw,5.25rem)}
+    .ticket-price .cur{font-size:.46em;vertical-align:.42em;margin-right:.04em}
+    .ticket-until{font-family:var(--font-serif);font-style:italic;color:var(--mt-magenta-50);
+      font-size:1.1875rem;margin-top:.3rem}
+
+    /* "save R70" stamp — a cream medallion with a dashed inner ring that echoes the
+       ticket perforation; the amount set in the same Caslon as the R250 price. */
+    .save-seal{position:absolute;z-index:3;top:clamp(.85rem,2.4vw,1.15rem);
+      right:clamp(.85rem,2.4vw,1.15rem);width:clamp(3.85rem,15vw,4.7rem);
+      height:clamp(3.85rem,15vw,4.7rem);border-radius:50%;background:var(--mt-offwhite);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;line-height:1;box-shadow:0 8px 20px rgba(122,29,78,.32)}
+    .save-seal::before{content:"";position:absolute;inset:4px;border-radius:50%;
+      border:1px dashed var(--mt-magenta-200)}
+    .save-seal .s-small{font-family:var(--font-body);font-weight:700;text-transform:uppercase;
+      letter-spacing:.2em;font-size:.5rem;color:var(--mt-magenta);padding-left:.2em}
+    .save-seal .s-amt{font-family:var(--font-display);font-size:1.4rem;
+      color:var(--mt-magenta-700);margin-top:.06em}
+
+    /* perforation: dashed line + two notch bites at the card edges */
+    .perf{position:relative;height:1.9rem;display:flex;align-items:center}
+    .perf-line{flex:1;height:0;border-top:2px dashed rgba(254,253,254,.42);margin:0 1.5rem}
+    .perf::before,.perf::after{content:"";position:absolute;top:50%;transform:translateY(-50%);
+      width:26px;height:26px;border-radius:50%;background:var(--page-bg)}
+    .perf::before{left:-13px}
+    .perf::after{right:-13px}
+
+    .ticket-bot{text-align:center;
+      padding:clamp(1.1rem,3vw,1.4rem) clamp(1.5rem,4vw,2.25rem) clamp(1.75rem,4.5vw,2.4rem)}
+    .incl{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:.55rem 1.4rem}
+    .incl li{font-family:var(--font-body);font-size:1.0625rem;display:inline-flex;align-items:center}
+    .incl li::before{content:"✓";margin-right:.45em;color:var(--mt-magenta-50);font-weight:700}
+    .ticket-serial{font-family:var(--font-body);text-transform:uppercase;letter-spacing:.28em;
+      font-size:.6875rem;color:var(--mt-magenta-50);margin-top:1.15rem;padding-left:.28em}
+
+    .tk-right{display:flex;flex-direction:column}
+    .tk-rates-label{font-family:var(--font-body);font-weight:600;text-transform:uppercase;
+      letter-spacing:.18em;font-size:.75rem;color:var(--mt-grey-600);margin-bottom:.35rem}
+    .tiers{list-style:none;margin:0;padding:0}
+    .tier{display:grid;grid-template-columns:1fr auto;column-gap:1rem;row-gap:.2rem;
+      align-items:baseline;padding:1.15rem .25rem;border-bottom:1px solid var(--mt-border)}
+    .tier:first-child{border-top:1px solid var(--mt-border)}
+    .tier-label{font-family:var(--font-body);font-weight:700;text-transform:uppercase;
+      letter-spacing:.04em;font-size:.9375rem;color:var(--mt-ink)}
+    .tier-price{font-family:var(--font-display);font-size:1.85rem;line-height:1;
+      color:var(--mt-magenta-700);text-align:right}
+    .tier-note{grid-column:1 / -1;font-family:var(--font-body);font-size:.9375rem;
+      color:var(--mt-grey-600);line-height:1.45}
+    .tier-note a{color:var(--mt-magenta-700);text-decoration:underline;
+      text-underline-offset:2px;font-weight:600}
+
+    /* Sponsored seat — the brief's non-elitist heart, as a dignified editorial coda
+       on the off-white ground (no box): a Caslon-italic statement + one quiet button. */
+    .sponsored{margin-top:clamp(2.5rem,6vw,4rem);text-align:center}
+    /* divider — a small magenta lozenge between two hairlines that fade to nothing. */
+    .sp-divider{display:flex;align-items:center;justify-content:center;gap:.9rem;
+      margin-bottom:1.5rem}
+    .sp-divider-line{height:1px;width:clamp(3rem,12vw,5rem);background:var(--mt-magenta-200)}
+    .sp-divider-line:first-child{background:linear-gradient(90deg,transparent,var(--mt-magenta-200))}
+    .sp-divider-line:last-child{background:linear-gradient(90deg,var(--mt-magenta-200),transparent)}
+    .sp-divider-mark{width:.5rem;height:.5rem;flex:none;border-radius:1px;
+      background:var(--mt-magenta);transform:rotate(45deg)}
+    .sponsored-h{font-family:var(--font-serif);font-style:italic;line-height:1.15;
+      color:var(--mt-magenta-700);font-size:clamp(1.6rem,1.1rem + 2vw,2.4rem)}
+    .sponsored-p{font-family:var(--font-body);font-size:1.0625rem;line-height:1.55;
+      color:var(--mt-grey-600);margin:.8rem auto 0;max-width:34rem}
+    .sponsored-meta{font-family:var(--font-body);font-size:.875rem;letter-spacing:.02em;
+      color:var(--mt-grey-600);margin-top:.55rem}
+    .sponsored-btn{display:inline-flex;align-items:center;gap:.5em;margin-top:1.5rem;
+      font-family:var(--font-body);font-weight:600;letter-spacing:.02em;font-size:1rem;
+      color:var(--mt-magenta-700);text-decoration:none;padding:.85rem 1.7rem;
+      border:1.5px solid var(--mt-magenta);border-radius:999px;
+      transition:background-color .18s var(--ease-out),color .18s var(--ease-out),transform .18s var(--ease-out)}
+    .sponsored-btn .arrow{transition:transform .18s var(--ease-out)}
+    .sponsored-btn:hover{background:var(--mt-magenta);color:var(--mt-offwhite);transform:translateY(-2px)}
+    .sponsored-btn:hover .arrow{transform:translateX(3px)}
+    .sponsored-btn:focus-visible{outline:3px solid var(--mt-magenta-700);outline-offset:3px}
+
+    .tk-foot{margin-top:clamp(2.25rem,5vw,3rem);display:flex;flex-direction:column;
+      align-items:center;gap:.9rem}
+    .tk-close{font-family:var(--font-body);font-size:.875rem;letter-spacing:.01em;
+      color:var(--mt-grey-600);text-align:center}
+    .tk-cta{display:inline-flex;align-items:center;gap:.5em;background:var(--mt-magenta);
+      color:var(--mt-offwhite);font-family:var(--font-body);font-weight:700;text-transform:uppercase;
+      letter-spacing:.1em;font-size:1rem;text-decoration:none;min-height:52px;
+      padding:1rem 2.4rem;border-radius:999px;box-shadow:0 10px 28px rgba(185,44,115,.3);
+      transition:transform .18s var(--ease-out),box-shadow .18s var(--ease-out),background-color .18s var(--ease-out)}
+    .tk-cta .arrow{transition:transform .18s var(--ease-out)}
+    .tk-cta:hover{background:var(--mt-magenta-700);transform:translateY(-2px);
+      box-shadow:0 14px 34px rgba(122,29,78,.36)}
+    .tk-cta:hover .arrow{transform:translateX(3px)}
+    .tk-cta:active{transform:translateY(0)}
+    .tk-cta:focus-visible{outline:3px solid var(--mt-magenta-700);outline-offset:3px}
+
+    @media (min-width:768px){
+      .tk-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(2rem,4vw,3rem)}
+      .tk-right{align-self:center}
+    }
+
+    /* scroll reveal — gated on .js so content is visible if JS never runs;
+       reduced-motion shows everything immediately (no hidden state). */
+    @media (prefers-reduced-motion:no-preference){
+      .js .reveal{opacity:0;transform:translateY(20px);
+        transition:opacity .6s var(--ease-out),transform .6s var(--ease-out)}
+      .js .reveal.in{opacity:1;transform:none}
+    }
+
+    /* ===================== MOTION / "WOW" =====================
+       Curated orchestrated moments — transform/opacity only, gated on .js +
+       prefers-reduced-motion so motion is delight, never a barrier. */
+
+    /* Editorial heading reveal — a clip wipe that rises from behind a line. */
+    @media (prefers-reduced-motion:no-preference){
+      .js .reveal-head{clip-path:inset(105% 0 -.12em 0);transform:translateY(.3em);
+        transition:clip-path .85s var(--ease-out),transform .85s var(--ease-out)}
+      .js .reveal-head.in{clip-path:inset(-.12em 0 -.12em 0);transform:none}
+    }
+
+
+    /* Light sweep across the magenta feature moments (on reveal). */
+    .shine{position:relative}
+    .shine::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
+      border-radius:inherit;background-repeat:no-repeat;background-size:250% 100%;
+      background-position:160% 0;opacity:0;
+      background-image:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.22) 50%,transparent 58%)}
+    @media (prefers-reduced-motion:no-preference){
+      .js .shine.in::after{animation:sweep 1.15s var(--ease-out) .35s}
+    }
+    @keyframes sweep{
+      0%{background-position:160% 0;opacity:1}
+      100%{background-position:-60% 0;opacity:1}}
+
+    /* Hero glow parallax on scroll — progressive; skipped where unsupported. */
+    @media (prefers-reduced-motion:no-preference){
+      @supports (animation-timeline:scroll()){
+        .field-glow{animation:glow-drift linear both;
+          animation-timeline:scroll(root);animation-range:0 70vh}
+      }
+    }
+    @keyframes glow-drift{to{transform:translateY(70px);opacity:.4}}
+
+    /* ===================== ABOUT — pinned scrollytelling =========================
+       Verbatim brief text (overview.md L30) in 5 layers. GSAP ScrollTrigger scrubs a
+       cross-fade while the stage is held in place (position:sticky): each layer's
+       text+photos reveal, then fade out as the next comes in. BASE state (no-JS /
+       reduced-motion): layers simply stack and read top-to-bottom. The `.ab-anim`
+       class — added by JS only when motion is allowed — switches on the pinned mode. */
+    .about{background:var(--mt-lilac-50);color:var(--mt-ink)}
+
+    /* layer inner composition (shared by both modes) */
+    .ab-layer-in{width:100%;max-width:62rem;margin:0 auto;
+      display:grid;grid-template-columns:1fr;gap:clamp(1.4rem,4vw,2.5rem);align-items:center}
+    .ab-head{font-family:var(--font-display);font-weight:400;color:var(--mt-magenta-700);
+      line-height:1.05;letter-spacing:.01em;margin-bottom:.9rem;
+      font-size:clamp(2rem,1.2rem + 3.4vw,3.1rem)}
+    .ab-text{max-width:34rem}
+    .ab-text p{font-family:var(--font-body);font-size:1.1875rem;line-height:1.7;color:var(--mt-ink)}
+    .ab-text b{color:var(--mt-magenta-700);font-weight:700}
+    .nb{white-space:nowrap}
+
+    .ab-figs{margin:0;display:grid;gap:clamp(.7rem,2vw,1.1rem);order:-1}
+    .ab-fig{overflow:hidden;border-radius:1rem;aspect-ratio:4/5;
+      box-shadow:0 18px 40px rgba(122,29,78,.16)}
+    .ab-fig.is-land{aspect-ratio:3/2}
+    .ab-fig img{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* the ethos layer — upright Caslon Text, centred, sized for comfortable reading */
+    .ab-layer--quote .ab-layer-in{grid-template-columns:1fr;max-width:42rem;justify-items:center;gap:0}
+    .ab-quote{position:relative;margin:0 auto;max-width:34rem;text-align:center;
+      font-family:var(--font-serif);font-style:normal;line-height:1.58;letter-spacing:.002em;
+      color:var(--mt-magenta-700);padding-top:2.6rem;
+      font-size:clamp(1.2rem,.98rem + 1vw,1.6rem)}
+    .ab-quote::before{content:"\201C";position:absolute;top:0;left:50%;transform:translateX(-50%);
+      font-family:var(--font-display);font-size:3.6rem;line-height:.6;color:var(--mt-magenta-200)}
+    .ab-quote-cta{margin-top:clamp(1.6rem,4vw,2.2rem)}
+
+    /* ---- SCROLL 4 (speakers): heading → Naledi feature (viewable photo LEFT, her name
+       then testimonial beside it) → divider → the other speakers listed (readable),
+       with "and numerous others" simply in italic. ---- */
+    .ab-layer--speakers .ab-layer-in{grid-template-columns:1fr;max-width:47rem;
+      row-gap:clamp(1.1rem,3vw,1.7rem);text-align:left}
+    .ab-sp-heading{font-family:var(--font-display);font-weight:400;color:var(--mt-magenta-700);
+      line-height:1.04;letter-spacing:.008em;margin:0;text-align:center;
+      font-size:clamp(1.65rem,1.1rem + 2.6vw,2.6rem)}
+    .ab-feat{display:grid;grid-template-columns:auto minmax(0,1fr);
+      gap:clamp(.85rem,3.5vw,2.5rem);align-items:center}
+    .ab-feat-photo{overflow:hidden;border-radius:1rem;box-shadow:0 16px 40px rgba(122,29,78,.22);
+      width:clamp(7rem,38vw,15rem);aspect-ratio:4/5}
+    .ab-feat-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 15%;display:block}
+    .ab-feat-name{font-family:var(--font-display);color:var(--mt-ink);line-height:1.08;margin:0;
+      font-size:clamp(1.5rem,1.15rem + 1.3vw,2.1rem)}
+    .ab-sp-note{font-family:var(--font-serif);font-style:italic;color:var(--mt-grey-600);font-size:.62em}
+    .ab-feat-role{font-family:var(--font-body);text-transform:uppercase;letter-spacing:.09em;
+      font-size:.78rem;color:var(--mt-grey-600);margin:.3rem 0 0}
+    .ab-feat-quote{font-family:var(--font-serif);font-style:normal;line-height:1.5;
+      color:var(--mt-magenta-700);margin:.9rem 0 0;font-size:clamp(1.05rem,.95rem + .45vw,1.28rem)}
+    .ab-sp-roll{font-family:var(--font-serif);font-style:normal;line-height:1.65;color:var(--mt-ink);
+      margin:0;text-align:center;font-size:clamp(1.1rem,.98rem + .5vw,1.35rem)}
+    .ab-sp-more{font-style:italic}
+
+    /* ---- SCROLL 5 (roll): the other past speakers on their own screen ---- */
+    .ab-layer--roll .ab-layer-in{grid-template-columns:1fr;max-width:44rem;justify-items:center}
+
+    /* excerpt vs full quote: pinned screens show the excerpt + Read more; the
+       stacked base mode (no JS / reduced motion) shows the FULL verbatim quote
+       inline and hides the button (dialogs need JS anyway). */
+    .about .q-short{display:none}
+    .about:not(.ab-anim) .tm-more{display:none}
+    .ab-anim .q-short{display:inline}
+    .ab-anim .q-full{display:none}
+    .tm-more{display:inline-flex;align-items:center;gap:.3rem;min-height:44px;padding:0;
+      border:0;background:none;cursor:pointer;font-family:var(--font-body);font-weight:600;
+      font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mt-magenta-700)}
+    .tm-more::after{content:"\25B8"}
+    .tm-more:hover{text-decoration:underline;text-underline-offset:3px}
+    .tm-more:focus-visible{outline:2px solid var(--mt-magenta-700);outline-offset:3px;border-radius:3px}
+    .ab-feat-body .tm-more{margin-top:.35rem}
+    .ab-tm-card .tm-more{align-self:flex-start;margin-top:.15rem}
+
+    /* ---- BASE / fallback: layers stack and read normally (no JS / reduced-motion) ---- */
+    .about{padding:clamp(3.5rem,9vw,6rem) 1.5rem clamp(4rem,10vw,7rem)}
+    .ab-layer{margin-top:clamp(3rem,8vw,6rem)}
+    .ab-layer:first-child{margin-top:0}
+    @media (min-width:768px){
+      .ab-layer-in{grid-template-columns:1fr 1fr;gap:clamp(2.5rem,5vw,4.5rem)}
+      .ab-figs{order:0}
+      .ab-layer--rev .ab-figs{order:-1}
+      .ab-figs:not(.ab-figs--pair):not(.ab-cluster){max-width:21rem}
+      .ab-layer:not(.ab-layer--rev) .ab-figs:not(.ab-figs--pair){justify-self:start}
+    }
+
+    /* ---- ENHANCED: pinned cross-fade (class added by JS only when motion allowed) ----
+       Uses svh so the pinned stage matches the *visible* viewport on mobile (avoids the
+       100vh-under-toolbar clip). Mobile layers are compacted so each fits one screen;
+       long testimonials show as excerpts + Read-more dialogs in this mode only. */
+    .about.ab-anim{padding:0}
+    .ab-anim .ab-track{position:relative;height:calc(100svh * 6.5)}
+    .ab-anim .ab-stage{position:sticky;top:0;height:100svh;overflow:hidden}
+    /* horizontal rail: About panel (holds the cross-fade layers) + Testimonials panel;
+       GSAP pans it left (xPercent:-100) after the cross-fades. */
+    .ab-anim .ab-rail{display:flex;width:100%;height:100%;will-change:transform}
+    .ab-anim .ab-panel{flex:0 0 100%;height:100svh;position:relative}
+    /* hidden layers use visibility:hidden (GSAP autoAlpha) so they can't intercept
+       clicks on the active layer's Read-more button or catch keyboard focus */
+    .ab-anim .ab-layer{position:absolute;inset:0;margin:0;display:grid;place-items:center;
+      opacity:0;visibility:hidden;padding:clamp(1.6rem,6vh,5.5rem) clamp(1.25rem,5vw,3rem);
+      will-change:opacity}
+    .ab-anim .ab-layer:first-child{opacity:1;visibility:visible}
+    .ab-anim .ab-layer-in{will-change:transform}
+    .ab-anim .ab-panel--tm{display:grid;place-items:center;overflow:hidden;
+      padding:clamp(1.4rem,5vh,4rem) clamp(1.25rem,5vw,3rem)}
+
+    @media (max-width:767.98px){
+      .ab-anim .ab-layer{padding:1.1rem 1.15rem}
+      .ab-anim .ab-layer-in{gap:.9rem}
+      .ab-anim .ab-head{font-size:1.55rem;margin-bottom:.45rem}
+      .ab-anim .ab-text p{font-size:1.02rem;line-height:1.52}
+      .ab-anim .ab-quote{font-size:1.22rem;line-height:1.55;padding-top:2.1rem}
+      .ab-anim .ab-quote::before{font-size:2.8rem}
+      .ab-anim .ab-sp-heading{font-size:clamp(1.55rem,1.1rem + 2.2vw,2.1rem)}
+      /* single portraits: keep aspect (no head-crop), just smaller + centred */
+      .ab-anim .ab-figs:not(.ab-figs--pair):not(.ab-cluster){max-width:48vw;justify-self:center}
+      /* scroll 4: keep photo LEFT of the text on phones too (the wanted layout), tightened */
+      .ab-anim .ab-feat{gap:.85rem}
+      .ab-anim .ab-feat-name{font-size:1.3rem}
+      .ab-anim .ab-feat-quote{font-size:1rem;line-height:1.45;margin-top:.55rem}
+      .ab-anim .ab-sp-roll{font-size:1.05rem;line-height:1.55}
+    }
+
+    /* ---- SCROLL 1 (lead): heading across the top, body text with the picture beside
+       it (all widths), top-aligned as one tight block, refined editorial type. ---- */
+    .ab-layer--lead .ab-layer-in{grid-template-columns:1fr minmax(0,.78fr);
+      column-gap:clamp(1.25rem,4vw,3rem);row-gap:clamp(.75rem,2.5vw,1.2rem);align-items:start}
+    .ab-layer--lead .ab-head{grid-column:1 / -1;margin:0;line-height:1;letter-spacing:.004em;
+      font-size:clamp(1.95rem,1.15rem + 4vw,3.4rem)}
+    .ab-layer--lead .ab-text{grid-column:1;grid-row:2;max-width:34rem}
+    .ab-rule{display:block;width:2.4rem;height:2px;border-radius:2px;background:var(--mt-magenta);
+      margin:0 0 clamp(.85rem,2.5vw,1.15rem)}
+    .ab-layer--lead .ab-text p{font-size:clamp(1rem,.92rem + .45vw,1.15rem);line-height:1.62;
+      color:var(--mt-ink)}
+    .ab-layer--lead .ab-figs{grid-column:2;grid-row:2;order:0}
+    .ab-layer--lead .ab-figs:not(.ab-figs--pair){max-width:none;justify-self:stretch}
+    .ab-layer--lead .ab-fig{aspect-ratio:4/5}
+    @media (min-width:768px){
+      .ab-layer--lead .ab-layer-in{max-width:56rem;grid-template-columns:1fr minmax(0,.72fr);
+        column-gap:clamp(2rem,5vw,3.5rem)}
+    }
+
+    /* ---- SCROLL 2 (gather): a layered photo cluster (one large, one overlapping with a
+       print-style frame) + larger editorial copy with the key phrase in Caslon italic. ---- */
+    .ab-layer--gather .ab-text{max-width:32rem}
+    .ab-layer--gather .ab-text p{font-size:clamp(1.1rem,.95rem + .85vw,1.45rem);line-height:1.55;
+      color:var(--mt-ink)}
+    .ab-em{font-family:var(--font-serif);font-style:italic;font-weight:400;color:var(--mt-magenta-700)}
+    .ab-cluster{position:relative;width:100%;max-width:none;aspect-ratio:4/3;order:-1}
+    .ab-cluster .ab-fig{position:absolute;margin:0;aspect-ratio:3/2;border-radius:.85rem}
+    .ab-cluster-a{top:0;left:0;width:72%;z-index:1}
+    .ab-cluster-b{right:0;bottom:0;width:57%;z-index:2;
+      box-shadow:0 0 0 5px #fff,0 18px 40px rgba(122,29,78,.28)}
+    @media (min-width:768px){
+      .ab-layer--gather .ab-layer-in{grid-template-columns:minmax(0,1.02fr) .98fr;
+        column-gap:clamp(2rem,5vw,4rem)}
+    }
+
+    /* ===================== TESTIMONIALS (now the 2nd horizontal panel of About) =====
+       The 4 attendee voices in a 2×2 grid of soft cards (1 column on phones).
+       (Naledi's endorsement lives in About scroll 4.) Quotes = FULL verbatim. */
+    .ab-tm-in{width:100%;max-width:50rem;margin:0 auto;text-align:center}
+    .ab-tm-eyebrow{font-family:var(--font-body);font-weight:600;text-transform:uppercase;
+      letter-spacing:.22em;font-size:.8125rem;color:var(--mt-magenta-700);margin:0}
+    .ab-tm-heading{font-family:var(--font-display);font-weight:400;color:var(--mt-magenta-700);
+      line-height:1.05;letter-spacing:.01em;margin:.4rem 0 0;font-size:clamp(1.9rem,1.2rem + 3vw,3rem)}
+    .ab-tm-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(.75rem,2.2vw,1.4rem);
+      margin-top:clamp(1.3rem,3.5vw,2.4rem)}
+    /* base (stacked) mode only: full quotes read better one-up on phones;
+       pinned mobile keeps the 2×2 because it shows short excerpts. */
+    @media (max-width:767.98px){.about:not(.ab-anim) .ab-tm-grid{grid-template-columns:1fr}}
+    .ab-tm-card{background:var(--mt-magenta-50);border:1px solid var(--mt-border);border-radius:1rem;
+      padding:clamp(.9rem,3vw,1.5rem);text-align:left;display:flex;flex-direction:column}
+    .ab-tm-card blockquote{margin:0;font-family:var(--font-serif);font-style:italic;color:var(--mt-ink);
+      line-height:1.45;font-size:clamp(.92rem,.85rem + .35vw,1.08rem)}
+    .ab-tm-card figcaption{margin-top:.7rem}
+    .ab-tm-card .tm-name{font-family:var(--font-body);font-weight:700;font-size:.9rem;
+      color:var(--mt-magenta-700)}
+    .ab-panel--tm{padding:clamp(2.5rem,7vw,4rem) 1.25rem 0}  /* fallback (stacked) spacing */
+
+    /* ---- Read-more dialogs: full verbatim testimonials, brand-styled ---- */
+    .tm-dialog{border:0;border-radius:1.1rem;padding:0;width:min(34rem,calc(100vw - 2rem));
+      max-height:85svh;background:#fefdfe;box-shadow:0 24px 70px rgba(58,10,38,.35)}
+    .tm-dialog::backdrop{background:rgba(58,10,38,.5)}
+    .tm-dialog-in{padding:clamp(1.4rem,4vw,2rem);overflow:auto;max-height:85svh}
+    .tm-dialog-name{font-family:var(--font-display);font-weight:400;color:var(--mt-magenta-700);
+      font-size:1.45rem;line-height:1.15;margin:0}
+    .tm-dialog-role{font-family:var(--font-body);font-size:.78rem;text-transform:uppercase;
+      letter-spacing:.09em;color:var(--mt-grey-600)}
+    .tm-dialog-quote{margin:1rem 0 0;font-family:var(--font-serif);font-style:italic;
+      color:var(--mt-ink);line-height:1.6;font-size:1.02rem}
+    /* sticky so it stays reachable while the long quote scrolls on small phones */
+    .tm-dialog-close{position:sticky;bottom:0;margin-top:1.2rem;display:inline-flex;align-items:center;
+      justify-content:center;min-height:44px;padding:.55rem 1.4rem;border:1px solid var(--mt-border);
+      border-radius:999px;background:#fefdfe;cursor:pointer;font-family:var(--font-body);font-weight:600;
+      font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mt-magenta-700)}
+    .tm-dialog-close:hover{background:var(--mt-magenta-50)}
+    .tm-dialog-close:focus-visible{outline:2px solid var(--mt-magenta-700);outline-offset:3px}
+
+    /* ===================== SPEAKERS =====================
+       Real names/topics/bios. Visual anchor = the processed portrait tiles
+       (uniform head-and-shoulders crop + scale) in a circular keyline frame.
+       Bios collapse into native <details> so the section stays scannable. */
+    .sp{background:var(--page-bg);color:var(--mt-ink);padding:clamp(3.5rem,9vw,6rem) 1.5rem}
+    .sp-wrap{max-width:64rem;margin:0 auto}
+    .sp-head{font-family:var(--font-display);font-weight:400;color:var(--mt-magenta-700);
+      text-align:center;line-height:1.05;letter-spacing:.01em;margin-top:.5rem;
+      font-size:clamp(2rem,1.2rem + 3.4vw,3.1rem)}
+    .sp-sub{font-family:var(--font-body);text-align:center;color:var(--mt-grey-600);
+      font-size:1.0625rem;line-height:1.55;margin:.85rem auto 0;max-width:34rem}
+
+    .sp-grid{display:grid;grid-template-columns:1fr;gap:1.25rem;margin-top:clamp(2rem,4.5vw,3rem)}
+    .sp-card{display:flex;gap:1.15rem;align-items:flex-start;background:#fff;
+      border:1px solid var(--mt-border);border-radius:1rem;padding:1.4rem 1.5rem}
+    .sp-med{flex:none;width:60px;height:60px;border-radius:50%;display:block;
+      object-fit:cover;background:linear-gradient(180deg,#f6d9e8 0%,#efe3f4 100%);
+      border:1px solid var(--mt-border)}
+    .sp-info{min-width:0}
+    .sp-name{font-family:var(--font-display);font-weight:400;font-size:1.3rem;line-height:1.1;
+      color:var(--mt-magenta-700)}
+    .sp-topic{font-family:var(--font-body);font-weight:600;font-size:.95rem;line-height:1.4;
+      color:var(--mt-ink);margin-top:.3rem}
+    .sp-bio{margin-top:.6rem}
+    .sp-bio summary{font-family:var(--font-body);font-weight:600;font-size:.85rem;
+      color:var(--mt-magenta-700);cursor:pointer;list-style:none;
+      display:inline-flex;align-items:center;gap:.35rem}
+    .sp-bio summary::-webkit-details-marker{display:none}
+    .sp-bio summary::after{content:"\25B8";transition:transform .2s var(--ease-out)}
+    .sp-bio[open] summary::after{transform:rotate(90deg)}
+    .sp-bio summary:focus-visible{outline:2px solid var(--mt-magenta-700);outline-offset:3px;border-radius:3px}
+    .sp-bio p{font-family:var(--font-body);font-size:.9375rem;line-height:1.55;
+      color:var(--mt-grey-600);margin:.5rem 0 0}
+
+    .sp-joint{margin-top:1.5rem;background:var(--mt-magenta);color:var(--mt-offwhite);
+      border-radius:1.25rem;padding:clamp(1.6rem,4vw,2.4rem);text-align:center}
+    .sp-joint-eyebrow{font-family:var(--font-body);font-weight:600;text-transform:uppercase;
+      letter-spacing:.2em;font-size:.75rem;color:var(--mt-magenta-50)}
+    .sp-joint-title{font-family:var(--font-serif);font-style:italic;color:var(--mt-offwhite);
+      line-height:1.35;margin-top:.6rem;font-size:clamp(1.25rem,1rem + 1.4vw,1.7rem)}
+    .sp-joint-who{font-family:var(--font-body);font-weight:600;color:var(--mt-magenta-50);
+      margin-top:.85rem;font-size:.95rem;letter-spacing:.02em}
+
+    @media (min-width:768px){
+      .sp-grid{grid-template-columns:1fr 1fr}
+    }
+
+    /* ===================== PAST EVENTS =====================
+       Full-colour masonry — the colour (vibrant dress, sisterhood, the magenta
+       branding) is the story, so NO duotone. Consistency comes from the uniform
+       grid + one-event cohesion. Curated subset; web-optimised webp, lazy-loaded. */
+    .pe{background:var(--mt-magenta);color:var(--mt-offwhite);padding:clamp(4rem,10vw,7rem) 0}
+    .pe-wrap{max-width:60rem;margin:0 auto;padding:0 1.5rem}
+    .pe-head{font-family:var(--font-display);font-weight:400;color:var(--mt-offwhite);
+      text-align:center;line-height:1.02;letter-spacing:.01em;margin-top:.6rem;
+      font-size:clamp(2.4rem,1.5rem + 4vw,3.8rem)}
+
+    /* Past-events MARQUEE — one seamless row of photos drifting left forever. The track
+       holds two identical copies; translateX(-50%) = exactly one copy → no visible reset.
+       Edges fade via mask; reduced-motion holds it static. */
+    .mq{margin-top:clamp(2rem,4.5vw,3rem);overflow:hidden;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+    .mq-track{display:flex;width:max-content;will-change:transform;
+      animation:mq-scroll 60s linear infinite}
+    .mq-item{flex:none;margin-right:clamp(.5rem,1.4vw,1rem);height:clamp(11rem,26vw,17rem);
+      border-radius:.75rem;overflow:hidden;box-shadow:0 16px 38px rgba(43,7,26,.4)}
+    .mq-item img{display:block;height:100%;width:auto;object-fit:cover}
+    @keyframes mq-scroll{to{transform:translateX(-50%)}}
+    @media (prefers-reduced-motion:reduce){.mq-track{animation:none}}
+
+    /* ---- Task 2 — DESKTOP ONLY: Option B, "poster in warm light" ----
+       Below the cap the poster is full-bleed (mobile, untouched). Once the
+       viewport exceeds the poster's max-width, the surrounding off-white becomes
+       a designed field: a soft magenta→lilac glow blooms behind the poster and a
+       magenta-tinted shadow lifts it, so the margins read as warm matting, not
+       empty white. The purposeful magenta shape + notches + art stay untouched. */
+    .field-glow{display:none}
+    @media (min-width:768px){
+      /* Task 2 — atmosphere in the SIDE MARGINS only. The centre corridor behind
+         the poster stays clean off-white so the topper's white notch/bracket shapes
+         keep their intentional blend with the ground, and the lilac wordmark (which
+         sits over the page bg in a transparent gap) keeps its contrast. No poster
+         shadow either — it would outline the notches and break that same blend. The
+         two blooms fade out well before the centre; any reach behind the poster's
+         opaque magenta edges is simply occluded. */
+      body{position:relative;padding:clamp(2.5rem,5vw,5.5rem) 1.5rem}
+      .field-glow{display:block;position:absolute;left:0;right:0;top:0;
+        height:min(1080px,100vh);pointer-events:none;z-index:0;
+        background:
+          radial-gradient(470px 660px at -2% 43%,
+            rgba(219,170,205,.6) 0%, rgba(233,207,238,.34) 46%, rgba(246,217,232,0) 74%),
+          radial-gradient(470px 660px at 102% 43%,
+            rgba(219,170,205,.6) 0%, rgba(233,207,238,.34) 46%, rgba(246,217,232,0) 74%)}
+      .hero{position:relative;z-index:1}
+    }
+
+    /* ===================== ATMOSPHERE — arches + light blooms =====================
+       Background system [DECISION 2026-07-07]: the arch — already the page's own
+       shape (portrait frames, --radius-arch, the event's welcome arch) — drawn as
+       oversized 1px hairlines drifting off alternating section edges, plus soft
+       lilac blooms continuing the hero's side-glow warmth down the page.
+       Decorative only: CSS pseudo-elements, no DOM/JS/motion, pointer-events
+       none, hairline alphas ≤ .10 so text contrast is untouched. isolation
+       keeps each negative-z pseudo above its own section fill. */
+    .tickets,.sp,.pe,.ab-stage{position:relative;isolation:isolate}
+    .tickets::before,.sp::before,.pe::before,.ab-stage::before{content:"";
+      position:absolute;z-index:-1;pointer-events:none;
+      border:1px solid rgba(122,29,78,.10);border-bottom:0;
+      border-radius:999px 999px 0 0}
+    /* zigzag: tickets RIGHT → about LEFT → speakers RIGHT → past-events LEFT */
+    .tickets::before{width:min(44vw,420px);height:min(72%,560px);
+      right:max(-13vw,-170px);bottom:0}
+    .tickets{background-image:radial-gradient(520px 420px at 0% 100%,
+      rgba(233,207,238,.38), rgba(233,207,238,0) 70%)}
+    .ab-stage::before{width:min(40vw,420px);height:min(68%,640px);
+      left:max(-11vw,-150px);bottom:0;border-color:rgba(122,29,78,.08)}
+    .about{background-image:radial-gradient(640px 520px at 100% 10%,
+      rgba(255,255,255,.55), rgba(255,255,255,0) 70%)}
+    .sp::before{width:min(42vw,400px);height:min(64%,520px);
+      right:max(-12vw,-160px);bottom:0}
+    .sp{background-image:radial-gradient(560px 460px at 0% 0%,
+      rgba(233,207,238,.42), rgba(233,207,238,0) 72%)}
+    .pe::before{width:min(46vw,460px);height:min(70%,540px);
+      left:max(-12vw,-160px);bottom:0;border-color:rgba(254,253,254,.07)}
+    .pe{background-image:radial-gradient(720px 560px at 88% 0%,
+      rgba(255,255,255,.06), rgba(255,255,255,0) 70%)}
+  </style>
+</head>
+<body>
+  <div class="field-glow" aria-hidden="true"></div>
+  <main>
+    <section class="hero" aria-label="Muslimah Today 2026 — 13th Annual Women’s Conference">
+    <h1 class="sr-only">Muslimah Today 2026 — 13th Annual Women’s Conference. Saturday 29th August 2026, 9am to 4.30pm, in sha Allah. NMJ Islamic Centre, Durban.</h1>
+    <div class="topper" set:html={topper}></div>
+    <div class="content" set:html={content}></div>
+    <div class="body">
+      <span class="glow" aria-hidden="true"></span>
+      <div class="details">
+        <div class="ed" aria-hidden="true">
+          <span class="bignum"><span class="digits" id="count">13</span><span class="ord">th</span></span>
+          <span class="annual"><span class="rl"></span>Annual<span class="rl"></span></span>
+          <span class="title">Women’s<br>Conference</span>
+        </div>
+
+        <p class="when">
+          Saturday, 29th August 2026<br>
+          9am&nbsp;–&nbsp;4.30pm
+        </p>
+
+        <a class="venue" href="https://maps.app.goo.gl/GhgJAQSFquFEftqX9" target="_blank" rel="noopener noreferrer" aria-label="NMJ Islamic Centre, Durban — open in Google Maps">
+          <svg class="pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0Z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span class="vtext">NMJ Islamic Centre, Durban</span>
+        </a>
+
+        <p class="insha"><i>in sha Allah</i></p>
+
+        <a class="cta" href="https://www.quicket.co.za/events/384264-muslimah-today-2026/">
+          Book your seat <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+    </section>
+
+    <section class="tickets" id="tickets" aria-labelledby="tk-h">
+      <div class="tk-wrap">
+        <h2 id="tk-h" class="tk-head reveal-head tk-gated">Tickets Prices</h2>
+        <div class="tk-cd-wrap reveal tk-gated">
+          <p class="tk-countdown" data-deadline="2026-07-31T23:59:59+02:00">
+            <span class="tk-dot" aria-hidden="true"></span>
+            <span class="tk-cd-text"><b>30</b>&nbsp;days left at the early-bird rate</span>
+          </p>
+        </div>
+
+        <div class="tk-grid">
+          <article class="ticket reveal shine" aria-label="Early-bird ticket — R250 until the 31st of July, save R70">
+            <div class="save-seal reveal tk-gated" aria-hidden="true"><span class="s-small">save</span><span class="s-amt">R70</span></div>
+            <div class="ticket-top">
+              <p class="ticket-label reveal tk-gated">Early Bird</p>
+              <p class="ticket-price"><span class="cur">R</span><span class="ticket-num" data-count-from="320" data-count-to="250" data-count-delay="350">250</span></p>
+              <p class="ticket-until reveal tk-gated">until the 31st of July</p>
+            </div>
+            <div class="perf" aria-hidden="true"><span class="perf-line"></span></div>
+            <div class="ticket-bot">
+              <ul class="incl reveal tk-gated">
+                <li>Lunch</li>
+                <li>Refreshments</li>
+                <li>Goodie bag</li>
+              </ul>
+              <p class="ticket-serial reveal tk-gated">Sat 29 Aug 2026</p>
+            </div>
+          </article>
+
+          <div class="tk-right reveal tk-gated">
+            <p class="tk-rates-label">Other rates</p>
+            <ul class="tiers">
+              <li class="tier">
+                <span class="tier-label">Standard</span>
+                <span class="tier-price">R320</span>
+                <span class="tier-note">From 1 August</span>
+              </li>
+              <li class="tier">
+                <span class="tier-label">Pensioners &amp; Students</span>
+                <span class="tier-price">R220</span>
+                <span class="tier-note"><a href="https://wa.me/27832714500" target="_blank" rel="noopener noreferrer">WhatsApp 083&nbsp;271&nbsp;4500</a> to book</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tk-foot reveal tk-gated">
+          <a class="tk-cta" href="https://www.quicket.co.za/events/384264-muslimah-today-2026/">Book your seat <span class="arrow" aria-hidden="true">→</span></a>
+          <p class="tk-close">Ticket sales close on Wednesday 26th August</p>
+        </div>
+
+        <div class="sponsored reveal tk-gated">
+          <div class="sp-divider" aria-hidden="true">
+            <span class="sp-divider-line"></span>
+            <span class="sp-divider-mark"></span>
+            <span class="sp-divider-line"></span>
+          </div>
+          <p class="sponsored-h">All sisters welcome</p>
+          <p class="sponsored-p">If you cannot afford a ticket, apply for a sponsored seat.</p>
+          <p class="sponsored-meta">limited to 100 seats · applications close 11 August</p>
+          <a class="sponsored-btn" href="https://forms.gle/Zbk4cY7K5FA9rv5f9" target="_blank" rel="noopener noreferrer">Apply for a sponsored seat <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="about" aria-labelledby="ab-h">
+      <div class="ab-track">
+        <div class="ab-stage">
+          <div class="ab-rail">
+          <div class="ab-panel ab-panel--about">
+
+          <div class="ab-layer ab-layer--lead">
+            <div class="ab-layer-in">
+              <h2 id="ab-h" class="ab-head">Thirteen years of sisterhood</h2>
+              <div class="ab-text">
+                <span class="ab-rule" aria-hidden="true"></span>
+                <p>Muslimah Today is an annual conference hosted by <b>ILM&nbsp;for&nbsp;Women</b>, a division of the Durban-based charity, Institute for Learning and Motivation&nbsp;–&nbsp;South Africa (better known as <span class="nb">“ILM-SA”</span>).</p>
+              </div>
+              <figure class="ab-figs">
+                <div class="ab-fig"><img src="/mt-events/welcome-arch.webp" alt="The floral “welcomes you” arch and ILM for Women banners at the entrance" loading="lazy" decoding="async" width="933" height="1400"></div>
+              </figure>
+            </div>
+          </div>
+
+          <div class="ab-layer ab-layer--rev ab-layer--gather">
+            <div class="ab-layer-in">
+              <div class="ab-text">
+                <p>Now in its thirteenth year, it is an eagerly anticipated event on the Durban calendar, attracting <em class="ab-em">a broad spectrum of women</em> who come together for a day of sisterhood, inspiration, motivation and education.</p>
+              </div>
+              <figure class="ab-figs ab-cluster">
+                <div class="ab-fig ab-cluster-a"><img src="/mt-events/audience.webp" alt="A full room of women attending a Muslimah Today session" loading="lazy" decoding="async" width="1000" height="667"></div>
+                <div class="ab-fig ab-cluster-b"><img src="/mt-events/group-elegant.webp" alt="A group of attendees together in colourful dress" loading="lazy" decoding="async" width="1400" height="933"></div>
+              </figure>
+            </div>
+          </div>
+
+          <div class="ab-layer ab-layer--quote">
+            <div class="ab-layer-in">
+              <blockquote class="ab-quote">Income generation is not an objective of the event and attendees purchase tickets for a nominal fee, or are given sponsored tickets if they cannot afford to purchase, making this a non-elitist event with a strong focus on strengthening the ties of sisterhood within the community.</blockquote>
+              <a class="sponsored-btn ab-quote-cta" href="https://forms.gle/Zbk4cY7K5FA9rv5f9" target="_blank" rel="noopener noreferrer">Apply for a sponsored ticket <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+
+          <div class="ab-layer ab-layer--speakers">
+            <div class="ab-layer-in">
+              <h3 class="ab-sp-heading">Past speakers have included</h3>
+              <div class="ab-feat">
+                <figure class="ab-feat-photo"><img src="/mt-events/naledi.webp" alt="Naledi Pandor addresses the Muslimah Today conference" loading="lazy" decoding="async" width="667" height="1000"></figure>
+                <div class="ab-feat-body">
+                  <p class="ab-feat-name">Naledi&nbsp;Pandor <span class="ab-sp-note">(twice)</span></p>
+                  <p class="ab-feat-role">2025 Speaker</p>
+                  <blockquote class="ab-feat-quote"><span class="q-short">{naledi.short}</span><span class="q-full">{naledi.full}</span></blockquote>
+                  <button type="button" class="tm-more" data-dialog="dlg-naledi" aria-label="Read more — Naledi Pandor">Read more</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ab-layer ab-layer--roll">
+            <div class="ab-layer-in">
+              <p class="ab-sp-roll">Dr&nbsp;Imtiaz&nbsp;Sooliman · Na’ima&nbsp;B.&nbsp;Robert · Amina&nbsp;Kathree&nbsp;Jamal <em class="ab-sp-more">and numerous others</em></p>
+            </div>
+          </div>
+
+          </div><!-- /.ab-panel--about -->
+
+          <section class="ab-panel ab-panel--tm" aria-labelledby="tm-h">
+            <div class="ab-tm-in">
+              <p class="ab-tm-eyebrow">Testimonials</p>
+              <h2 id="tm-h" class="ab-tm-heading">In their own words</h2>
+              <div class="ab-tm-grid">
+                {testimonials.map((t) => (
+                  <figure class="ab-tm-card">
+                    <blockquote>
+                      {t.short ? (
+                        <><span class="q-short">{t.short}</span><span class="q-full">{t.full}</span></>
+                      ) : (
+                        t.full
+                      )}
+                    </blockquote>
+                    {t.short && (
+                      <button type="button" class="tm-more" data-dialog={`dlg-${t.id}`} aria-label={`Read more — ${t.name}`}>Read more</button>
+                    )}
+                    <figcaption><span class="tm-name">{t.name}</span></figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          </div><!-- /.ab-rail -->
+
+        </div>
+      </div>
+    </section>
+
+    <section class="sp" aria-labelledby="sp-h">
+      <div class="sp-wrap">
+        <h2 id="sp-h" class="sp-head reveal-head">This year’s speakers</h2>
+        <p class="sp-sub reveal">Seven voices one day — from spoken-word poetry to standing firm in your convictions.</p>
+
+        <div class="sp-grid">
+          {speakers.map((s) => (
+            <article class="sp-card reveal">
+              <Image class="sp-med" src={s.img} alt="" width={180} height={180} loading="lazy" />
+              <div class="sp-info">
+                <h3 class="sp-name">{s.name}</h3>
+                <p class="sp-topic">{s.topic}</p>
+                <details class="sp-bio">
+                  <summary>Read bio</summary>
+                  <p>{s.bio}</p>
+                </details>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="sp-joint reveal shine" role="group" aria-label="Joint interactive session">
+          <p class="sp-joint-eyebrow">Interactive session</p>
+          <p class="sp-joint-title">“{joint.title}”</p>
+          <p class="sp-joint-who">{joint.who}</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pe" aria-labelledby="pe-h">
+      <div class="pe-wrap">
+        <h2 id="pe-h" class="pe-head reveal-head">Glimpses from past events</h2>
+      </div>
+      <div class="mq">
+        <div class="mq-track">
+          {pastEvents.map((p) => (
+            <div class="mq-item"><img src={`/mt-events/${p.src}.webp`} alt={p.alt} width={p.w} height={p.h} loading="lazy" decoding="async" /></div>
+          ))}
+          {pastEvents.map((p) => (
+            <div class="mq-item" aria-hidden="true"><img src={`/mt-events/${p.src}.webp`} alt="" width={p.w} height={p.h} loading="lazy" decoding="async" /></div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {/* Full-testimonial dialogs (opened by the pinned-mode Read-more buttons).
+      Native <dialog> — the browser provides the focus trap, Esc-close and
+      focus restore to the trigger; backdrop click also closes (non-destructive). */}
+  {dialogs.map((d) => (
+    <dialog class="tm-dialog" id={`dlg-${d.id}`} aria-labelledby={`dlg-${d.id}-h`}>
+      <div class="tm-dialog-in">
+        <h2 id={`dlg-${d.id}-h`} class="tm-dialog-name">{d.name}{d.role && <span class="tm-dialog-role"> · {d.role}</span>}</h2>
+        <blockquote class="tm-dialog-quote">{d.full}</blockquote>
+        <button type="button" class="tm-dialog-close" data-close>Close</button>
+      </div>
+    </dialog>
+  ))}
+
+  <Footer />
+
+  <script is:inline>
+    document.documentElement.classList.add('js');
+    // Edition count-up: 1 → 13 once on load. The ordinal ("th") is hidden during
+    // the count (so it never reads "2th, 3th…") and fades in only when it settles.
+    (function () {
+      var el = document.getElementById('count');
+      if (!el) return;
+      var ord = document.querySelector('.bignum .ord');
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) { el.textContent = '13'; if (ord) ord.style.opacity = '1'; return; }
+      if (ord) ord.style.opacity = '0';
+      var target = 13, dur = 1150, start = null;
+      function ease(t) { return 1 - Math.pow(1 - t, 3); }
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / dur, 1);
+        el.textContent = String(Math.max(1, Math.round(ease(p) * target)));
+        if (p < 1) { requestAnimationFrame(step); }
+        else { el.textContent = '13'; if (ord) ord.style.opacity = '1'; }
+      }
+      setTimeout(function () { requestAnimationFrame(step); }, 360);
+    })();
+
+    // Testimonial Read-more dialogs. Native <dialog>.showModal() gives the focus
+    // trap, Esc-close and focus restore for free; clicking the backdrop closes too
+    // (e.target is the <dialog> only outside .tm-dialog-in, which carries the padding).
+    (function () {
+      document.querySelectorAll('[data-dialog]').forEach(function (btn) {
+        var dlg = document.getElementById(btn.getAttribute('data-dialog'));
+        if (!dlg || typeof dlg.showModal !== 'function') return;
+        btn.addEventListener('click', function () { dlg.showModal(); });
+      });
+      document.querySelectorAll('.tm-dialog').forEach(function (dlg) {
+        var close = dlg.querySelector('[data-close]');
+        if (close) close.addEventListener('click', function () { dlg.close(); });
+        dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+      });
+    })();
+
+    // Generic counter for [data-count-to]. Starts from data-count-from (default 0),
+    // so it counts DOWN when from > to (the early-bird price: 320 → 250). Shows the
+    // start value through data-count-delay ms first so the 320 registers, then
+    // descends on a gentle quad ease. Fires a bubbling `mt:countdone` on landing.
+    function countUp(el) {
+      if (el.dataset.counted) return;
+      el.dataset.counted = '1';
+      var target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
+      var from = parseInt(el.getAttribute('data-count-from') || '0', 10) || 0;
+      var delay = parseInt(el.getAttribute('data-count-delay') || '0', 10) || 0;
+      function done() {
+        el.textContent = String(target);
+        el.dispatchEvent(new CustomEvent('mt:countdone', { bubbles: true }));
+      }
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        done(); return;
+      }
+      el.textContent = String(from);
+      var dur = 1600, start = null;
+      function ease(t) { return 1 - Math.pow(1 - t, 2); }
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / dur, 1);
+        el.textContent = String(Math.round(from + ease(p) * (target - from)));
+        if (p < 1) requestAnimationFrame(step); else done();
+      }
+      setTimeout(function () { requestAnimationFrame(step); }, delay);
+    }
+
+    // Early-bird countdown — live days-left, with graceful states past the deadline.
+    (function () {
+      var el = document.querySelector('.tk-countdown');
+      if (!el) return;
+      var txt = el.querySelector('.tk-cd-text');
+      var deadline = new Date(el.getAttribute('data-deadline'));
+      if (isNaN(deadline)) return;
+      var ms = deadline - new Date();
+      var days = Math.ceil(ms / 86400000);
+      if (days > 1) {
+        txt.innerHTML = '<b>' + days + '</b>&nbsp;days left at the early-bird rate';
+      } else if (days === 1) {
+        txt.innerHTML = '<b>1</b>&nbsp;day left at the early-bird rate';
+      } else if (days === 0) {
+        txt.textContent = 'Last day for the early-bird rate';
+      } else {
+        var w = el.closest('.tk-cd-wrap');
+        if (w) w.style.display = 'none';
+      }
+    })();
+
+    // Tickets choreography: only the card frame + the counting price reveal first
+    // (ALL other text in the section — the card's own labels included — is
+    // .tk-gated and excluded from the generic engine); when the price lands on
+    // 250, everything cascades in top-to-bottom, heading first.
+    // Base mode (no JS / reduced motion) shows everything immediately as usual.
+    (function () {
+      var gated = [].slice.call(document.querySelectorAll('.tk-gated'));
+      if (!gated.length) return;
+      document.addEventListener('mt:countdone', function (e) {
+        if (!e.target.classList || !e.target.classList.contains('ticket-num')) return;
+        gated.forEach(function (el, i) {
+          setTimeout(function () { el.classList.add('in'); }, i * 110);
+        });
+      });
+    })();
+
+    // Scroll reveal (.reveal / .reveal-head) + count-ups. Position-based (checked
+    // on scroll via rAF) so a fast fling can never leave a block hidden.
+    // .tk-gated blocks are excluded — they release on the price countdown instead.
+    (function () {
+      var els = [].slice.call(document.querySelectorAll('.reveal, .reveal-head')).filter(function (el) {
+        return !el.classList.contains('tk-gated');
+      });
+      function activate(t) {
+        t.classList.add('in');
+        if (t.querySelectorAll) t.querySelectorAll('[data-count-to]').forEach(countUp);
+        if (t.hasAttribute && t.hasAttribute('data-count-to')) countUp(t);
+      }
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        els.forEach(activate); return;
+      }
+      var pending = els.slice(), ticking = false;
+      function check() {
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        pending = pending.filter(function (el) {
+          if (el.getBoundingClientRect().top < vh * 0.9) { activate(el); return false; }
+          return true;
+        });
+        if (!pending.length) {
+          window.removeEventListener('scroll', onScroll);
+          window.removeEventListener('resize', onScroll);
+        }
+      }
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { ticking = false; check(); });
+      }
+      check();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+    })();
+  </script>
+
+  <script>
+    // About — pinned scrollytelling. GSAP ScrollTrigger scrubs a cross-fade while the
+    // stage is held by position:sticky. Base CSS keeps the 4 layers stacked + readable;
+    // this only adds `.ab-anim` when motion is allowed, so no-JS / reduced-motion users
+    // get the plain stacked version.
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    gsap.registerPlugin(ScrollTrigger);
+
+    const about = document.querySelector(".about");
+    if (about) {
+      const track = about.querySelector(".ab-track");
+      const rail = about.querySelector(".ab-rail");
+      const layers = gsap.utils.toArray<HTMLElement>(".about .ab-layer");
+      const inners = layers.map((l) => l.querySelector(".ab-layer-in") as HTMLElement);
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
+      // Pinned cross-fade on all sizes — every pinned screen's copy is excerpt-short
+      // by design (full quotes live in the Read-more dialogs); reduced-motion / no-JS
+      // falls back to the stacked mode with the full quotes inline.
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        about.classList.add("ab-anim");
+        gsap.set(layers, { autoAlpha: 0 });
+        gsap.set(inners, { y: 42 });
+        gsap.set(layers[0], { autoAlpha: 1 });
+        gsap.set(inners[0], { y: 0 });
+
+        const tl = gsap.timeline({
+          defaults: { ease: "power1.inOut" },
+          scrollTrigger: { trigger: track, start: "top top", end: "bottom bottom", scrub: 0.6 },
+        });
+        tl.to({}, { duration: 0.6 }); // hold on the opening layer before the first cross-fade
+        for (let i = 1; i < layers.length; i++) {
+          tl.to(layers[i - 1], { autoAlpha: 0, duration: 1 })
+            .to(inners[i - 1], { y: -42, duration: 1 }, "<")
+            .to(layers[i], { autoAlpha: 1, duration: 1 }, "<")
+            .to(inners[i], { y: 0, duration: 1 }, "<")
+            .to({}, { duration: 0.5 }); // hold on each layer before the next
+        }
+        tl.to({}, { duration: 0.6 }); // hold on the past-speakers roll layer
+        tl.to(rail, { xPercent: -100, duration: 1.6, ease: "none" }); // pan LEFT → Testimonials
+        tl.to({}, { duration: 0.6 }); // settle on Testimonials
+
+        ScrollTrigger.refresh();
+        return () => {
+          about.classList.remove("ab-anim");
+          gsap.set([...layers, ...inners, rail], { clearProps: "all" });
+        };
+      });
+
+      window.addEventListener("load", () => ScrollTrigger.refresh());
+    }
+  </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # ILM-SA Bursary site
 
-This repository contains the marketing site for the ILM-SA bursary programme, built with [Astro](https://astro.build/) and Tailwind CSS.
+This repository contains the marketing site for the ILM-SA bursary programme, built with [Astro](https://astro.build/) and Tailwind CSS. It also hosts the self-contained **Muslimah Today 2026** event landing page at `/MT` (see `CLAUDE.md` and `Muslima_Today/` for details).
 
 ## 🚀 Getting started
 
@@ -20,6 +20,7 @@ The site will be available at [http://localhost:4321](http://localhost:4321).
 | `npm install` | Install dependencies |
 | `npm run dev` | Start the development server |
 | `npm run build` | Build the production site to `./dist/` |
+| `npm run check` | Type-check with `astro check` |
 | `npm run preview` | Preview the built site locally |
 
 ## 🌐 Deployment
@@ -41,4 +42,4 @@ If you need to customise the deployment domain or base path, override the follow
 
 - [Astro 5](https://docs.astro.build/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [AOS](https://michalsnik.github.io/aos/) for scroll animations
+- [GSAP](https://gsap.com/) for the Muslimah Today scroll animations

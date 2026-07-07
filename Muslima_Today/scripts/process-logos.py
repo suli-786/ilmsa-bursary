@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A1 — sort & convert Muslimah Today logos into tiered, kebab-named transparent PNGs.
+"""Sort & convert Muslimah Today logos into tiered, kebab-named transparent PNGs.
 
 Source: Muslima_Today/assets-raw/logos/**   →   Output: src/assets/muslimah-today/logos/
 - PDFs are rendered (pymupdf) at high DPI with alpha, then trimmed to content.

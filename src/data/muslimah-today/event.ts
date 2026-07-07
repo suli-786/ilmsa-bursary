@@ -1,19 +1,19 @@
 /**
- * event.ts — single-instance Muslimah Today facts & links (hero, footer, CTAs).
- * Copy is VERBATIM from build-docs/01-content.md §1/§2/§6. [OURS] central module so
- * every section/CTA reads one source (no duplicated strings or URLs). Repeated
- * content (speakers, testimonials, sponsors, tickets, gallery) lives in its own
- * module per design/03 §3.
+ * event.ts — single-instance Muslimah Today facts & links (date, venue, socials,
+ * attribution, booking URLs). Copy is VERBATIM from build-docs/01-content.md
+ * §1/§2/§6 — one source for these facts, no duplicated strings or URLs.
  *
- * M5: the Quicket "Book" page (MT2026) and the sponsored-ticket form (MTSP2026)
- * are not created yet → `live: false`; CTAs render disabled ("Booking opens soon")
- * with the URL wired so they activate when Raeesah links them (B6).
+ * The Quicket booking page and the sponsored-ticket Google Form are LIVE
+ * (direct URLs supplied by the client 2026-07-07; the former ilmsa.co.za/MT2026
+ * and /MTSP2026 wrapper links were never activated).
  */
 
 export interface Social {
   platform: "Facebook" | "Instagram" | "WhatsApp";
   handle: string;
   url: string;
+  /** Optional display text shown instead of the handle (e.g. a call to action). */
+  label?: string;
 }
 
 export const event = {
@@ -39,10 +39,10 @@ export const event = {
   salesClose: "Wednesday 26th August",
 
   links: {
-    /** Book → Quicket page (M5: not live yet). */
-    book: { url: "https://www.ilmsa.co.za/MT2026", live: false as boolean },
-    /** Sponsored-ticket application form (M5: not live yet). */
-    sponsored: { url: "https://www.ilmsa.co.za/MTSP2026", live: false as boolean },
+    /** Book → Quicket event page (live, client-supplied 2026-07-07). */
+    book: { url: "https://www.quicket.co.za/events/384264-muslimah-today-2026/", live: true as boolean },
+    /** Sponsored-ticket application form (live, client-supplied 2026-07-07). */
+    sponsored: { url: "https://forms.gle/Zbk4cY7K5FA9rv5f9", live: true as boolean },
     /** Pensioner/student booking via WhatsApp. */
     whatsappBooking: { display: "083 271 4500", url: "https://wa.me/27832714500" },
   },
@@ -50,16 +50,15 @@ export const event = {
   socials: [
     { platform: "Facebook", handle: "ILM.SouthAfrica", url: "https://www.facebook.com/ILM.SouthAfrica" },
     { platform: "Instagram", handle: "ilmsouthafrica", url: "https://www.instagram.com/ilmsouthafrica" },
-    { platform: "WhatsApp", handle: "ilmsa.co.za/WA", url: "https://www.ilmsa.co.za/WA" },
+    { platform: "WhatsApp", handle: "ilmsa.co.za/WA", url: "https://www.ilmsa.co.za/WA", label: "Join our WhatsApp group" },
   ] satisfies Social[],
 
   /** Footer "brought to you by" attribution — verbatim §6 (logos rendered by the component). */
   attribution: {
     lead: "Muslimah Today is brought to you by",
     division: "a division of",
+    conjunction: "In conjunction with:",
     org: "ILM for Women",
     parent: "ILM-SA",
   },
 } as const;
-
-export type Event = typeof event;

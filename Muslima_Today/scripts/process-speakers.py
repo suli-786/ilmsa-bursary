@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
-"""A2 / A2b — process the 7 Muslimah Today speaker photos into uniform portrait tiles.
+"""Process the 7 Muslimah Today speaker photos into uniform portrait tiles.
 
-Pipeline (design/02 → Imagery D26, 04-assets A2):
+Pipeline:
   EXIF + face-detected auto-orient (fixes Shubnum's sideways landscape)
-  → rembg human-seg cut-out (A2b: ALPHA MATTING on → clean edges, no dark halo)
+  → rembg human-seg cut-out (ALPHA MATTING on → clean edges, no dark halo)
   → face-aligned uniform crop (eyeline ~upper third, consistent subject scale)
-  → composite on the D26 standard speaker bg
-  (--mt-speaker-bg: magenta-100 #f6d9e8 → lilac-100 #efe3f4 vertical gradient),
-  baked as a SQUARE tile.
+  → composite on a brand gradient bg
+  (magenta-100 #f6d9e8 → lilac-100 #efe3f4 vertical), baked as a SQUARE tile.
 
-A2b — why this changed: the first cut (plain rembg) left a hard dark box on Rosieda
-and dark edge halos on Adam/Shubnum/Zohra (dark subject against a bright/dark bg →
-the matte kept a semi-transparent dark rim that reads as a halo on the light gradient).
-Fix: rembg `alpha_matting=True` re-estimates the edge alpha AND the true foreground
-colour (kills colour spill), then a gentle alpha erode+feather trims any residual rim.
+Why alpha matting: a plain rembg cut left a hard dark box on Rosieda and dark
+edge halos on Adam/Shubnum/Zohra (dark subject against a bright/dark bg → the
+matte kept a semi-transparent dark rim that reads as a halo on a light gradient).
+`alpha_matting=True` re-estimates the edge alpha AND the true foreground colour
+(kills colour spill), then a gentle alpha erode+feather trims any residual rim.
 
-Note: the circular / arch mask + off-white ring are applied at BUILD via the CSS
-tokens (--radius-circle / --radius-arch, --mt-ring, --mt-border) so the same tile
-serves both the circular speaker grid and Ebrahim & Rosieda's arch headliner niche.
-The contact sheet written to .verify/ previews those masks faithfully (circle for the
-grid, arch for the two headliners, 4px off-white ring + 1px magenta-200 keyline) so
-edge defects are caught exactly as they will render.
+Note: any display mask (circle/arch) + ring is applied at BUILD via CSS, so one
+square tile can serve whatever frame the page design uses. The contact sheet
+written to .verify/ previews the masks so edge defects are caught as rendered.
 
 Run from repo root via Muslima_Today/.venv/bin/python.
 """
@@ -66,6 +62,16 @@ MAGENTA200 = (237, 179, 208, 255) # --color-mt-magenta-200 #edb3d0 (--mt-border 
 MANUAL = {
     "speaker-shubnum-khan": (0.515, 0.40, 0.175),
 }
+
+# Opt-in bottom-fill: a source cropped tight below the face (Ebrahim's 562x789
+# headshot) runs out of pixels above the canvas bottom, leaving a gradient gap
+# under the subject inside the display circle. For these stems, zoom past the
+# uniform FACE_FRAC target just enough that the cut-out reaches the bottom edge
+# (top-pinned if the source starts right at the head). Trades a slightly larger
+# head for a filled frame — only where the source forces the choice.
+FILL_BOTTOM = {"speaker-ebrahim-rasool", "speaker-rosieda-shabodien"}
+FILL_PAD = 0.10   # overshoot past the canvas bottom so the feathered cut-out edge /
+                  # light clothing right at the crop line can't read as a residual gap
 
 SESS = new_session("u2net_human_seg")
 CASCADES = [cv2.CascadeClassifier(cv2.data.haarcascades + n) for n in
@@ -246,9 +252,18 @@ for fn, stem, headliner in SPEAKERS:
     upscaled = scale > 1.0
     scale = min(scale, MAX_UP)
     cw, ch = cut.size
+    if stem in FILL_BOTTOM:
+        pad = FILL_PAD * CANVAS
+        scale = max(scale, (CANVAS * (1 - EYE_Y) + pad) / max(1, ch - face_cy))
+        if EYE_Y * CANVAS - face_cy * scale > 0:   # would open a gap above the head too
+            scale = max(scale, (CANVAS + pad) / ch)
     cut_s = cut.resize((max(1, round(cw * scale)), max(1, round(ch * scale))), Image.LANCZOS)
     ox = round(CANVAS / 2 - face_cx * scale)
     oy = round(EYE_Y * CANVAS - face_cy * scale)
+    if stem in FILL_BOTTOM:
+        oy = min(oy, 0)                            # pin the top edge inside the canvas
+        if oy + cut_s.height < CANVAS:             # rounding safety: keep the bottom filled
+            oy = CANVAS - cut_s.height
 
     canvas = gradient(CANVAS)
     canvas.alpha_composite(cut_s, (ox, oy))

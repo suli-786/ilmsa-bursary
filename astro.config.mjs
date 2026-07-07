@@ -10,12 +10,15 @@ const site = (() => {
   if (configured && configured.trim().length > 0) {
     return configured;
   }
-  return "http://bursaries.ilmsa.co.za";
+  return "https://bursaries.ilmsa.co.za";
 })();
 
 export default defineConfig({
-  site: process.env.PUBLIC_SITE ?? 'https://bursaries.ilmsa.co.za',
-  base: process.env.PUBLIC_BASE_PATH ?? '/',
+  site,
+  base,
+  // NOTE: /mt → /MT lives in public/mt/index.html (static meta-refresh). It can't
+  // go through `redirects` here — Astro matches redirect keys against existing
+  // routes case-insensitively, and "/mt" swallowed the real /MT page at build.
   vite: {
     plugins: [tailwindcss()],
   },

@@ -26,11 +26,8 @@ pnpm-debug.log*
 # Muslimah Today image-tooling venv (rembg/pymupdf/pillow) — recreate, don't commit
 Muslima_Today/.venv/
 
-# Muslimah Today raw asset originals — kept on-disk for the build loop, not committed
+# Muslimah Today raw asset originals — kept on-disk, not committed
 Muslima_Today/assets-raw/
 
 # Muslimah Today verification screenshots
 Muslima_Today/.verify/
-
-# Muslimah Today autonomous build-loop logs / lock / STOP switch
-Muslima_Today/.loop/
