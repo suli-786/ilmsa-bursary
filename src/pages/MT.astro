@@ -476,12 +476,9 @@ const pastEvents = [
     }
     @keyframes glow-drift{to{transform:translateY(70px);opacity:.4}}
 
-    /* ===================== ABOUT — pinned scrollytelling =========================
-       Verbatim brief text (overview.md L30) in 5 layers. GSAP ScrollTrigger scrubs a
-       cross-fade while the stage is held in place (position:sticky): each layer's
-       text+photos reveal, then fade out as the next comes in. BASE state (no-JS /
-       reduced-motion): layers simply stack and read top-to-bottom. The `.ab-anim`
-       class — added by JS only when motion is allowed — switches on the pinned mode. */
+    /* ===================== ABOUT — static, stacked =============================
+       Verbatim brief text (overview.md L30). Blocks stack and read top-to-bottom:
+       intro → past speakers → testimonials. No GSAP, no scroll-driven motion. */
     .about{background:var(--mt-lilac-50);color:var(--mt-ink)}
 
     /* layer inner composition (shared by both modes) */
@@ -500,16 +497,6 @@ const pastEvents = [
       box-shadow:0 18px 40px rgba(122,29,78,.16)}
     .ab-fig.is-land{aspect-ratio:3/2}
     .ab-fig img{width:100%;height:100%;object-fit:cover;display:block}
-
-    /* the ethos layer — upright Caslon Text, centred, sized for comfortable reading */
-    .ab-layer--quote .ab-layer-in{grid-template-columns:1fr;max-width:42rem;justify-items:center;gap:0}
-    .ab-quote{position:relative;margin:0 auto;max-width:34rem;text-align:center;
-      font-family:var(--font-serif);font-style:normal;line-height:1.58;letter-spacing:.002em;
-      color:var(--mt-magenta-700);padding-top:2.6rem;
-      font-size:clamp(1.2rem,.98rem + 1vw,1.6rem)}
-    .ab-quote::before{content:"\201C";position:absolute;top:0;left:50%;transform:translateX(-50%);
-      font-family:var(--font-display);font-size:3.6rem;line-height:.6;color:var(--mt-magenta-200)}
-    .ab-quote-cta{margin-top:clamp(1.6rem,4vw,2.2rem)}
 
     /* ---- SCROLL 4 (speakers): heading → Naledi feature (viewable photo LEFT, her name
        then testimonial beside it) → divider → the other speakers listed (readable),
@@ -538,16 +525,15 @@ const pastEvents = [
     /* ---- SCROLL 5 (roll): the other past speakers on their own screen ---- */
     .ab-layer--roll .ab-layer-in{grid-template-columns:1fr;max-width:44rem;justify-items:center}
 
-    /* excerpt vs full quote: pinned screens show the excerpt + Read more; the
-       stacked base mode (no JS / reduced motion) shows the FULL verbatim quote
-       inline and hides the button (dialogs need JS anyway). */
-    .about .q-short{display:none}
-    .about:not(.ab-anim) .tm-more{display:none}
-    .ab-anim .q-short{display:inline}
-    .ab-anim .q-full{display:none}
-    .tm-more{display:inline-flex;align-items:center;gap:.3rem;min-height:44px;padding:0;
+    /* excerpt + Read more when JS is present (the dialog needs JS); with no JS the
+       FULL verbatim quote shows inline and the button is hidden. */
+    .q-short{display:none}
+    .js .q-short{display:inline}
+    .js .q-full{display:none}
+    .tm-more{display:none;align-items:center;gap:.3rem;min-height:44px;padding:0;
       border:0;background:none;cursor:pointer;font-family:var(--font-body);font-weight:600;
       font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--mt-magenta-700)}
+    .js .tm-more{display:inline-flex}
     .tm-more::after{content:"\25B8"}
     .tm-more:hover{text-decoration:underline;text-underline-offset:3px}
     .tm-more:focus-visible{outline:2px solid var(--mt-magenta-700);outline-offset:3px;border-radius:3px}
@@ -561,47 +547,8 @@ const pastEvents = [
     @media (min-width:768px){
       .ab-layer-in{grid-template-columns:1fr 1fr;gap:clamp(2.5rem,5vw,4.5rem)}
       .ab-figs{order:0}
-      .ab-layer--rev .ab-figs{order:-1}
       .ab-figs:not(.ab-figs--pair):not(.ab-cluster){max-width:21rem}
       .ab-layer:not(.ab-layer--rev) .ab-figs:not(.ab-figs--pair){justify-self:start}
-    }
-
-    /* ---- ENHANCED: pinned cross-fade (class added by JS only when motion allowed) ----
-       Uses svh so the pinned stage matches the *visible* viewport on mobile (avoids the
-       100vh-under-toolbar clip). Mobile layers are compacted so each fits one screen;
-       long testimonials show as excerpts + Read-more dialogs in this mode only. */
-    .about.ab-anim{padding:0}
-    .ab-anim .ab-track{position:relative;height:calc(100svh * 6.5)}
-    .ab-anim .ab-stage{position:sticky;top:0;height:100svh;overflow:hidden}
-    /* horizontal rail: About panel (holds the cross-fade layers) + Testimonials panel;
-       GSAP pans it left (xPercent:-100) after the cross-fades. */
-    .ab-anim .ab-rail{display:flex;width:100%;height:100%;will-change:transform}
-    .ab-anim .ab-panel{flex:0 0 100%;height:100svh;position:relative}
-    /* hidden layers use visibility:hidden (GSAP autoAlpha) so they can't intercept
-       clicks on the active layer's Read-more button or catch keyboard focus */
-    .ab-anim .ab-layer{position:absolute;inset:0;margin:0;display:grid;place-items:center;
-      opacity:0;visibility:hidden;padding:clamp(1.6rem,6vh,5.5rem) clamp(1.25rem,5vw,3rem);
-      will-change:opacity}
-    .ab-anim .ab-layer:first-child{opacity:1;visibility:visible}
-    .ab-anim .ab-layer-in{will-change:transform}
-    .ab-anim .ab-panel--tm{display:grid;place-items:center;overflow:hidden;
-      padding:clamp(1.4rem,5vh,4rem) clamp(1.25rem,5vw,3rem)}
-
-    @media (max-width:767.98px){
-      .ab-anim .ab-layer{padding:1.1rem 1.15rem}
-      .ab-anim .ab-layer-in{gap:.9rem}
-      .ab-anim .ab-head{font-size:1.55rem;margin-bottom:.45rem}
-      .ab-anim .ab-text p{font-size:1.02rem;line-height:1.52}
-      .ab-anim .ab-quote{font-size:1.22rem;line-height:1.55;padding-top:2.1rem}
-      .ab-anim .ab-quote::before{font-size:2.8rem}
-      .ab-anim .ab-sp-heading{font-size:clamp(1.55rem,1.1rem + 2.2vw,2.1rem)}
-      /* single portraits: keep aspect (no head-crop), just smaller + centred */
-      .ab-anim .ab-figs:not(.ab-figs--pair):not(.ab-cluster){max-width:48vw;justify-self:center}
-      /* scroll 4: keep photo LEFT of the text on phones too (the wanted layout), tightened */
-      .ab-anim .ab-feat{gap:.85rem}
-      .ab-anim .ab-feat-name{font-size:1.3rem}
-      .ab-anim .ab-feat-quote{font-size:1rem;line-height:1.45;margin-top:.55rem}
-      .ab-anim .ab-sp-roll{font-size:1.05rem;line-height:1.55}
     }
 
     /* ---- SCROLL 1 (lead): heading across the top, body text with the picture beside
@@ -623,25 +570,9 @@ const pastEvents = [
         column-gap:clamp(2rem,5vw,3.5rem)}
     }
 
-    /* ---- SCROLL 2 (gather): a layered photo cluster (one large, one overlapping with a
-       print-style frame) + larger editorial copy with the key phrase in Caslon italic. ---- */
-    .ab-layer--gather .ab-text{max-width:32rem}
-    .ab-layer--gather .ab-text p{font-size:clamp(1.1rem,.95rem + .85vw,1.45rem);line-height:1.55;
-      color:var(--mt-ink)}
-    .ab-em{font-family:var(--font-serif);font-style:italic;font-weight:400;color:var(--mt-magenta-700)}
-    .ab-cluster{position:relative;width:100%;max-width:none;aspect-ratio:4/3;order:-1}
-    .ab-cluster .ab-fig{position:absolute;margin:0;aspect-ratio:3/2;border-radius:.85rem}
-    .ab-cluster-a{top:0;left:0;width:72%;z-index:1}
-    .ab-cluster-b{right:0;bottom:0;width:57%;z-index:2;
-      box-shadow:0 0 0 5px #fff,0 18px 40px rgba(122,29,78,.28)}
-    @media (min-width:768px){
-      .ab-layer--gather .ab-layer-in{grid-template-columns:minmax(0,1.02fr) .98fr;
-        column-gap:clamp(2rem,5vw,4rem)}
-    }
-
-    /* ===================== TESTIMONIALS (now the 2nd horizontal panel of About) =====
-       The 4 attendee voices in a 2×2 grid of soft cards (1 column on phones).
-       (Naledi's endorsement lives in About scroll 4.) Quotes = FULL verbatim. */
+    /* ===================== TESTIMONIALS (2nd block of the About section) =====
+       Four attendee voices in a 2×2 grid of soft cards. Cards show a short excerpt
+       with a Read-more dialog (full verbatim quote); no-JS shows the full inline. */
     .ab-tm-in{width:100%;max-width:50rem;margin:0 auto;text-align:center}
     .ab-tm-eyebrow{font-family:var(--font-body);font-weight:600;text-transform:uppercase;
       letter-spacing:.22em;font-size:.8125rem;color:var(--mt-magenta-700);margin:0}
@@ -649,9 +580,7 @@ const pastEvents = [
       line-height:1.05;letter-spacing:.01em;margin:.4rem 0 0;font-size:clamp(1.9rem,1.2rem + 3vw,3rem)}
     .ab-tm-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(.75rem,2.2vw,1.4rem);
       margin-top:clamp(1.3rem,3.5vw,2.4rem)}
-    /* base (stacked) mode only: full quotes read better one-up on phones;
-       pinned mobile keeps the 2×2 because it shows short excerpts. */
-    @media (max-width:767.98px){.about:not(.ab-anim) .ab-tm-grid{grid-template-columns:1fr}}
+    /* 2×2 on every size (cards show short excerpts; full quote lives in the dialog) */
     .ab-tm-card{background:var(--mt-magenta-50);border:1px solid var(--mt-border);border-radius:1rem;
       padding:clamp(.9rem,3vw,1.5rem);text-align:left;display:flex;flex-direction:column}
     .ab-tm-card blockquote{margin:0;font-family:var(--font-serif);font-style:italic;color:var(--mt-ink);
@@ -785,8 +714,8 @@ const pastEvents = [
        Decorative only: CSS pseudo-elements, no DOM/JS/motion, pointer-events
        none, hairline alphas ≤ .10 so text contrast is untouched. isolation
        keeps each negative-z pseudo above its own section fill. */
-    .tickets,.sp,.pe,.ab-stage{position:relative;isolation:isolate}
-    .tickets::before,.sp::before,.pe::before,.ab-stage::before{content:"";
+    .tickets,.sp,.pe,.about{position:relative;isolation:isolate}
+    .tickets::before,.sp::before,.pe::before,.about::before{content:"";
       position:absolute;z-index:-1;pointer-events:none;
       border:1px solid rgba(122,29,78,.10);border-bottom:0;
       border-radius:999px 999px 0 0}
@@ -795,7 +724,7 @@ const pastEvents = [
       right:max(-13vw,-170px);bottom:0}
     .tickets{background-image:radial-gradient(520px 420px at 0% 100%,
       rgba(233,207,238,.38), rgba(233,207,238,0) 70%)}
-    .ab-stage::before{width:min(40vw,420px);height:min(68%,640px);
+    .about::before{width:min(40vw,420px);height:min(68%,640px);
       left:max(-11vw,-150px);bottom:0;border-color:rgba(122,29,78,.08)}
     .about{background-image:radial-gradient(640px 520px at 100% 10%,
       rgba(255,255,255,.55), rgba(255,255,255,0) 70%)}
@@ -882,7 +811,7 @@ const pastEvents = [
               <li class="tier">
                 <span class="tier-label">Standard</span>
                 <span class="tier-price">R320</span>
-                <span class="tier-note">From 1 August</span>
+                <span class="tier-note">From 1st August</span>
               </li>
               <li class="tier">
                 <span class="tier-label">Pensioners &amp; Students</span>
@@ -912,11 +841,37 @@ const pastEvents = [
       </div>
     </section>
 
+    <section class="sp" aria-labelledby="sp-h">
+      <div class="sp-wrap">
+        <h2 id="sp-h" class="sp-head reveal-head">This year’s speakers</h2>
+        <p class="sp-sub reveal">Seven voices one day — from spoken-word poetry to standing firm in your convictions.</p>
+
+        <div class="sp-grid">
+          {speakers.map((s) => (
+            <article class="sp-card reveal">
+              <Image class="sp-med" src={s.img} alt="" width={180} height={180} loading="lazy" />
+              <div class="sp-info">
+                <h3 class="sp-name">{s.name}</h3>
+                <p class="sp-topic">{s.topic}</p>
+                <details class="sp-bio">
+                  <summary>Read bio</summary>
+                  <p>{s.bio}</p>
+                </details>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div class="sp-joint reveal shine" role="group" aria-label="Joint interactive session">
+          <p class="sp-joint-eyebrow">Interactive session</p>
+          <p class="sp-joint-title">“{joint.title}”</p>
+          <p class="sp-joint-who">{joint.who}</p>
+        </div>
+      </div>
+    </section>
+
     <section class="about" aria-labelledby="ab-h">
-      <div class="ab-track">
-        <div class="ab-stage">
-          <div class="ab-rail">
-          <div class="ab-panel ab-panel--about">
+      <div class="ab-panel ab-panel--about">
 
           <div class="ab-layer ab-layer--lead">
             <div class="ab-layer-in">
@@ -928,25 +883,6 @@ const pastEvents = [
               <figure class="ab-figs">
                 <div class="ab-fig"><img src="/mt-events/welcome-arch.webp" alt="The floral “welcomes you” arch and ILM for Women banners at the entrance" loading="lazy" decoding="async" width="933" height="1400"></div>
               </figure>
-            </div>
-          </div>
-
-          <div class="ab-layer ab-layer--rev ab-layer--gather">
-            <div class="ab-layer-in">
-              <div class="ab-text">
-                <p>Now in its thirteenth year, it is an eagerly anticipated event on the Durban calendar, attracting <em class="ab-em">a broad spectrum of women</em> who come together for a day of sisterhood, inspiration, motivation and education.</p>
-              </div>
-              <figure class="ab-figs ab-cluster">
-                <div class="ab-fig ab-cluster-a"><img src="/mt-events/audience.webp" alt="A full room of women attending a Muslimah Today session" loading="lazy" decoding="async" width="1000" height="667"></div>
-                <div class="ab-fig ab-cluster-b"><img src="/mt-events/group-elegant.webp" alt="A group of attendees together in colourful dress" loading="lazy" decoding="async" width="1400" height="933"></div>
-              </figure>
-            </div>
-          </div>
-
-          <div class="ab-layer ab-layer--quote">
-            <div class="ab-layer-in">
-              <blockquote class="ab-quote">Income generation is not an objective of the event and attendees purchase tickets for a nominal fee, or are given sponsored tickets if they cannot afford to purchase, making this a non-elitist event with a strong focus on strengthening the ties of sisterhood within the community.</blockquote>
-              <a class="sponsored-btn ab-quote-cta" href="https://forms.gle/Zbk4cY7K5FA9rv5f9" target="_blank" rel="noopener noreferrer">Apply for a sponsored ticket <span class="arrow" aria-hidden="true">→</span></a>
             </div>
           </div>
 
@@ -997,39 +933,6 @@ const pastEvents = [
             </div>
           </section>
 
-          </div><!-- /.ab-rail -->
-
-        </div>
-      </div>
-    </section>
-
-    <section class="sp" aria-labelledby="sp-h">
-      <div class="sp-wrap">
-        <h2 id="sp-h" class="sp-head reveal-head">This year’s speakers</h2>
-        <p class="sp-sub reveal">Seven voices one day — from spoken-word poetry to standing firm in your convictions.</p>
-
-        <div class="sp-grid">
-          {speakers.map((s) => (
-            <article class="sp-card reveal">
-              <Image class="sp-med" src={s.img} alt="" width={180} height={180} loading="lazy" />
-              <div class="sp-info">
-                <h3 class="sp-name">{s.name}</h3>
-                <p class="sp-topic">{s.topic}</p>
-                <details class="sp-bio">
-                  <summary>Read bio</summary>
-                  <p>{s.bio}</p>
-                </details>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div class="sp-joint reveal shine" role="group" aria-label="Joint interactive session">
-          <p class="sp-joint-eyebrow">Interactive session</p>
-          <p class="sp-joint-title">“{joint.title}”</p>
-          <p class="sp-joint-who">{joint.who}</p>
-        </div>
-      </div>
     </section>
 
     <section class="pe" aria-labelledby="pe-h">
@@ -1049,7 +952,7 @@ const pastEvents = [
     </section>
   </main>
 
-  {/* Full-testimonial dialogs (opened by the pinned-mode Read-more buttons).
+  {/* Full-testimonial dialogs (opened by the Read-more buttons).
       Native <dialog> — the browser provides the focus trap, Esc-close and
       focus restore to the trigger; backdrop click also closes (non-destructive). */}
   {dialogs.map((d) => (
@@ -1205,61 +1108,6 @@ const pastEvents = [
       window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', onScroll, { passive: true });
     })();
-  </script>
-
-  <script>
-    // About — pinned scrollytelling. GSAP ScrollTrigger scrubs a cross-fade while the
-    // stage is held by position:sticky. Base CSS keeps the 4 layers stacked + readable;
-    // this only adds `.ab-anim` when motion is allowed, so no-JS / reduced-motion users
-    // get the plain stacked version.
-    import { gsap } from "gsap";
-    import { ScrollTrigger } from "gsap/ScrollTrigger";
-    gsap.registerPlugin(ScrollTrigger);
-
-    const about = document.querySelector(".about");
-    if (about) {
-      const track = about.querySelector(".ab-track");
-      const rail = about.querySelector(".ab-rail");
-      const layers = gsap.utils.toArray<HTMLElement>(".about .ab-layer");
-      const inners = layers.map((l) => l.querySelector(".ab-layer-in") as HTMLElement);
-      ScrollTrigger.config({ ignoreMobileResize: true });
-
-      // Pinned cross-fade on all sizes — every pinned screen's copy is excerpt-short
-      // by design (full quotes live in the Read-more dialogs); reduced-motion / no-JS
-      // falls back to the stacked mode with the full quotes inline.
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        about.classList.add("ab-anim");
-        gsap.set(layers, { autoAlpha: 0 });
-        gsap.set(inners, { y: 42 });
-        gsap.set(layers[0], { autoAlpha: 1 });
-        gsap.set(inners[0], { y: 0 });
-
-        const tl = gsap.timeline({
-          defaults: { ease: "power1.inOut" },
-          scrollTrigger: { trigger: track, start: "top top", end: "bottom bottom", scrub: 0.6 },
-        });
-        tl.to({}, { duration: 0.6 }); // hold on the opening layer before the first cross-fade
-        for (let i = 1; i < layers.length; i++) {
-          tl.to(layers[i - 1], { autoAlpha: 0, duration: 1 })
-            .to(inners[i - 1], { y: -42, duration: 1 }, "<")
-            .to(layers[i], { autoAlpha: 1, duration: 1 }, "<")
-            .to(inners[i], { y: 0, duration: 1 }, "<")
-            .to({}, { duration: 0.5 }); // hold on each layer before the next
-        }
-        tl.to({}, { duration: 0.6 }); // hold on the past-speakers roll layer
-        tl.to(rail, { xPercent: -100, duration: 1.6, ease: "none" }); // pan LEFT → Testimonials
-        tl.to({}, { duration: 0.6 }); // settle on Testimonials
-
-        ScrollTrigger.refresh();
-        return () => {
-          about.classList.remove("ab-anim");
-          gsap.set([...layers, ...inners, rail], { clearProps: "all" });
-        };
-      });
-
-      window.addEventListener("load", () => ScrollTrigger.refresh());
-    }
   </script>
 </body>
 </html>
