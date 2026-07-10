@@ -34,7 +34,7 @@ jobs:
       - name: Build site
         env:
           PUBLIC_BASE_PATH: "/"
-          PUBLIC_SITE: "https://bursaries.ilmsa.co.za"
+          PUBLIC_SITE: "https://ilmsa.co.za"
         run: npm run build
 
       - name: Upload build output

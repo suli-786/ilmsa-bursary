@@ -10,7 +10,7 @@ const site = (() => {
   if (configured && configured.trim().length > 0) {
     return configured;
   }
-  return "https://bursaries.ilmsa.co.za";
+  return "https://ilmsa.co.za";
 })();
 
 export default defineConfig({
