@@ -1,0 +1,393 @@
+---
+// Give — route /give. ILM-SA donations / banking-details page (bursary brand).
+//
+// Copy is VERBATIM from the client's brief (email received 2026-10-29) — do not
+// paraphrase or "fix" it. Unknowns (e.g. the Zakaah account holder) are left out,
+// never invented.
+//
+// Design: ported by hand from shadcnblocks.com premium blocks into plain Astro
+// markup + Tailwind utilities (no React / shadcn runtime added):
+//   • hero175    → centred intro (lede + pill jump-links)
+//   • feature203 → detail cards with separator-divided rows (Lillah / Zakaah / Steps)
+//   • feature207 → numbered steps (numeral badge beside each step heading)
+// Colour rule (WCAG AA): black text on orange — white on #f6931c is 2.3:1 and fails
+// even as large text; white text on teal only as bold headings ≥ 24px (3.84:1 passes
+// the large-text threshold). Body text is always dark on white or on a light tint.
+// Cards are tinted with their section colour (teal for Non-18A, orange for the 18A
+// steps); solid colour is reserved for the strips and the step numeral badges.
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import { withBase } from "../utils/paths";
+
+type Row = { label: string; value: string };
+type Account = { id: string; title: string; rows: Row[] };
+
+const intro = [
+  "A Section 18A donation is one for which a tax exemption certificate can be issued.",
+  "Only use our Section 18A banking details if you require a Section 18A certificate.",
+];
+
+const non18a = {
+  intro:
+    "For non-18A donations, we have separate Lillah and Zakaah accounts, details as follows:",
+  accounts: [
+    {
+      id: "lillah",
+      title: "Lillah",
+      rows: [
+        { label: "Account holder", value: "Institute for Learning and Motivation – SA" },
+        { label: "Bank", value: "FNB" },
+        { label: "Branch code", value: "222826" },
+        { label: "Account number", value: "62143281905" },
+        { label: "Reference", value: "Your name and cell number" },
+      ],
+    },
+    {
+      id: "zakaah",
+      title: "Zakaah",
+      rows: [
+        { label: "Bank", value: "FNB" },
+        { label: "Branch code", value: "222826" },
+        { label: "Account number", value: "62205602510" },
+        { label: "Reference", value: "Your name and cell number" },
+      ],
+    },
+  ] satisfies Account[],
+};
+
+const section18a = {
+  intro:
+    "We have a singular account for Zakaah and Lillah Section 18A donations, and therefore request that you reference your donation accordingly, e.g. “M Ismail Zakaah” or “M Ismail Lillah.”",
+  stepOne: {
+    title: "Step one",
+    lead: "Transfer your donation into the following account:",
+    rows: [
+      { label: "Account name", value: "Charity & Welfare Trust ILM" },
+      { label: "Bank", value: "alBaraka" },
+      { label: "Branch code", value: "800000" },
+      { label: "Account number", value: "78600290903" },
+      { label: "Reference", value: "Your name + Lillah/Zakaah" },
+    ] satisfies Row[],
+  },
+  stepTwo: {
+    title: "Step two",
+    email: "fatima@ilmsa.co.za",
+    items: [
+      "Proof of payment",
+      "Full name",
+      "ID number",
+      "Income tax number",
+      "Email address",
+      "Contact number",
+      "Physical address",
+    ],
+  },
+};
+
+const isNumeric = (value: string) => /^\d+$/.test(value);
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Give – ILM-SA</title>
+    <meta
+      name="description"
+      content="Banking details for Lillah, Zakaah and Section 18A donations to ILM-SA."
+    />
+  </head>
+  <body class="antialiased bg-white text-[#0b1d2a]">
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <header class="mx-auto flex max-w-5xl justify-center px-4 pt-8 md:pt-12">
+      <a href={withBase("/")} class="focus-ring inline-flex rounded-md">
+        <img
+          src={withBase("/images/ilm_logo.svg")}
+          alt="ILM-SA – Home"
+          width="400"
+          height="146"
+          class="block h-16 w-auto md:h-20"
+          decoding="async"
+          fetchpriority="high"
+        />
+      </a>
+    </header>
+
+    <main id="main">
+      <!-- Intro · hero175 pattern: centred lede + pill links -->
+      <div class="mx-auto max-w-3xl px-4 pt-10 pb-12 text-center md:pt-14 md:pb-16">
+        <div class="space-y-3 text-lg leading-8 text-slate-700 md:text-xl md:leading-9">
+          {intro.map((sentence) => <p>{sentence}</p>)}
+        </div>
+        <nav aria-label="On this page" class="mt-8 flex flex-wrap justify-center gap-3">
+          <a href="#non-18a" class="pill focus-ring">Non-18A donations</a>
+          <a href="#section-18a" class="pill focus-ring">Section 18A donations</a>
+        </nav>
+      </div>
+
+      <h1 class="strip strip--orange"><span class="strip__inner">Banking details</span></h1>
+
+      <!-- Non-18A · teal strip, black intro, two detail cards (feature203 pattern) -->
+      <section id="non-18a" aria-labelledby="non-18a-heading" class="scroll-mt-4">
+        <h2 id="non-18a-heading" class="strip strip--teal">
+          <span class="strip__inner">Non-18A donations</span>
+        </h2>
+        <div class="mx-auto max-w-5xl px-4 py-10 md:py-12">
+          <p class="max-w-3xl text-base leading-7 md:text-lg md:leading-8">{non18a.intro}</p>
+          <div class="mt-8 grid gap-6 md:grid-cols-2 md:gap-8">
+            {non18a.accounts.map((account) => (
+              <div class="card card--teal">
+                <h3 class="card__title">{account.title}</h3>
+                <dl class="rows">
+                  {account.rows.map((row) => (
+                    <div class="row">
+                      <dt>{row.label}</dt>
+                      <dd class={isNumeric(row.value) ? "num" : undefined}>{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 18A · teal strip, black intro, two orange step blocks (feature207 numerals) -->
+      <section id="section-18a" aria-labelledby="section-18a-heading" class="scroll-mt-4">
+        <h2 id="section-18a-heading" class="strip strip--teal">
+          <span class="strip__inner">Section 18A donations</span>
+        </h2>
+        <div class="mx-auto max-w-5xl px-4 py-10 md:py-12">
+          <p class="max-w-3xl text-base leading-7 md:text-lg md:leading-8">{section18a.intro}</p>
+          <div class="mt-8 grid gap-6 md:grid-cols-2 md:gap-8">
+            <div class="card card--orange">
+              <h3 class="card__title card__title--step">
+                <span class="step-badge" aria-hidden="true">1</span>
+                {section18a.stepOne.title}
+              </h3>
+              <p class="mt-2 leading-7">{section18a.stepOne.lead}</p>
+              <dl class="rows rows--on-orange">
+                {section18a.stepOne.rows.map((row) => (
+                  <div class="row">
+                    <dt>{row.label}</dt>
+                    <dd class={isNumeric(row.value) ? "num" : undefined}>{row.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            <div class="card card--orange">
+              <h3 class="card__title card__title--step">
+                <span class="step-badge" aria-hidden="true">2</span>
+                {section18a.stepTwo.title}
+              </h3>
+              <p class="mt-2 leading-7">
+                Email the following to{" "}
+                <a href={`mailto:${section18a.stepTwo.email}`} class="email focus-ring">{section18a.stepTwo.email}</a>:
+              </p>
+              <ol class="mt-4 list-decimal space-y-2 pl-6 leading-7 marker:font-semibold">
+                {section18a.stepTwo.items.map((item) => <li class="pl-1">{item}</li>)}
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </body>
+</html>
+
+<style>
+  :root {
+    --ink: #0b1d2a;
+    --teal-tint: color-mix(in srgb, var(--brand-primary) 9%, white);
+    --teal-line: color-mix(in srgb, var(--brand-primary) 28%, white);
+    --orange-tint: color-mix(in srgb, var(--brand-secondary) 12%, white);
+    --orange-line: color-mix(in srgb, var(--brand-secondary) 45%, white);
+  }
+
+  /* Focus — one dark ring everywhere: ≥ 7:1 on white, orange and teal surfaces. */
+  .focus-ring:focus-visible,
+  .skip-link:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    z-index: 50;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 600;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus-visible {
+    transform: none;
+  }
+
+  /* hero175 pill → in-page jump links (outline, dark text, teal border 3.8:1 ≥ 3:1) */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.125rem;
+    border: 2px solid var(--brand-primary);
+    border-radius: 9999px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  .pill:hover {
+    background: var(--teal-tint);
+  }
+
+  /* Full-bleed heading strips (client spec); inner text sits on the page container. */
+  .strip {
+    display: block;
+    width: 100%;
+    margin: 0;
+  }
+  .strip__inner {
+    display: block;
+    max-width: 64rem;
+    margin-inline: auto;
+    padding: 1.125rem 1rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 1.25rem + 1vw, 1.875rem); /* ≥ 24px → "large text" */
+    line-height: 1.2;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .strip--orange {
+    background: var(--brand-secondary);
+    color: var(--ink); /* 7.5:1 — white here would be 2.3:1 */
+  }
+  .strip--teal {
+    background: var(--brand-primary);
+    color: #fff; /* 3.84:1 — passes only because the text is bold and ≥ 24px */
+  }
+
+  /* feature203 card: rounded surface, title, separator-divided rows */
+  .card {
+    border-radius: 1rem;
+    padding: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .card {
+      padding: 2rem;
+    }
+  }
+  .card--teal {
+    background: var(--teal-tint);
+    border: 1px solid var(--teal-line);
+  }
+  .card--orange {
+    background: var(--orange-tint);
+    border: 1px solid var(--orange-line);
+  }
+  .card__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.375rem;
+    line-height: 1.25;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .card__title--step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  /* feature207 numeral → solid orange badge (dark text on #f6931c = 7.5:1) */
+  .step-badge {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    background: var(--brand-secondary);
+    color: var(--ink);
+    font-size: 0.9375rem;
+    letter-spacing: 0;
+  }
+
+  .rows {
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--teal-line);
+  }
+  .rows--on-orange {
+    border-top-color: var(--orange-line);
+  }
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--teal-line);
+  }
+  .rows--on-orange .row {
+    border-bottom-color: var(--orange-line);
+  }
+  @media (min-width: 640px) {
+    .row {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+  }
+  .row dt {
+    flex: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155; /* slate-700: ≥ 7:1 on both tints */
+  }
+  .row dd {
+    margin: 0;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+  @media (min-width: 640px) {
+    .row dd {
+      text-align: right;
+    }
+  }
+  .row dd.num {
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    user-select: all; /* one tap/click selects the whole number for copying */
+  }
+
+  .email {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+    overflow-wrap: anywhere;
+  }
+  .email:hover {
+    text-decoration-color: rgba(11, 29, 42, 0.5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+  }
+</style>
