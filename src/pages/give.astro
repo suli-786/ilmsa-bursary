@@ -16,7 +16,6 @@
 // Cards are tinted with their section colour (teal for Non-18A, orange for the 18A
 // steps); solid colour is reserved for the strips and the step numeral badges.
 import "../styles/global.css";
-import Footer from "../components/Footer.astro";
 import { withBase } from "../utils/paths";
 
 type Row = { label: string; value: string };
@@ -194,7 +193,10 @@ const isNumeric = (value: string) => /^\d+$/.test(value);
       </section>
     </main>
 
-    <Footer />
+    <!-- NPO registration strip — same styling as the bottom bar of the site Footer -->
+    <footer class="mt-6 border-t border-slate-200 bg-[#F7F7F7] py-4 text-center text-xs text-slate-600">
+      065-012-NPO
+    </footer>
   </body>
 </html>
 
