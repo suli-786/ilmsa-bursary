@@ -1,4 +1,4 @@
-// shoot.mjs — VISUAL verification for the Muslimah Today page.
+// shoot.mjs — VISUAL verification for a built page (default: the home page).
 // Serves dist/, screenshots the page at mobile + desktop, runs axe a11y, writes a report.
 //
 // Contexts emulate `prefers-reduced-motion: reduce` so every scroll-driven reveal
@@ -6,10 +6,10 @@
 // renders below-fold reveal elements at opacity 0 (their start state) — i.e. blank —
 // making below-fold sections impossible to inspect. It also doubles as the
 // reduced-motion acceptance check (the page must be fully readable without motion).
-//   node Muslima_Today/scripts/shoot.mjs            # screenshot + axe the built /MT/ page
-//   node Muslima_Today/scripts/shoot.mjs --smoke    # just prove Chromium launches (no page needed)
-//   MT_PATH=/MT/ node ...                           # override the page path
-// Screenshots + report → Muslima_Today/.verify/ (gitignored). Exit non-zero on console
+//   node scripts/shoot.mjs                 # screenshot + axe the built home page
+//   node scripts/shoot.mjs --smoke         # just prove Chromium launches (no page needed)
+//   PAGE_PATH=/give/ node scripts/shoot.mjs # override the page path
+// Screenshots + report → .verify/ (gitignored). Exit non-zero on console
 // errors or serious/critical a11y violations, so automated checks can gate on it.
 import { chromium } from 'playwright';
 import { createServer } from 'node:http';
@@ -17,10 +17,10 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = fileURLToPath(new URL('../../', import.meta.url));   // repo root
+const ROOT = fileURLToPath(new URL('../', import.meta.url));   // repo root
 const DIST = join(ROOT, 'dist');
-const OUT  = fileURLToPath(new URL('../.verify/', import.meta.url)); // Muslima_Today/.verify
-const PAGE = process.env.MT_PATH || '/MT/';
+const OUT  = join(ROOT, '.verify');
+const PAGE = process.env.PAGE_PATH || '/';
 const SMOKE = process.argv.includes('--smoke');
 const launchOpts = { args: ['--no-sandbox', '--disable-dev-shm-usage'] };
 
@@ -105,6 +105,6 @@ for (const k of Object.keys(report)) {
   r.violations.forEach((v) => console.log(`   - ${v.impact || '?'} ${v.id} (${v.nodes}) ${v.help}`));
   r.consoleErrors.slice(0, 5).forEach((e) => console.log('   console: ' + e));
 }
-console.log(`\nScreenshots → Muslima_Today/.verify/{mobile,desktop}.png · report → .verify/report.json`);
+console.log(`\nScreenshots → .verify/{mobile,desktop}.png · report → .verify/report.json`);
 console.log(bad ? 'VISUAL: FAIL (console errors or serious a11y)' : 'VISUAL: ok');
 process.exit(bad);
