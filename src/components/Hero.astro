@@ -37,7 +37,7 @@ const {
   showButtons = true,
   ctas: providedCtas,
   scrollCue,
-  scrollTarget: rawScrollTarget = "#how-to-apply",
+  scrollTarget: rawScrollTarget = "#who-can-apply",
 } = Astro.props as HeroProps;
 
 const defaultSlides = [
@@ -45,7 +45,7 @@ const defaultSlides = [
     image: "/images/bg1.jpg",
     title: "As salaamu alaikum wa rahmatullahi wa barakaatuh,",
     sub: "",
-    body: "We have reached our capacity and being a small organisation, we are unable to accommodate further applications. We wish you all the best in pursuing your study goals!",
+    body: "Bursary Applications for 2027 will be opening soon.",
     objectPosition: "center center",
     highlight: "As salaamu alaikum",
   },
@@ -53,7 +53,7 @@ const defaultSlides = [
     image: "/images/bg2.jpg",
     title: "As salaamu alaikum wa rahmatullahi wa barakaatuh,",
     sub: "",
-    body: "We have reached our capacity and being a small organisation, we are unable to accommodate further applications. We wish you all the best in pursuing your study goals!",
+    body: "Bursary Applications for 2027 will be opening soon.",
     objectPosition: "center center", // keep crop fix
     highlight: "As salaamu alaikum",
   },
@@ -66,16 +66,16 @@ const slides = slidesSource.map((slide) => ({
 }));
 const firstSlide = slides[0] ?? defaultSlides[0];
 
-const sub = customSub ?? firstSlide.sub ?? "Bursary Application Form 2026";
+const sub = customSub ?? firstSlide.sub ?? "";
 const headlineText = customHeadline ?? firstSlide.title ?? "ILM-SA Bursary";
 const bodyText =
   customBody ??
   firstSlide.body ??
-  "Financial assistance, mentorship, and a supportive community to help you thrive in 2026 and beyond.";
+  "Bursary Applications for 2027 will be opening soon.";
 const highlightWord = customHighlight ?? firstSlide.highlight ?? "ILM-SA";
 
 const defaultCtas = [
-  { href: "#how-to-apply", label: "How to apply", variant: "outline" },
+  { href: "/give/", label: "Donate", variant: "outline" },
 ];
 const ctas = (providedCtas ?? defaultCtas).map((cta) => ({
   ...cta,
