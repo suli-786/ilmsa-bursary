@@ -37,6 +37,7 @@ This is an **Astro 5 + Tailwind CSS 4** static site (Tailwind via the `@tailwind
 - `src/pages/give.astro` → `/give/` — donations / banking-details page (shares `Header` + `Footer`; content self-contained).
 - `src/pages/apply.astro` → `/apply/` — "What you need to know before applying": `Hero185` (overline label, heading, intro, photo bento) → `Services3` (one label row per section). Wording verbatim from the former `WhoCanApply` section, minus "How to apply" and "Applications" (applications are open at go-live). The application form is on JotForm (https://form.jotform.com/Bursaries_bursaries/2027-bursary-application): two `CtaLink` buttons labelled with the form's own title, "2027 Bursary Application" (under the intro and after the last row).
 - `Header.astro` menu: "Bursary Applications" → `/apply/` and "Donate" → `/give/`.
+- `Favicons.astro` (in every page's `<head>`): `public/favicon.ico` (16/32/48), `favicon.svg`, `apple-touch-icon.png` (180, white) — all cut from the logo's teal figures mark (no text; "SOUTH AFRICA" clipped).
 - Styles: `src/styles/global.css` (Tailwind + bursary tokens: teal `#009193`, orange `#f6931c`, Poppins).
 
 ### shadcnblocks (premium blocks via the shadcn CLI)

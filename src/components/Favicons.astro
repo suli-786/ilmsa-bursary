@@ -1,0 +1,13 @@
+---
+/**
+ * Favicons.astro — <head> icon links, shared by every page.
+ * Generated 2026-11-18 from the ILM-SA logo's teal figures mark (no text):
+ *   • favicon.ico        16/32/48 px (also answers direct /favicon.ico requests)
+ *   • favicon.svg        vector, crisp at any size (modern browsers prefer it)
+ *   • apple-touch-icon   180 px on white (iOS home screen; transparency renders black)
+ */
+import { withBase } from "../utils/paths";
+---
+<link rel="icon" href={withBase("/favicon.ico")} sizes="32x32" />
+<link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+<link rel="apple-touch-icon" href={withBase("/apple-touch-icon.png")} />

@@ -11,6 +11,7 @@
 // → NPO strip footer. Blocks are shadcnblocks components rendered to static
 // HTML (no client JS).
 import "../styles/global.css";
+import Favicons from "../components/Favicons.astro";
 import { getImage } from "astro:assets";
 import {
   BookOpenIcon,
@@ -72,6 +73,7 @@ const tiles = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Favicons />
     <title>ILM-SA Bursary</title>
   </head>
   <body class="antialiased bg-white text-[#0b1d2a]">
