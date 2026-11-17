@@ -1,24 +1,94 @@
 ---
+// Home — route /. Built from the client's home-page brief (email received 2026-11-17).
+//
+// Copy is VERBATIM from the brief — do not paraphrase or "fix" it (including the
+// full stop on the third bullet only). The greeting is split only for colour
+// (salutation in teal); its words are unchanged. Tile labels reuse the brief's
+// two menu labels so no new wording is introduced.
+//
+// Layout: site Header → feature382 (greeting, intro, activity rows, photo
+// collage) → feature116 (the brief's "separate block" + two icon link tiles)
+// → NPO strip footer. Blocks are shadcnblocks components rendered to static
+// HTML (no client JS).
 import "../styles/global.css";
-import Preloader from "../components/Preloader.astro";
+import { getImage } from "astro:assets";
+import {
+  BookOpenIcon,
+  GraduationCapIcon,
+  HandHeartIcon,
+  HeartHandshakeIcon,
+  UsersIcon,
+} from "lucide-react";
 import Header from "../components/Header.astro";
-import Hero from "../components/Hero.astro";
-import WhoCanApply from "../components/WhoCanApply.astro";
 import Footer from "../components/Footer.astro";
+import { Feature382 } from "@/components/feature382";
+import { Feature116 } from "@/components/feature116";
+import { withBase } from "../utils/paths";
+
+import bursaryStudents from "../assets/home/bursary-students.jpg";
+import speaker from "../assets/home/speaker.jpg";
+import madrasahLearners from "../assets/home/madrasah-learners.jpg";
+import eventPanel from "../assets/home/event-panel.jpg";
+
+// Greeting (verbatim): "As salaamu alaikum wa rahmatullahi wa barakaatuh, hello and welcome to the ILM-SA website!"
+const greetingAccent = "As salaamu alaikum wa rahmatullahi wa barakaatuh,";
+const greetingRest = "hello and welcome to the ILM-SA website!";
+
+const intro =
+  "ILM-SA (Institute for Learning and Motivation – South Africa) is a Durban-based non-profit organisation (065-012-NPO) engaged in:";
+
+const activities = [
+  { text: "the provision of bursaries for financially deserving tertiary students", icon: GraduationCapIcon },
+  { text: "the upliftment of six historically disadvantaged madrasahs", icon: BookOpenIcon },
+  {
+    text: "the provision of social welfare interventions for individuals and families who require assistance with basic necessities like rent, utilities and groceries.",
+    icon: HeartHandshakeIcon,
+  },
+  { text: "the hosting of events aimed at motivating and educating the Muslim community", icon: UsersIcon },
+];
+
+const stillBuilding =
+  "As you can see we are still building our website but in the meantime,  you can apply for a bursary for the 2027 academic year or make a donation to us by clicking on the relevant buttons.";
+
+const webp = async (src: ImageMetadata, width: number) =>
+  (await getImage({ src, width, format: "webp", quality: 80 })).src;
+
+// Collage, 2 columns × 3 rows: tall left, two stacked right, wide bottom.
+// Decorative (alt="") — the activity rows beside them already say what they show.
+const photos = [
+  { src: await webp(speaker, 700), alt: "", className: "row-span-2", imgClassName: "object-[50%_30%]" },
+  { src: await webp(madrasahLearners, 700), alt: "" },
+  { src: await webp(eventPanel, 700), alt: "", imgClassName: "object-[60%_50%]" },
+  { src: await webp(bursaryStudents, 1100), alt: "", className: "col-span-2", imgClassName: "object-[50%_40%]" },
+];
+
+// Icons, not photos, on the two link tiles (user's instruction).
+const tiles = [
+  { label: "Bursary Applications", href: withBase("/apply/"), icon: GraduationCapIcon, tone: "teal" as const },
+  { label: "Donate", href: withBase("/give/"), icon: HandHeartIcon, tone: "orange" as const },
+];
 ---
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ILM-SA Bursary</title>
   </head>
-  <body class="antialiased">
-    <Preloader />   <!-- <-- here -->
+  <body class="antialiased bg-white text-[#0b1d2a]">
     <Header />
-    <main id="main" class="scroll-mt-28">
-      <Hero />
-      <WhoCanApply />
+    <main id="main">
+      <div class="shadcn">
+        <Feature382
+          headingAccent={greetingAccent}
+          heading={greetingRest}
+          description={intro}
+          keepTogether={["(065-012-NPO)"]}
+          items={activities}
+          images={photos}
+        />
+        <Feature116 description={stillBuilding} tiles={tiles} />
+      </div>
     </main>
-    <Footer />
+    <Footer class="mt-0" />
   </body>
 </html>

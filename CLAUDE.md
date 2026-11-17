@@ -33,9 +33,23 @@ node scripts/shoot.mjs --smoke            # just prove Chromium launches
 
 This is an **Astro 5 + Tailwind CSS 4** static site (Tailwind via the `@tailwindcss/vite` plugin, no `tailwind.config` file) for the ILM-SA bursary programme.
 
-- `src/pages/index.astro` → `/` — home page (Header, Hero, WhoCanApply, Footer, Preloader from `src/components/`).
-- `src/pages/give.astro` → `/give/` — donations / banking-details page (single self-contained file).
+- `src/pages/index.astro` → `/` — home page per the client brief of 2026-11-17: `Header` → `Feature382` (greeting with teal salutation, intro, icon activity rows, 2×3 photo collage) → `Feature116` (the brief's separate block + two icon link tiles on a teal band) → `Footer`. Photos live in `src/assets/home/` (pre-resized, optimised to WebP at build).
+- `src/pages/give.astro` → `/give/` — donations / banking-details page (shares `Header` + `Footer`; content self-contained).
+- `src/pages/apply.astro` → `/apply/` — "What you need to know before applying": `Hero185` (overline label, heading, intro, photo bento) → `Services3` (one label row per section). Wording verbatim from the former `WhoCanApply` section, minus "How to apply" and "Applications" (applications are open at go-live). The application form is on JotForm (https://form.jotform.com/Bursaries_bursaries/2027-bursary-application): two `CtaLink` buttons labelled with the form's own title, "2027 Bursary Application" (under the intro and after the last row).
+- `Header.astro` menu: "Bursary Applications" → `/apply/` and "Donate" → `/give/`.
 - Styles: `src/styles/global.css` (Tailwind + bursary tokens: teal `#009193`, orange `#f6931c`, Poppins).
+
+### shadcnblocks (premium blocks via the shadcn CLI)
+React is wired in (`@astrojs/react`) only so shadcnblocks.com blocks can be used as-is; Astro renders them to static HTML (no client JS unless a block gets a `client:*` directive).
+
+```bash
+npx shadcn@latest add @shadcnblocks/hero193   # needs SHADCNBLOCKS_API_KEY in the env (see components.json)
+```
+
+- Blocks land in `src/components/<name>.tsx`, shadcn primitives in `src/components/ui/`. Import with the `@/` alias.
+- **Wrap every block in `<div class="shadcn">…</div>`.** The shadcn border-colour default is scoped to that class so it can't touch existing pages.
+- **Never run `shadcn init`.** It would rewrite `global.css` (radius scale, body colours, focus outlines) and restyle the existing pages. The tokens it would add are already in `global.css` (neutral light + scoped `.dark` set); `cn` + `class-variance-authority` are pre-installed.
+- Blocks use Tailwind's default radius scale (shadcn's `--radius` overrides were left out on purpose).
 
 ### Copy is verbatim
 Client-supplied copy (e.g. `/give` banking details) is used **verbatim** — do not paraphrase, "fix" spellings, or invent facts (dates, amounts, requirements).

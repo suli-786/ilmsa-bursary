@@ -16,7 +16,8 @@
 // Cards are tinted with their section colour (teal for Non-18A, orange for the 18A
 // steps); solid colour is reserved for the strips and the step numeral badges.
 import "../styles/global.css";
-import { withBase } from "../utils/paths";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 
 type Row = { label: string; value: string };
 type Account = { id: string; title: string; rows: Row[] };
@@ -97,21 +98,9 @@ const isNumeric = (value: string) => /^\d+$/.test(value);
     />
   </head>
   <body class="antialiased bg-white text-[#0b1d2a]">
-    <a href="#main" class="skip-link">Skip to content</a>
-
-    <header class="mx-auto flex max-w-5xl justify-center px-4 pt-8 md:pt-12">
-      <a href={withBase("/")} class="focus-ring inline-flex rounded-md">
-        <img
-          src={withBase("/images/ilm_logo.svg")}
-          alt="ILM-SA – Home"
-          width="400"
-          height="146"
-          class="block h-16 w-auto md:h-20"
-          decoding="async"
-          fetchpriority="high"
-        />
-      </a>
-    </header>
+    <!-- Site header (logo + menu, incl. its skip link) — shared with the home page
+         per the 2026-11-17 brief ("keep website home page and give link consistent"). -->
+    <Header />
 
     <main id="main">
       <!-- Intro · hero175 pattern: centred lede + pill links -->
@@ -194,10 +183,7 @@ const isNumeric = (value: string) => /^\d+$/.test(value);
       </section>
     </main>
 
-    <!-- NPO registration strip — same styling as the bottom bar of the site Footer -->
-    <footer class="mt-6 border-t border-slate-200 bg-[#F7F7F7] py-4 text-center text-xs text-slate-600">
-      065-012-NPO
-    </footer>
+    <Footer />
   </body>
 </html>
 
@@ -211,26 +197,9 @@ const isNumeric = (value: string) => /^\d+$/.test(value);
   }
 
   /* Focus — one dark ring everywhere: ≥ 7:1 on white, orange and teal surfaces. */
-  .focus-ring:focus-visible,
-  .skip-link:focus-visible {
+  .focus-ring:focus-visible {
     outline: 2px solid var(--ink);
     outline-offset: 3px;
-  }
-
-  .skip-link {
-    position: absolute;
-    left: 0.5rem;
-    top: 0.5rem;
-    z-index: 50;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
-    background: #fff;
-    color: var(--ink);
-    font-weight: 600;
-    transform: translateY(-200%);
-  }
-  .skip-link:focus-visible {
-    transform: none;
   }
 
   /* hero175 pill → in-page jump links (outline, dark text, teal border 3.8:1 ≥ 3:1) */

@@ -1,0 +1,122 @@
+---
+// Bursary Applications — route /apply. Linked from the header menu and the home page.
+//
+// Copy is VERBATIM from the previous "What you need to know before applying"
+// section (WhoCanApply.astro, removed from the home page 2026-11-17) — the user
+// asked to keep the wording the same. Left out: "How to apply" (last cycle's
+// steps, deleted 2026-11-12) and "Applications" ("…will be opening soon" —
+// applications are open once the site goes live).
+//
+// Application form: hosted on JotForm (link supplied by the user 2026-11-18). Two
+// buttons link to it — under the intro and after the last section. Their label
+// is the form's own title ("2027 Bursary Application"), so no wording is invented.
+//
+// Layout: site Header → hero185 (label, heading, intro, photo bento) →
+// services3 (one label row per section, who-can-apply first, then the form
+// button) → NPO strip footer.
+import "../styles/global.css";
+import { getImage } from "astro:assets";
+import {
+  CameraIcon,
+  ClipboardCheckIcon,
+  CompassIcon,
+  HandCoinsIcon,
+  HandshakeIcon,
+} from "lucide-react";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { Hero185 } from "@/components/hero185";
+import { Services3 } from "@/components/services3";
+
+import studentsBanner from "../assets/apply/students-banner.jpg";
+import studentsSeated from "../assets/apply/students-seated.jpg";
+import bursaryStudents from "../assets/home/bursary-students.jpg";
+
+const applicationForm = {
+  text: "2027 Bursary Application",
+  href: "https://form.jotform.com/Bursaries_bursaries/2027-bursary-application",
+};
+
+const webp = async (src: ImageMetadata, width: number) =>
+  (await getImage({ src, width, format: "webp", quality: 80 })).src;
+
+// Decorative (alt="") — bursary-event photos illustrating the page.
+const images: [
+  { src: string; alt: string; className?: string },
+  { src: string; alt: string; className?: string },
+  { src: string; alt: string; className?: string },
+] = [
+  { src: await webp(studentsBanner, 900), alt: "", className: "object-[45%_50%]" },
+  { src: await webp(studentsSeated, 900), alt: "" },
+  { src: await webp(bursaryStudents, 900), alt: "", className: "object-[50%_40%]" },
+];
+
+// Order: who can apply (eligibility, funding priority) → if accepted
+// (expectations, media) → advice. Icon tiles alternate teal / orange.
+const rows = [
+  {
+    title: "Eligibility checklist",
+    items: [
+      "You are an undergraduate student (no funding for postgraduate studies).",
+      "You are a South African citizen.",
+      "You reside in KwaZulu Natal. You may study elsewhere if the programme is inaccessible locally, but KZN residency is required.",
+    ],
+    icon: ClipboardCheckIcon,
+    tone: "teal" as const,
+  },
+  {
+    title: "Funding context & fairness",
+    description:
+      "Most of the bursary funding we receive is in the form of zakaah. Zakaah funds must be allocated to specific categories of Muslims. We therefore prioritise Muslim applicants who qualify for zakaah assistance.  However, students who are not Muslim and Muslim students who do not qualify for zakaah assistance are welcome to apply.",
+    icon: HandCoinsIcon,
+    tone: "orange" as const,
+  },
+  {
+    title: "Expectations of Accepted Applicants",
+    items: [
+      "Volunteer at ILM-SA events throughout the academic year.",
+      "Attend mentorship sessions and development programmes arranged by the organisation.",
+      "Donate to ILM-SA on a monthly basis once you are employed – the specific amount will depend on your financial situation.",
+    ],
+    icon: HandshakeIcon,
+    tone: "teal" as const,
+  },
+  {
+    title: "Media & visibility",
+    description:
+      "We regularly publish photographs and videos featuring our bursary students on our marketing platforms. This is done in the most respectful of ways. Apply only if you and your guardians are comfortable with this level of visibility.",
+    icon: CameraIcon,
+    tone: "orange" as const,
+  },
+  {
+    title: "Apply elsewhere too",
+    description:
+      "Funding is limited and demand is high. We cannot guarantee support for every applicant, so please continue applying for other bursaries.",
+    icon: CompassIcon,
+    tone: "teal" as const,
+  },
+];
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Apply — ILM-SA Bursary</title>
+  </head>
+  <body class="antialiased bg-white text-[#0b1d2a]">
+    <Header />
+    <main id="main">
+      <div class="shadcn">
+        <Hero185
+          label="Read this first"
+          heading="WHAT YOU NEED TO KNOW BEFORE APPLYING"
+          description="We want every applicant to understand the criteria, commitment and expectations attached to ILM-SA bursary funding."
+          cta={applicationForm}
+          images={images}
+        />
+        <Services3 className="pt-0 md:pt-0" rows={rows} cta={applicationForm} />
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -4,9 +4,20 @@
     // Verification script run directly via `node`, not imported by the site.
     "scripts/shoot.mjs"
   ],
+  "ignore": [
+    // shadcn scaffolding: components/ui/* that `npx shadcn add` creates
+    // import `cn` from here. Unused until the first block is installed.
+    "src/lib/utils.ts"
+  ],
   "ignoreDependencies": [
     // shoot.mjs injects node_modules/axe-core/axe.min.js via readFile, which
     // knip can't trace as an import.
-    "axe-core"
-  ]
+    "axe-core",
+    // shadcn scaffolding normally added by `shadcn init` (which we skip so it
+    // can't rewrite global.css); `shadcn add` assumes it's present.
+    "class-variance-authority"
+  ],
+  // shadcn ui primitives export their variant helpers (e.g. buttonVariants)
+  // alongside the component that uses them; that's convention, not dead code.
+  "ignoreExportsUsedInFile": true
 }

@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 
 const rawBase = process.env.PUBLIC_BASE_PATH ?? "/";
@@ -16,6 +17,9 @@ const site = (() => {
 export default defineConfig({
   site,
   base,
+  // React renders shadcnblocks blocks to static HTML at build time; no JS
+  // ships to the browser unless a block is given a client:* directive.
+  integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
   },
